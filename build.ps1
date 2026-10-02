@@ -30,7 +30,8 @@ $targets = @(
   @{ name = "bench";     sources = @("tools/bench.cpp") + $engine },
   @{ name = "bitboard_test"; sources = @("tests/bitboard_test.cpp") + @("engine/bitboard.cpp") },
   @{ name = "geometry_test"; sources = @("tests/geometry_test.cpp") + @("engine/bitboard.cpp") },
-  @{ name = "eval_test"; sources = @("tests/eval_test.cpp") + $engineEval }
+  @{ name = "eval_test"; sources = @("tests/eval_test.cpp") + $engineEval },
+  @{ name = "tt_test"; sources = @("tests/tt_test.cpp") + @("engine/tt.cpp") }
 )
 
 New-Item -ItemType Directory -Force -Path "build" | Out-Null
