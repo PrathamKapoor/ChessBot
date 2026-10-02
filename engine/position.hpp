@@ -48,12 +48,12 @@ inline Bitboard pawnAttacksFrom(Square s, Color c) {
 // True if a piece of type `pt` on `from` attacks `to` under occupancy `occ`.
 inline bool attacksSquare(PieceType pt, Square from, Square to, Bitboard occ) {
   switch (pt) {
-    case kPawn: return (pawnAttacksFrom(from, kWhite) & to) != 0;
-    case kKnight: return (kKnightAttacksBB[from] & to) != 0;
-    case kBishop: return (bishopAttacks(from, occ) & to) != 0;
-    case kRook: return (rookAttacks(from, occ) & to) != 0;
-    case kQueen: return (queenAttacks(from, occ) & to) != 0;
-    default: return (kKingAttacksBB[from] & to) != 0;
+    case kPawn: return (pawnAttacksFrom(from, kWhite) & squareBB(to)) != 0;
+    case kKnight: return (kKnightAttacksBB[from] & squareBB(to)) != 0;
+    case kBishop: return (bishopAttacks(from, occ) & squareBB(to)) != 0;
+    case kRook: return (rookAttacks(from, occ) & squareBB(to)) != 0;
+    case kQueen: return (queenAttacks(from, occ) & squareBB(to)) != 0;
+    default: return (kKingAttacksBB[from] & squareBB(to)) != 0;
   }
 }
 
@@ -112,6 +112,17 @@ class Position {
 
   // Pieces of any colour attacking `s` under occupancy `occ`.
   Bitboard attackersTo(Square s, Bitboard occ) const;
+
+  // Absolute pins for colour `c`: our own pieces that cannot move without
+  // exposing our king, together with the enemy sliders doing the pinning.
+  //
+  // A piece is pinned when an enemy rook/queen lines up with the king along a
+  // rank or file, or an enemy bishop/queen along a diagonal, with exactly one
+  // piece between them. The returned mask therefore contains both the pinned
+  // pieces and the pinning sliders; callers only test membership of our own
+  // pieces, so the extra squares are harmless and this avoids a second
+  // structure.
+  Bitboard blockersForKing(Color c) const;
 
   bool canCastle(CastlingRight cr) const { return (state_->castlingRights & int(cr)) != 0; }
   // Bit layout is 1 = white king, 2 = white queen, 4 = black king, 8 = black

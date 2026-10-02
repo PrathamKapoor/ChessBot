@@ -14,6 +14,8 @@ const Bitboard kRankBB[8] = {
 Bitboard kPawnAttacksBB[kNumColors][kNumSquares];
 Bitboard kKnightAttacksBB[kNumSquares];
 Bitboard kKingAttacksBB[kNumSquares];
+Bitboard kDiagonalBB[kNumSquares];
+Bitboard kOrthogonalBB[kNumSquares];
 
 namespace magic {
 Bitboard kMask[kNumSquares][magic::kNumDirections];
@@ -47,7 +49,7 @@ Bitboard rayAttacks(Square s, int dir, Bitboard occ) {
     if (f < 0 || f > 7 || r < 0 || r > 7) break;
     const Square t = makeSquare(File(f), Rank(r));
     att |= squareBB(t);
-    if (occ & t) break;
+    if (occ & squareBB(t)) break;
   }
   return att;
 }
@@ -111,6 +113,29 @@ void initBitboards() {
 
   initStepTable(kKnightAttacksBB, kKnightStep);
   initStepTable(kKingAttacksBB, kKingStep);
+
+  // Unobstructed rays, built by the same walk used for the magic masks but
+  // keeping every square rather than stopping before the edge.
+  for (int s = 0; s < kNumSquares; ++s) {
+    const Square sq = Square(s);
+    Bitboard diag = 0, orth = 0;
+    for (int d = 0; d < magic::kNumDirections; ++d) {
+      int f = int(fileOf(sq));
+      int r = int(rankOf(sq));
+      Bitboard ray = 0;
+      while (true) {
+        f += kRayStep[d].df;
+        r += kRayStep[d].dr;
+        if (f < 0 || f > 7 || r < 0 || r > 7) break;
+        ray |= squareBB(makeSquare(File(f), Rank(r)));
+      }
+      // Directions 0..3 are orthogonal, 4..7 diagonal.
+      if (d < 4) orth |= ray;
+      else diag |= ray;
+    }
+    kDiagonalBB[s] = diag;
+    kOrthogonalBB[s] = orth;
+  }
 
   for (int i = 0; i < kNumSquares; ++i) {
     for (Color c : {kWhite, kBlack}) {

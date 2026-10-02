@@ -27,7 +27,8 @@ $ref = @{}
 $d = 0
 foreach ($line in (Get-Content $refFile)) {
   if ($line -match '^=== depth (\d+) ===') { $d = [int]$Matches[1]; continue }
-  if ($line -match '^\s+(\S{4}) : (\d+)') { $ref["$d|$($Matches[1])"] = [int]$Matches[2] }
+  # UCI move strings are 4 characters, or 5 with a promotion suffix (d7c8q).
+  if ($line -match '^\s+(\S{4,5}) : (\d+)') { $ref["$d|$($Matches[1])"] = [int]$Matches[2] }
 }
 
 Write-Host "case=$Case depth=$Depth  engine=$($mine.Count) ref=$($ref.Count)" -ForegroundColor Cyan

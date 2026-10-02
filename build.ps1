@@ -27,7 +27,8 @@ $engine = @("engine/bitboard.cpp", "engine/position.cpp", "engine/movegen.cpp")
 $targets = @(
   @{ name = "perft";     sources = @("tools/perft.cpp") + $engine },
   @{ name = "bench";     sources = @("tools/bench.cpp") + $engine },
-  @{ name = "bitboard_test"; sources = @("tests/bitboard_test.cpp") + @("engine/bitboard.cpp") }
+  @{ name = "bitboard_test"; sources = @("tests/bitboard_test.cpp") + @("engine/bitboard.cpp") },
+  @{ name = "geometry_test"; sources = @("tests/geometry_test.cpp") + @("engine/bitboard.cpp") }
 )
 
 New-Item -ItemType Directory -Force -Path "build" | Out-Null

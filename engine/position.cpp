@@ -116,6 +116,32 @@ Bitboard Position::attackersTo(Square s, Bitboard occ) const {
          (rookAttacks(s, occ) & pieces(kRook, kQueen));
 }
 
+Bitboard Position::blockersForKing(Color c) const {
+  const Square ksq = kingSquare(c);
+
+  // Candidate snipers: enemy rooks and queens sharing a rank or file with our
+  // king, enemy bishops and queens sharing a diagonal. Both ray masks are
+  // static so this costs table lookups rather than PEXT probes.
+  Bitboard snipers = (pieces(~c, kRook, kQueen) & kOrthogonalBB[ksq]) |
+                     (pieces(~c, kBishop, kQueen) & kDiagonalBB[ksq]);
+
+  // The snipers do not themselves block anything, so excluding them makes the
+  // "how many pieces are in the way" test meaningful.
+  const Bitboard occupancy = pieces() ^ snipers;
+
+  Bitboard blockers = 0;
+  while (snipers) {
+    const Square s = popLsb(snipers);
+    const Bitboard between = betweenBB(ksq, s) & occupancy;
+    // A sniper only pins when the ray actually reaches our king, i.e. when
+    // exactly one piece stands in the way.
+    if (between && !moreThanOne(between)) blockers |= between;
+    if (between || ksq == Square(int(s) - 1) || ksq == Square(int(s) + 1))
+      blockers |= squareBB(s);
+  }
+  return blockers;
+}
+
 void Position::setCheckers() {
   checkers_ = attackersTo(kingSquare(sideToMove_), pieces()) & pieces(~sideToMove_);
   // Kept in the undo stack so undoMove can restore it for free.
@@ -517,7 +543,7 @@ bool Position::legal(Move m) {
 
     // The rook is excluded from the occupancy test: it is our own piece and
     // cannot attack us, but it does block sliders along the rank.
-    const Bitboard occ = pieces() ^ rfrom;
+    const Bitboard occ = pieces() ^ squareBB(rfrom);
     while (kingPath) {
       const Square s = popLsb(kingPath);
       if (attackersTo(s, occ) & pieces(them)) return false;
@@ -528,7 +554,7 @@ bool Position::legal(Move m) {
   if (typeOf(pieceOn(from)) == kKing) {
     // The king may not step onto a square attacked by the enemy. The origin is
     // vacated and whatever stood on the destination is captured.
-    const Bitboard occ = pieces() ^ from ^ to;
+    const Bitboard occ = pieces() ^ squareBB(from) ^ squareBB(to);
     return (attackersTo(to, occ) & pieces(them)) == 0;
   }
 
@@ -544,7 +570,7 @@ bool Position::legal(Move m) {
   }
 
   // Occupancy once the move is played: `from` is vacated, `to` is occupied.
-  const Bitboard occ = (pieces() ^ from) | to;
+  const Bitboard occ = (pieces() ^ squareBB(from)) | squareBB(to);
   // The captured piece is no longer an enemy piece, so exclude its square.
   const Bitboard enemies = pieces(them) & ~squareBB(to);
   return (attackersTo(ksq, occ) & enemies) == 0;

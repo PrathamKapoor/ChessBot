@@ -20,14 +20,22 @@ constexpr Bitboard rankBB(int r) { return 0xFFULL << (8 * r); }
 extern const Bitboard kFileBB[8];
 extern const Bitboard kRankBB[8];
 
-// Bitboard is a plain uint64_t, so the native operators already work. Only the
-// Bitboard <-> Square overloads need defining, which is legal because Square is
-// an enumeration type.
-constexpr Bitboard operator&(Bitboard b, Square s) { return b & squareBB(s); }
-constexpr Bitboard operator|(Bitboard b, Square s) { return b | squareBB(s); }
-constexpr Bitboard operator^(Bitboard b, Square s) { return b ^ squareBB(s); }
-constexpr Bitboard operator|(Square s, Bitboard b) { return b | squareBB(s); }
-constexpr Bitboard operator&(Square s, Bitboard b) { return b & squareBB(s); }
+// Bitboard is a plain uint64_t. There are deliberately NO operators mixing
+// Bitboard with Square: because Square is an enumeration with an underlying
+// type of int, an expression like `bb |= sq` silently selects the built-in
+// integer `|` and ORs in the square's INDEX as if it were a mask, which is
+// wrong and hard to see.
+//
+// These deleted overloads turn that mistake into a compile error. Without them
+// the built-in integer operator is always available and always wins.
+Bitboard operator|(Bitboard, Square) = delete;
+Bitboard operator&(Bitboard, Square) = delete;
+Bitboard operator^(Bitboard, Square) = delete;
+Bitboard operator|(Square, Bitboard) = delete;
+Bitboard operator&(Square, Bitboard) = delete;
+Bitboard& operator|=(Bitboard&, Square) = delete;
+Bitboard& operator&=(Bitboard&, Square) = delete;
+Bitboard& operator^=(Bitboard&, Square) = delete;
 
 inline int popcount(Bitboard b) { return __builtin_popcountll(b); }
 inline Square lsb(Bitboard b) { return Square(__builtin_ctzll(b)); }
@@ -88,6 +96,53 @@ inline Bitboard rookAttacks(Square s, Bitboard occ) {
 
 inline Bitboard queenAttacks(Square s, Bitboard occ) {
   return bishopAttacks(s, occ) | rookAttacks(s, occ);
+}
+
+// Full rays from each square with nothing on the board. Static masks, so these
+// cost a table lookup rather than the eight PEXT probes the magic path needs.
+extern Bitboard kDiagonalBB[kNumSquares];
+extern Bitboard kOrthogonalBB[kNumSquares];
+
+// Squares strictly between a and b on their common line, or 0 when they share
+// no line.
+inline Bitboard betweenBB(Square a, Square b) {
+  if (a == b) return 0ULL;
+  const int ra = int(rankOf(a)), fa = int(fileOf(a));
+  const int rb = int(rankOf(b)), fb = int(fileOf(b));
+
+  // The squares strictly between must be restricted to the span of the two
+  // squares. Returning the whole rank or file minus the endpoints would include
+  // squares outside the pair, which turns a single blocker into two and hides
+  // real pins.
+  if (ra == rb) {
+    Bitboard band = 0;
+    for (int f = std::min(fa, fb) + 1; f < std::max(fa, fb); ++f)
+      band |= squareBB(makeSquare(File(f), Rank(ra)));
+    return band;
+  }
+  if (fa == fb) {
+    Bitboard band = 0;
+    for (int r = std::min(ra, rb) + 1; r < std::max(ra, rb); ++r)
+      band |= squareBB(makeSquare(File(fa), Rank(r)));
+    return band;
+  }
+  if (std::abs(ra - rb) != std::abs(fa - fb)) return 0ULL;
+
+  Bitboard band = 0;
+  for (int r = std::min(ra, rb) + 1; r < std::max(ra, rb); ++r) band |= kRankBB[r];
+  return (kDiagonalBB[a] & kDiagonalBB[b]) & band;
+}
+
+// True when a, b and c share a rank, file or diagonal.
+inline bool aligned(Square a, Square b, Square c) {
+  const int ra = int(rankOf(a)), fa = int(fileOf(a));
+  const int rb = int(rankOf(b)), fb = int(fileOf(b));
+  const int rc = int(rankOf(c)), fc = int(fileOf(c));
+  if (ra == rb && ra == rc) return true;
+  if (fa == fb && fa == fc) return true;
+  if (ra - fa == rb - fb && rb - fb == rc - fc) return true;
+  if (ra + fa == rb + fb && rb + fb == rc + fc) return true;
+  return false;
 }
 
 }  // namespace pocket
