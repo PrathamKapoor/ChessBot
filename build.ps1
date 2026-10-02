@@ -24,6 +24,8 @@ if ($Config -eq "release") {
 
 $engine = @("engine/bitboard.cpp", "engine/position.cpp", "engine/movegen.cpp")
 $engineEval = $engine + @("engine/evaluate.cpp")
+$engineSearch = $engineEval + @("engine/tt.cpp", "engine/search.cpp")
+$engineUci = $engineSearch + @("engine/uci.cpp")
 
 $targets = @(
   @{ name = "perft";     sources = @("tools/perft.cpp") + $engine },
@@ -31,7 +33,10 @@ $targets = @(
   @{ name = "bitboard_test"; sources = @("tests/bitboard_test.cpp") + @("engine/bitboard.cpp") },
   @{ name = "geometry_test"; sources = @("tests/geometry_test.cpp") + @("engine/bitboard.cpp") },
   @{ name = "eval_test"; sources = @("tests/eval_test.cpp") + $engineEval },
-  @{ name = "tt_test"; sources = @("tests/tt_test.cpp") + @("engine/tt.cpp") }
+  @{ name = "tt_test"; sources = @("tests/tt_test.cpp") + @("engine/tt.cpp") },
+  @{ name = "search_test"; sources = @("tests/search_test.cpp") + $engineUci },
+  @{ name = "pocketchess"; sources = @("tools/engine_main.cpp") + $engineUci },
+  @{ name = "search_bench"; sources = @("tools/search_bench.cpp") + $engineSearch }
 )
 
 New-Item -ItemType Directory -Force -Path "build" | Out-Null
