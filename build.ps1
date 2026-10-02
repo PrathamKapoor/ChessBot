@@ -23,12 +23,14 @@ if ($Config -eq "release") {
 }
 
 $engine = @("engine/bitboard.cpp", "engine/position.cpp", "engine/movegen.cpp")
+$engineEval = $engine + @("engine/evaluate.cpp")
 
 $targets = @(
   @{ name = "perft";     sources = @("tools/perft.cpp") + $engine },
   @{ name = "bench";     sources = @("tools/bench.cpp") + $engine },
   @{ name = "bitboard_test"; sources = @("tests/bitboard_test.cpp") + @("engine/bitboard.cpp") },
-  @{ name = "geometry_test"; sources = @("tests/geometry_test.cpp") + @("engine/bitboard.cpp") }
+  @{ name = "geometry_test"; sources = @("tests/geometry_test.cpp") + @("engine/bitboard.cpp") },
+  @{ name = "eval_test"; sources = @("tests/eval_test.cpp") + $engineEval }
 )
 
 New-Item -ItemType Directory -Force -Path "build" | Out-Null

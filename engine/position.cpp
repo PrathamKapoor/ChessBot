@@ -600,4 +600,15 @@ bool Position::hasNonPawnMaterial(Color c) const {
                                 byTypeBB_[int(kRook)] | byTypeBB_[int(kQueen)])) != 0;
 }
 
+bool Position::hasInsufficientMaterial() const {
+  // Any pawn, rook or queen on the board leaves enough material to mate in
+  // some position, so the presence of one rules out an automatic draw.
+  if (pieces(kPawn) || pieces(kRook) || pieces(kQueen)) return false;
+
+  // Otherwise each side may hold at most one knight or bishop.
+  const Bitboard wMinors = pieces(kWhite, kKnight, kBishop);
+  const Bitboard bMinors = pieces(kBlack, kKnight, kBishop);
+  return popcount(wMinors) <= 1 && popcount(bMinors) <= 1;
+}
+
 }  // namespace pocket

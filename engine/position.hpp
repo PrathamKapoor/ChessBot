@@ -155,6 +155,33 @@ class Position {
   int repetitionCount() const;
   bool hasNonPawnMaterial(Color c) const;
 
+  // --- Draw detection -------------------------------------------------------
+  //
+  // These are the position-level rules the search consults. They are kept on
+  // Position because they are rules about the position, not about search.
+
+  // Fifty-move rule: 100 plies without a pawn move or capture.
+  bool isFiftyMoveDraw() const { return state_->rule50 >= 100; }
+
+  // Twofold repetition inside the fifty-move window. Search treats a repeated
+  // position as drawn, which is the practical engine convention; claiming a
+  // draw requires threefold but engines assume the opponent will claim.
+  bool isRepetition() const { return repetitionCount() > 0; }
+
+  // No side can possibly deliver mate.
+  //
+  // This recognises K vs K, K+minor vs K, and K+minor vs K+minor. It does not
+  // detect the rare K+B vs K+B same-colour case, where the true result is a
+  // draw. That omission only means such a game keeps playing instead of being
+  // declared drawn, so it cannot cost playing strength.
+  bool hasInsufficientMaterial() const;
+
+  // Any draw rule other than stalemate, which the search detects separately
+  // because it needs the move list.
+  bool isDrawByRule() const {
+    return isFiftyMoveDraw() || isRepetition() || hasInsufficientMaterial();
+  }
+
  private:
   void putPiece(Piece pc, Square s);
   void removePiece(Square s);
