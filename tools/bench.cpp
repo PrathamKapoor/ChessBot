@@ -130,51 +130,76 @@ void addStats(Stats& a, const Stats& b) {
 
 // Measures one node's own work, then recurses. The node window deliberately
 // closes before descending so that children never inflate the parent's share.
-void profileNode(Position& pos, int depth, Stats& st) {
+//
+// `useReference` selects Position::legal() per pseudo-legal move (the Phase 1
+// path) instead of the current generateLegal(). Profiling the wrong one of these
+// reports a bottleneck that no longer exists, so both are selectable.
+void profileNode(Position& pos, int depth, Stats& st, bool useReference = false) {
   const unsigned long long nodeStart = __rdtsc();
-
-  Move pseudoBuf[256];
-  int nPseudo = 0;
-  const unsigned long long c0 = __rdtsc();
-  generatePseudoLegal(pos, pseudoBuf, nPseudo);
-  const unsigned long long c1 = __rdtsc();
-  st.cPseudoGen += c1 - c0;
-  st.pseudoMoves += (unsigned long long)nPseudo;
-  st.positions++;
-
-  const Bitboard checkers = pos.checkers();
-  if (checkers) st.posInCheck++;
-  if (moreThanOne(checkers)) st.posDoubleCheck++;
-  if (pos.epSquare() != kSQNone) st.posWithEp++;
-  if (pos.canCastle(kWhiteKingSide) || pos.canCastle(kWhiteQueenSide) ||
-      pos.canCastle(kBlackKingSide) || pos.canCastle(kBlackQueenSide))
-    st.posWithCastling++;
 
   Move legalBuf[256];
   int nLegal = 0;
-  for (int i = 0; i < nPseudo; ++i) {
-    const Move m = pseudoBuf[i];
-    const unsigned long long t0 = __rdtsc();
-    const bool ok = pos.legal(m);
-    const unsigned long long t1 = __rdtsc();
 
-    if (isCastling(m)) {
-      st.cLegalCastle += t1 - t0;
-      ++st.mvCastle;
-    } else if (isEnPassant(m)) {
-      st.cLegalEp += t1 - t0;
-      ++st.mvEp;
-    } else if (typeOf(pos.pieceOn(fromSq(m))) == kKing) {
-      st.cLegalKing += t1 - t0;
-      ++st.mvKing;
-    } else {
-      st.cLegalOther += t1 - t0;
-      if (isPromotion(m)) ++st.mvPromotion;
-      else if (typeOf(pos.pieceOn(fromSq(m))) == kPawn) ++st.mvPawn;
+  if (useReference) {
+    // Split the old path so it is still comparable: pseudo-legal generation,
+    // then a legal() call per move.
+    Move pseudoBuf[256];
+    int nPseudo = 0;
+    const unsigned long long c0 = __rdtsc();
+    generatePseudoLegal(pos, pseudoBuf, nPseudo);
+    const unsigned long long c1 = __rdtsc();
+    st.cPseudoGen += c1 - c0;
+    st.pseudoMoves += (unsigned long long)nPseudo;
+    st.positions++;
+
+    const Bitboard checkers = pos.checkers();
+    if (checkers) st.posInCheck++;
+    if (moreThanOne(checkers)) st.posDoubleCheck++;
+    if (pos.epSquare() != kSQNone) st.posWithEp++;
+    if (pos.canCastle(kWhiteKingSide) || pos.canCastle(kWhiteQueenSide) ||
+        pos.canCastle(kBlackKingSide) || pos.canCastle(kBlackQueenSide))
+      st.posWithCastling++;
+
+    for (int i = 0; i < nPseudo; ++i) {
+      const Move m = pseudoBuf[i];
+      const unsigned long long t0 = __rdtsc();
+      const bool ok = pos.legal(m);
+      const unsigned long long t1 = __rdtsc();
+      if (isCastling(m)) {
+        st.cLegalCastle += t1 - t0;
+        ++st.mvCastle;
+      } else if (isEnPassant(m)) {
+        st.cLegalEp += t1 - t0;
+        ++st.mvEp;
+      } else if (typeOf(pos.pieceOn(fromSq(m))) == kKing) {
+        st.cLegalKing += t1 - t0;
+        ++st.mvKing;
+      } else {
+        st.cLegalOther += t1 - t0;
+        if (isPromotion(m)) ++st.mvPromotion;
+        else if (typeOf(pos.pieceOn(fromSq(m))) == kPawn) ++st.mvPawn;
+      }
+      if (ok) legalBuf[nLegal++] = m;
     }
-    if (ok) legalBuf[nLegal++] = m;
+    st.legalMoves += (unsigned long long)nLegal;
+  } else {
+    // The production path: one call that does generation and legality.
+    const unsigned long long c0 = __rdtsc();
+    generateLegal(pos, legalBuf, nLegal);
+    const unsigned long long c1 = __rdtsc();
+    st.cPseudoGen += c1 - c0;  // "movegen" bucket: generation plus legality
+    st.pseudoMoves += (unsigned long long)nLegal;
+    st.positions++;
+    st.legalMoves += (unsigned long long)nLegal;
+
+    const Bitboard checkers = pos.checkers();
+    if (checkers) st.posInCheck++;
+    if (moreThanOne(checkers)) st.posDoubleCheck++;
+    if (pos.epSquare() != kSQNone) st.posWithEp++;
+    if (pos.canCastle(kWhiteKingSide) || pos.canCastle(kWhiteQueenSide) ||
+        pos.canCastle(kBlackKingSide) || pos.canCastle(kBlackQueenSide))
+      st.posWithCastling++;
   }
-  st.legalMoves += (unsigned long long)nLegal;
 
   // do/undo over the legal moves. This includes check detection, which is
   // recomputed inside doMove.
@@ -192,7 +217,7 @@ void profileNode(Position& pos, int depth, Stats& st) {
 
   for (int i = 0; i < nLegal; ++i) {
     pos.doMove(legalBuf[i]);
-    profileNode(pos, depth - 1, st);
+    profileNode(pos, depth - 1, st, useReference);
     pos.undoMove(legalBuf[i]);
   }
 }
@@ -371,13 +396,14 @@ int main(int argc, char** argv) {
   int reps = 3;
   int ablDepth = 3;
   int ablInner = 16;
-  bool doBench = true, doProfile = false, doMicro = false, doAblate = false, special = false;
+  bool doBench = true, doProfile = false, doMicro = false, doAblate = false, special = false, useRef = false;
   for (int i = 1; i < argc; ++i) {
     if (!std::strcmp(argv[i], "--profile")) { doBench = false; doProfile = true; }
     else if (!std::strcmp(argv[i], "--both")) { doBench = true; doProfile = true; }
     else if (!std::strcmp(argv[i], "--micro")) { doBench = false; doMicro = true; }
     else if (!std::strcmp(argv[i], "--ablate")) { doBench = false; doAblate = true; }
     else if (!std::strcmp(argv[i], "--special")) special = true;
+    else if (!std::strcmp(argv[i], "--reference")) { doBench = false; doProfile = true; useRef = true; }
     else if (!std::strcmp(argv[i], "--reps") && i + 1 < argc) reps = std::atoi(argv[++i]);
     else if (!std::strcmp(argv[i], "--ablate-depth") && i + 1 < argc)
       ablDepth = std::atoi(argv[++i]);
@@ -410,7 +436,7 @@ int main(int argc, char** argv) {
 
   if (doProfile) {
     printf("\n=====================================================================\n");
-    printf("PROFILE  (rdtsc attribution, node windows exclude children)\n");
+    printf("PROFILE  (rdtsc attribution, node windows exclude children, path=%s)\\n", useRef ? "REFERENCE legal()" : "generateLegal()");
     printf("=====================================================================\n");
     Stats total;
     for (const Case& c : kCases) {
@@ -418,7 +444,7 @@ int main(int argc, char** argv) {
       std::string err;
       if (!pos.setFromFen(c.fen, &err)) continue;
       Stats st;
-      profileNode(pos, c.depth >= 3 ? c.depth - 2 : 1, st);
+      profileNode(pos, c.depth >= 3 ? c.depth - 2 : 1, st, useRef);
       printStats(st, c.name);
       addStats(total, st);
     }
@@ -431,7 +457,7 @@ int main(int argc, char** argv) {
         std::string err;
         if (!pos.setFromFen(c.fen, &err)) continue;
         Stats st;
-        profileNode(pos, c.depth >= 3 ? c.depth - 2 : 1, st);
+        profileNode(pos, c.depth >= 3 ? c.depth - 2 : 1, st, useRef);
         printStats(st, c.name);
         addStats(sp, st);
       }

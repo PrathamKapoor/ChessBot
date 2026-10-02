@@ -229,27 +229,24 @@ void generateLegal(Position& pos, Move* out, int& count) {
       checkTargets |= betweenBB(ksq, lsb(checkers));
   }
 
-  Move pseudo[256];
-  int nPseudo = 0;
-  generatePseudoLegal(pos, pseudo, nPseudo);
+  // Generate straight into the caller's buffer and compact in place. Filtering
+  // through a second 1 KB array costs an extra pass and extra stack, for no
+  // benefit: the write index never overtakes the read index.
+  generatePseudoLegal(pos, out, count);
 
-  count = 0;
-  for (int i = 0; i < nPseudo; ++i) {
-    const Move m = pseudo[i];
+  int write = 0;
+  for (int i = 0; i < count; ++i) {
+    const Move m = out[i];
     const Square from = fromSq(m);
     const Square to = toSq(m);
-    const PieceType pt = typeOf(pos.pieceOn(from));
 
-    // Castling must be recognised before the generic king case below, because
-    // its origin square holds the king too. It needs the path-empty and
-    // not-castling-through-check rules that a plain king step does not have.
     if (isCastling(m)) {
-      if (castlingIsLegal(pos, us, from, to)) out[count++] = m;
+      if (castlingIsLegal(pos, us, from, to)) out[write++] = m;
       continue;
     }
 
-    if (pt == kKing) {
-      if (kingStepIsSafe(pos, from, to)) out[count++] = m;
+    if (typeOf(pos.pieceOn(from)) == kKing) {
+      if (kingStepIsSafe(pos, from, to)) out[write++] = m;
       continue;
     }
 
@@ -257,7 +254,7 @@ void generateLegal(Position& pos, Move* out, int& count) {
       // Two pawns leave the board on the same rank, which can uncover a slider
       // in ways the pin mask cannot express (the captured pawn may itself be
       // the blocker). En passant is rare enough to keep the exact test.
-      if (pos.legal(m)) out[count++] = m;
+      if (pos.legal(m)) out[write++] = m;
       continue;
     }
 
@@ -271,8 +268,9 @@ void generateLegal(Position& pos, Move* out, int& count) {
     // When in check, the move must also answer the check.
     if (checkers && !(checkTargets & squareBB(to))) continue;
 
-    out[count++] = m;
+    out[write++] = m;
   }
+  count = write;
 }
 
 bool checkLegalAgrees(Position& pos) {
