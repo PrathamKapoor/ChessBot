@@ -118,6 +118,8 @@ Bitboard Position::attackersTo(Square s, Bitboard occ) const {
 
 void Position::setCheckers() {
   checkers_ = attackersTo(kingSquare(sideToMove_), pieces()) & pieces(~sideToMove_);
+  // Kept in the undo stack so undoMove can restore it for free.
+  state_->checkers = checkers_;
 }
 
 // --- FEN --------------------------------------------------------------------
@@ -441,8 +443,12 @@ void Position::undoMove(Move m) {
     putPiece(state_->capturedPiece, capsq);
   }
 
+  // Restore the checkers recorded before the move was played rather than
+  // recomputing them: attackersTo() is one of the most expensive operations in
+  // the engine and the answer is already known. Note this must read the PARENT
+  // entry; state_ still points at the child's StateInfo at this point.
+  checkers_ = (state_ - 1)->checkers;
   --state_;
-  setCheckers();
   --gamePly_;
 }
 
@@ -465,8 +471,8 @@ void Position::doNullMove() {
 
 void Position::undoNullMove() {
   sideToMove_ = ~sideToMove_;
+  checkers_ = (state_ - 1)->checkers;
   --state_;
-  setCheckers();
   --gamePly_;
 }
 

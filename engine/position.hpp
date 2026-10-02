@@ -22,6 +22,9 @@ struct StateInfo {
   int nonPawnMaterial = 0;
   uint64_t key = 0;
   uint64_t pawnKey = 0;
+  // Squares of the side to move's king attacked by the opponent. Stored so that
+  // undoMove can restore it instead of recomputing an attackersTo() call.
+  Bitboard checkers = 0;
   Move move = kMoveNone;
 };
 
