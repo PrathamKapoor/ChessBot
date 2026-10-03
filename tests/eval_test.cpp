@@ -368,12 +368,87 @@ void testSee() {
   }
 }
 
+void testThreatTermSemantics() {
+  // The threat term is the one place where the two colour loops interact, and its
+  // exact value is subtle: a hanging piece is scored TWICE, once as "their piece
+  // we attack" and once as "our piece they attack", and the net contribution is
+  // (value-weighted attacked) minus (flat hanging).
+  //
+  // An optimisation that merged those two loops but applied only one half passed
+  // every aggregate check except mirror invariance. These are direct assertions
+  // so the semantics are pinned rather than merely implied by a whole-board
+  // invariant.
+
+  // A white knight on b1 is attacked by the black pawn on c2 and defended by
+  // nothing.
+  // A rook rather than a pawn for the attacker. A pawn setup has no clean
+  // colour-swapped twin: the black pawn on c2 attacks b1, but a white pawn on
+  // c2 attacks b3, so simply swapping colours produces a position where
+  // nothing is attacked at all. That trap cost one round of debugging.
+  const char* kHangingWhite = "4r2k/8/8/4N3/8/8/8/4K3 w - - 0 1";
+  const char* kHangingBlack = "4R2K/8/8/4n3/8/8/8/4k3 b - - 0 1";
+  // Same board plus a white bishop on d4, which defends the knight. A defended
+  // piece is not hanging, so the term must fall to zero.
+  const char* kDefended = "4r2k/8/8/4N3/3B4/8/8/4K3 w - - 0 1";
+
+  {
+    Position pos;
+    if (load(pos, kHangingWhite)) {
+      const TaperedScore t = evalThreats(pos);
+      char buf[96];
+      snprintf(buf, sizeof(buf), "mg=%d eg=%d", t.mg, t.eg);
+      check(t.mg > 0, "hanging white minor scores positive for White", buf);
+      check(t.eg > 0, "hanging white minor scores positive in the endgame", buf);
+      // The two component weights are not equal, so the middlegame and endgame
+      // figures must differ. If they ever match, the difference-of-weights
+      // structure has collapsed into a single weight.
+      check(t.mg != t.eg, "threat weights differ between phases", buf);
+    }
+  }
+
+  // Colour antisymmetry stated directly rather than only through the whole-board
+  // mirror test.
+  {
+    Position w, b;
+    if (load(w, kHangingWhite) && load(b, kHangingBlack)) {
+      const TaperedScore tw = evalThreats(w);
+      const TaperedScore tb = evalThreats(b);
+      char buf[128];
+      snprintf(buf, sizeof(buf), "white %d/%d  black %d/%d", tw.mg, tw.eg, tb.mg, tb.eg);
+      check(tw.mg == -tb.mg && tw.eg == -tb.eg, "threat term is colour-antisymmetric", buf);
+    }
+  }
+
+  // A defended piece contributes nothing: the term is about hanging pieces, not
+  // about pieces that merely stand attacked.
+  {
+    Position pos;
+    if (load(pos, kDefended)) {
+      const TaperedScore t = evalThreats(pos);
+      char buf[96];
+      snprintf(buf, sizeof(buf), "mg=%d eg=%d", t.mg, t.eg);
+      check(t.mg == 0 && t.eg == 0, "defended piece produces no threat term", buf);
+    }
+  }
+
+  // An exchange where both sides have supported pieces: again nothing hangs.
+  {
+    Position pos;
+    if (load(pos, "4k3/2p5/8/3p4/8/8/5N2/4K3 w - - 0 1")) {
+      const TaperedScore t = evalThreats(pos);
+      char buf[96];
+      snprintf(buf, sizeof(buf), "mg=%d eg=%d", t.mg, t.eg);
+      check(t.mg == 0 && t.eg == 0, "defended exchange produces no threat term", buf);
+    }
+  }
+}
 }  // namespace
 
 int main() {
   testEvalMirrorInvariance();
   testEvalDeterminism();
   testEvalMaterialSanity();
+  testThreatTermSemantics();
   testDrawRules();
   testSee();
   if (g_fail == 0)

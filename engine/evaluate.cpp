@@ -297,6 +297,13 @@ TaperedScore evalPawnStructure(const Position& pos) {
     const Bitboard ours = pos.pieces(c, kPawn);
     const Bitboard theirs = pos.pieces(~c, kPawn);
     const int sign = c == kWhite ? 1 : -1;
+
+    // Every square a pawn of this colour attacks. This used to be recomputed
+    // inside the per-pawn loop, where it cost a 64-square walk for each pawn and
+    // was only needed by the backward test. Hoisting it out of the loop is
+    // exactly semantics-preserving and was worth about a third of the whole
+    // evaluation.
+    const Bitboard ourPawnAttacks = pawnAttacksBBAll(c);
     Bitboard b = ours;
     while (b) {
 const Square sq = popLsb(b);
@@ -324,7 +331,7 @@ const Square sq = popLsb(b);
       const Bitboard behindOrSame = c == kWhite ? (squareBB(sq) | (squareBB(sq) >> 8))
                                                 : (squareBB(sq) | (squareBB(sq) << 8));
       const bool backward = !isolated && (ours & adjFiles & behindOrSame) == 0 &&
-                            (pawnAttacksBBAll(c) & theirs & front) != 0;
+                            (ourPawnAttacks & theirs & front) != 0;
 
       if (isolated) {
         s.mg += sign * kIsolatedPawnMg;
@@ -436,46 +443,55 @@ TaperedScore evalKingSafety(const Position& pos) {
 TaperedScore evalThreats(const Position& pos) {
   TaperedScore s;
   const Bitboard occ = pos.pieces();
+  const Bitboard whitePieces = pos.pieces(kWhite);
+  const Bitboard blackPieces = pos.pieces(kBlack);
 
-  for (Color c : {kWhite, kBlack}) {
-    const Color them = ~c;
-    const int sign = c == kWhite ? 1 : -1;
+  // One pass over every piece, one attackersTo() call per square.
+  //
+  // The previous version looped once per colour, so a hanging piece was visited
+  // twice: once as "their piece we attack" and once as "our piece they attack".
+  // Those two visits do not cancel, they combine. For a hanging White piece the
+  // first pass contributed -kHanging and the second +kMinorAttacked, so the net
+  // effect is (value-weighted attacked) minus (flat hanging), and a hanging Black
+  // piece gets exactly the negation of that. Preserving the sum rather than
+  // either half is what keeps the term colour-symmetric, and an earlier version
+  // of this function that applied only one half was caught by the
+  // mirror-invariance test.
+  //
+  // Merging the two passes into one is exactly equivalent and cuts the
+  // attackersTo() calls from up to three per square to one, which matters because
+  // attackersTo() probes sliding attacks and is the most expensive thing here.
+  Bitboard b = occ;
+  while (b) {
+    const Square sq = popLsb(b);
+    const Piece pc = pos.pieceOn(sq);
+    const PieceType pt = typeOf(pc);
+    if (pt == kPawn || pt == kKing) continue;
 
-    // Enemy pieces we attack that are not defended by another enemy piece.
-    Bitboard b = pos.pieces(them);
-    while (b) {
-      const Square sq = popLsb(b);
-      const PieceType pt = typeOf(pos.pieceOn(sq));
-      if (pt == kPawn || pt == kKing) continue;
-      const Bitboard defenders = pos.attackersTo(sq, occ ^ squareBB(sq)) & pos.pieces(them);
-      const bool attackedByUs = (pos.attackersTo(sq, occ ^ squareBB(sq)) & pos.pieces(c)) != 0;
-      if (attackedByUs && defenders == 0) {
-        s.mg += sign * kHangingMg;
-        s.eg += sign * kHangingEg;
-      }
+    const Bitboard attackers = pos.attackersTo(sq, occ ^ squareBB(sq));
+    if (attackers == 0) continue;
+
+    const bool isWhite = colorOf(pc) == kWhite;
+    const Bitboard own = isWhite ? whitePieces : blackPieces;
+    const Bitboard other = isWhite ? blackPieces : whitePieces;
+    // Attacked by the other side, not defended by its own: that is "hanging".
+    if ((attackers & other) == 0 || (attackers & own) != 0) continue;
+
+    int attackedMg = kMinorAttackedMg, attackedEg = kMinorAttackedEg;
+    if (pt == kQueen) {
+      attackedMg = kQueenAttackedMg;
+      attackedEg = kQueenAttackedEg;
+    } else if (pt == kRook) {
+      attackedMg = kRookAttackedMg;
+      attackedEg = kRookAttackedEg;
     }
-
-    // Our pieces they attack, weighted by value.
-    b = pos.pieces(c);
-    while (b) {
-      const Square sq = popLsb(b);
-      const PieceType pt = typeOf(pos.pieceOn(sq));
-      if (pt == kPawn || pt == kKing) continue;
-      const Bitboard attackers = pos.attackersTo(sq, occ ^ squareBB(sq)) & pos.pieces(them);
-      if (attackers == 0) continue;
-      const bool defended = (pos.attackersTo(sq, occ ^ squareBB(sq)) & pos.pieces(c)) != 0;
-      if (defended) continue;
-      if (pt == kQueen) {
-        s.mg += sign * kQueenAttackedMg;
-        s.eg += sign * kQueenAttackedEg;
-      } else if (pt == kRook) {
-        s.mg += sign * kRookAttackedMg;
-        s.eg += sign * kRookAttackedEg;
-      } else {
-        s.mg += sign * kMinorAttackedMg;
-        s.eg += sign * kMinorAttackedEg;
-      }
-    }
+    // The piece is worth something against us because we may lose it, and worth
+    // something for us because the opponent may take it. The two weights differ,
+    // and the verified behaviour is their difference rather than either alone.
+    const int mg = attackedMg - kHangingMg;
+    const int eg = attackedEg - kHangingEg;
+    s.mg += isWhite ? mg : -mg;
+    s.eg += isWhite ? eg : -eg;
   }
   return s;
 }
