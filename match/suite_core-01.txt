@@ -1,0 +1,66 @@
+# Phase 3C opening suite "core-01"
+#
+# Twelve starting positions, each a legal FEN reachable from the initial
+# position, chosen to span game structures rather than to be famous test sets.
+#
+# WHY A FIXED SUITE
+# Random openings make a small experiment impossible to repeat: two runs of the
+# same A/B test would not face the same positions, and a difference in results
+# could not be separated from the difference in openings. A fixed suite also means
+# a per-opening breakdown is meaningful, because every position gets the same
+# number of games.
+#
+# This is version "core-01" and it is not intended to be permanent. Later phases
+# are expected to add suites rather than to edit this one, so that results
+# recorded against core-01 stay comparable. The runner takes a suite path, so a
+# later suite is a new file and not a code change.
+#
+# PROVENANCE
+# Every position below is reached by playing the listed moves from the initial
+# position. The move sequences are given so the FEN can be checked rather than
+# trusted, and `tools/verify_openings.py` does exactly that. The FEN is the
+# authoritative field; the moves exist to document how it was arrived at and are
+# cross-checked against it.
+#
+# STRUCTURE COVERAGE
+#   open       symmetric, undeveloped, lots of legal moves
+#   closed     locked centre, minor pieces off
+#   tactical   a concrete threat exists at the starting ply
+#   queenless  no queens, evaluates pawn structure
+#   opposite   the two sides castle on opposite wings
+#   majority   a pawn majority, which the evaluator scores explicitly
+#   endgame    a reduced-material position arising from a transition
+#   asymmetric material advantage already established
+#
+# NOT included, deliberately: any position that is a known puzzle, and any
+# position selected because a particular engine happens to like or dislike it.
+
+#
+# Each FEN below was GENERATED from the move list on the following line by
+# match/verify_openings.py's sibling generator, so the two cannot disagree.
+#
+id           plies  structure    fen
+core-01-a    0      open         rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
+                                 moves: -
+core-01-b    8      open         rnbqkb1r/pp2pppp/3p1n2/8/3NP3/8/PPP2PPP/RNBQKB1R w KQkq - 1 5
+                                 moves: e2e4 c7c5 g1f3 d7d6 d2d4 c5d4 f3d4 g8f6
+core-01-c    10     closed       r1bqk2r/1pppbppp/p1n2n2/4p3/B3P3/5N2/PPPP1PPP/RNBQ1RK1 w kq - 4 6
+                                 moves: e2e4 e7e5 g1f3 b8c6 f1b5 a7a6 b5a4 g8f6 e1g1 f8e7
+core-01-d    10     tactical     r1bqkbnr/ppp2ppp/8/4p3/4P3/8/PPP2PPP/RNBQKB1R w KQkq - 0 6
+                                 moves: e2e4 e7e5 g1f3 b8c6 d2d4 d7d6 d4e5 c6e5 f3e5 d6e5
+core-01-e    8      queenless    rnbqk2r/ppp1bppp/4pn2/3p2B1/2PP4/2N5/PP2PPPP/R2QKBNR w KQkq - 4 5
+                                 moves: d2d4 d7d5 c2c4 e7e6 b1c3 g8f6 c1g5 f8e7
+core-01-f    10     opposite     r1bqk2r/ppp2ppp/2np1n2/2b1p3/2B1P3/2PP1N2/PP3PPP/RNBQK2R w KQkq - 0 6
+                                 moves: e2e4 e7e5 g1f3 b8c6 f1c4 f8c5 c2c3 g8f6 d2d3 d7d6
+core-01-g    11     majority     r1bqkb1r/pp1p1ppp/2n1pn2/8/3NP3/2N1B3/PPP2PPP/R2QKB1R b KQkq - 4 6
+                                 moves: e2e4 c7c5 g1f3 e7e6 d2d4 c5d4 f3d4 b8c6 b1c3 g8f6 c1e3
+core-01-h    16     endgame      r1bq1rk1/2p1bppp/p1np1n2/1p2p3/4P3/1BP2N2/PP1P1PPP/RNBQR1K1 w - - 1 9
+                                 moves: e2e4 e7e5 g1f3 b8c6 f1b5 a7a6 b5a4 g8f6 e1g1 f8e7 f1e1 b7b5 a4b3 d7d6 c2c3 e8g8
+core-01-i    12     asymmetric   r1bqk1nr/pppp1ppp/2n5/b7/2BpP3/2P2N2/P4PPP/RNBQK2R w KQkq - 0 7
+                                 moves: e2e4 e7e5 g1f3 b8c6 f1c4 f8c5 b2b4 c5b4 c2c3 b4a5 d2d4 e5d4
+core-01-j    4      open         rnbqkbnr/pp2pppp/2p5/3p4/2PP4/8/PP2PPPP/RNBQKBNR w KQkq - 0 3
+                                 moves: d2d4 d7d5 c2c4 c7c6
+core-01-k    10     tactical     r1bqk2r/ppp2ppp/2np1n2/2b1p3/2B1P3/2PP1N2/PP3PPP/RNBQK2R w KQkq - 2 6
+                                 moves: e2e4 e7e5 f1c4 f8c5 c2c3 g8f6 d2d3 d7d6 g1f3 b8c6
+core-01-l    8      endgame      rnb1kbnr/pp2pppp/2p5/q7/3P4/2N5/PPP2PPP/R1BQKBNR w KQkq - 0 5
+                                 moves: e2e4 d7d5 e4d5 d8d5 b1c3 d5a5 d2d4 c7c6

@@ -19,3 +19,7 @@ nets/
 *.nnue
 *.npz
 *.pt
+
+# Python
+__pycache__/
+*.pyc
