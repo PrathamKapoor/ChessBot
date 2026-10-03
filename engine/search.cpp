@@ -9,6 +9,24 @@ namespace pocket {
 
 std::atomic<bool> g_searchStopRequested{false};
 
+uint64_t computeTimeBudget(const SearchLimits& limits, Color sideToMove,
+                           uint64_t overheadMs) {
+  const bool white = sideToMove == kWhite;
+  const uint64_t time = white ? limits.wtimeMs : limits.btimeMs;
+  const uint64_t inc = white ? limits.wincMs : limits.bincMs;
+  if (time == 0) return 0;
+
+  const int mtg = limits.movestogo > 0 ? limits.movestogo : kDefaultMovestogo;
+  const int movesLeft = mtg + kTimeExtension;
+  const uint64_t soft = time / uint64_t(movesLeft) + inc * 3 / 4;
+  const uint64_t hard = time * 2 / 5;
+
+  uint64_t budget = soft * 3;
+  if (hard < budget) budget = hard;
+  if (budget <= overheadMs) return 0;  // too little time to search anything
+  return budget - overheadMs;
+}
+
 namespace {
 
 uint64_t nowMs() {
@@ -584,7 +602,12 @@ SearchResult Search::search(const SearchLimits& limits) {
   std::memset(killers_, 0, sizeof(killers_));
   std::memset(history_, 0, sizeof(history_));
   startTimeMs_ = nowMs();
-  limitMs_ = limits.movetimeMs;
+  // A clock budget takes precedence over nothing, but an explicit movetime is an
+  // exact request from a match runner and is honoured as given.
+  limitMs_ = limits.movetimeMs != 0 ? limits.movetimeMs
+                                    : (limits.timeLimitMs != 0
+                                           ? limits.timeLimitMs
+                                           : computeTimeBudget(limits, root_.sideToMove()));
   limitNodes_ = limits.nodes;
   // g_searchStopRequested is deliberately NOT cleared here. With an infinite
   // search the reader thread may already have processed a "stop" by the time this

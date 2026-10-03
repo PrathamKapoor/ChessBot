@@ -95,14 +95,55 @@ struct SearchOptions {
   int ttSizeMB = 16;
 };
 
+// Per-move time budget derived from a clock.
+//
+// The allocation is deliberately simple and fully documented rather than clever,
+// because a match has to be reproducible and the arithmetic has to be arguable
+// later. With T the side to move's remaining milliseconds, I its increment, and
+// M the moves to go:
+//
+//     movesLeft = movestogo + 40        (40 is the extension into the endgame)
+//     soft      = T / movesLeft + 3I/4
+//     limit     = min(T * 2/5, soft * 3) - overhead
+//
+// The 2/5 cap is what stops a large remaining clock from producing a single move
+// long enough to blow it. The 3/4 increment fraction means three increments in a
+// row can be spent on one move, which is the usual convention.
+//
+// When no clock is supplied the budget is zero and the search is bounded by depth,
+// nodes, or movetime instead.
+constexpr int kTimeExtension = 40;      // moves assumed still to come after movestogo
+constexpr int kDefaultMovestogo = 30;  // used when movestogo is absent
+constexpr uint64_t kProtocolOverheadMs = 10;
+
+struct SearchLimits;
+
+uint64_t computeTimeBudget(const SearchLimits& limits, Color sideToMove,
+                           uint64_t overheadMs = kProtocolOverheadMs);
+
 struct SearchLimits {
   int depth = 0;              // 0 means no depth limit
   uint64_t movetimeMs = 0;    // 0 means no time limit
   uint64_t nodes = 0;         // 0 means no node limit
-  // No depth or time limit at all: search until stopped. Only reachable from
-  // UCI go infinite / go ponder, which run on a worker thread so that a stop
-  // arriving on stdin can interrupt them.
   bool infinite = false;
+
+  // Clock control, set from "go wtime .. btime .. winc .. binc .. movestogo".
+  // A value of 0 means "not supplied", which is how a plain "go depth 5" is
+  // distinguished from a clock-based game.
+  uint64_t wtimeMs = 0;
+  uint64_t btimeMs = 0;
+  uint64_t wincMs = 0;
+  uint64_t bincMs = 0;
+  int movestogo = 0;          // 0 means not supplied
+
+  // Filled in from the above, not set directly by callers.
+  uint64_t timeLimitMs = 0;
+
+  // True when any clock field was supplied. `go` with no arguments at all is
+  // treated as a short fixed-depth search rather than as an infinite clock.
+  bool usesClock() const {
+    return wtimeMs != 0 || btimeMs != 0 || wincMs != 0 || bincMs != 0 || movestogo != 0;
+  }
 };
 
 struct SearchStats {

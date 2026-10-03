@@ -207,6 +207,16 @@ void UciEngine::go(std::istream& in, std::ostream& out) {
       in >> n;
       limits.nodes = uint64_t(n);
       anyLimit = true;
+    } else if (token == "wtime") {
+      long long v = 0; in >> v; limits.wtimeMs = uint64_t(v < 0 ? 0 : v); anyLimit = true;
+    } else if (token == "btime") {
+      long long v = 0; in >> v; limits.btimeMs = uint64_t(v < 0 ? 0 : v); anyLimit = true;
+    } else if (token == "winc") {
+      long long v = 0; in >> v; limits.wincMs = uint64_t(v < 0 ? 0 : v); anyLimit = true;
+    } else if (token == "binc") {
+      long long v = 0; in >> v; limits.bincMs = uint64_t(v < 0 ? 0 : v); anyLimit = true;
+    } else if (token == "movestogo") {
+      int v = 0; in >> v; limits.movestogo = v < 0 ? 0 : v; anyLimit = true;
     } else if (token == "infinite" || token == "ponder") {
       // No depth or time limit: run until stopped. This has to happen on
       // another thread, otherwise the loop is blocked inside the search and a
