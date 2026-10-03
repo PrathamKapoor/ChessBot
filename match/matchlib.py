@@ -371,6 +371,14 @@ def game_pgn(start_fen, headers, move_log):
     """
     import io
     game = chess.pgn.Game()
+
+    # The root node must carry the opening position. A fresh chess.pgn.Game is
+    # rooted at the standard start position, so a game that begins from an
+    # opening FEN would be exported by walking the movetext from the wrong
+    # board, which fails outright as soon as the line diverges.
+    if start_fen != chess.STARTING_FEN:
+        game.setup(chess.Board(start_fen))
+
     for key, value in headers.items():
         game.headers[key] = value
 

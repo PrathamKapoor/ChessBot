@@ -233,19 +233,30 @@ def run_one_game(cfg, opening, baseline_white, game_id, pgn_dir, verbose=False):
         headers = {
             "Event": cfg["experiment_id"],
             "Site": "PocketChess local match",
-            "Date": datetime.datetime.now().strftime("%Y.%m.%d"),
+            "Date": datetime.datetime.now(datetime.timezone.utc).strftime("%Y.%m.%d"),
             "Round": str(game_id),
             "White": white_name,
             "Black": black_name,
             "Result": result,
             "Opening": opening["id"],
         }
-        pgn_text = matchlib.game_pgn(opening["fen"], headers, move_log)
-        os.makedirs(pgn_dir, exist_ok=True)
-        pgn_path = os.path.join(pgn_dir, f"{cfg['experiment_id']}-{game_id:04d}.pgn")
-        with open(pgn_path, "w", encoding="utf-8") as handle:
-            handle.write(pgn_text)
-        record["pgn"] = os.path.basename(pgn_path)
+        # Writing the PGN must not be able to destroy a game that was played and
+        # adjudicated correctly. A failure here means the move log and the
+        # recorded position disagree, which is worth reporting loudly, but the
+        # chess result itself is still valid and still belongs in the record.
+        try:
+            pgn_text = matchlib.game_pgn(opening["fen"], headers, move_log)
+        except Exception as exc:  # noqa: BLE001
+            record["pgn_error"] = f"{type(exc).__name__}: {exc}"
+            print(f"  game {game_id}: PGN could not be written "
+                  f"({type(exc).__name__}: {exc}); result retained", file=sys.stderr)
+        else:
+            os.makedirs(pgn_dir, exist_ok=True)
+            pgn_path = os.path.join(
+                pgn_dir, f"{cfg['experiment_id']}-{game_id:04d}.pgn")
+            with open(pgn_path, "w", encoding="utf-8") as handle:
+                handle.write(pgn_text)
+            record["pgn"] = os.path.basename(pgn_path)
 
     return record
 

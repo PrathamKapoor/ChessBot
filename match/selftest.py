@@ -477,6 +477,29 @@ class TestPgnAndClock(unittest.TestCase):
             matchlib.game_pgn(chess.Board().fen(), {"Event": "T"},
                               ["e2e4", "e2e4"])
 
+    def test_pgn_from_a_non_standard_opening_round_trips(self):
+        # A fresh chess.pgn.Game is rooted at the standard start position. A
+        # game opening from an arbitrary FEN must re-root, or the exporter
+        # walks the movetext from the wrong board and dies on the first move
+        # that only makes sense in the real opening.
+        start = "r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 4 4"
+        moves = ["d7d6", "d2d3", "g8f6", "e1g1"]
+        text = matchlib.game_pgn(start, {"Event": "T", "Result": "0-1"}, moves)
+        # Move numbering follows the FEN, so this is a move 4 game, not move 1.
+        self.assertIn('4... d6 5. d3 Nf6 6. O-O', text)
+        self.assertIn('[SetUp "1"]', text)
+        # And it must parse back to the same position, which is the only real
+        # test of a PGN.
+        game = chess.pgn.read_game(io.StringIO(text))
+        self.assertIsNotNone(game)
+        board = game.end().board()
+        expected = chess.Board(start)
+        for uci in moves:
+            expected.push_uci(uci)
+        self.assertEqual(board.board_fen(), expected.board_fen())
+        self.assertEqual(board.turn, expected.turn)
+        self.assertEqual(board.castling_rights, expected.castling_rights)
+
     def test_clock_is_decremented_and_increment_applied(self):
         control = {"type": "clock", "inc": 0.1, "movestogo": 40}
         clock = {"white": 60.0, "black": 60.0}
