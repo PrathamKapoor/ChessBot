@@ -621,3 +621,198 @@ Not NNUE, and not a training pipeline. The order that the measurements point at:
 Strength has still not been measured at any point in this repository. Everything
 above is correctness and cost. The first real strength measurement will be the
 first match.
+
+## Phase 3B: measurement purification and qsearch cost
+
+Snapshot: 2026-10-03. Starting commit `0d6782e`, Phase 3B baseline recorded at
+`304e22d`. Phase 1, 2 and 3A results above are left untouched.
+
+This phase began with Phase 3A's own list of limitations, in which the first item
+was that the statistics counters had never had their overhead measured. That
+turned out to be wrong in an informative way, and the rest of the phase followed
+from measuring rather than assuming.
+
+### Baseline frozen before any change
+
+    commit   0d6782e
+    gcc      g++ (Rev5, MSYS2) 15.1.0
+    flags    -std=c++20 -O3 -DNDEBUG -mavx2 -mbmi -mbmi2 -mpopcnt -funroll-loops
+    CPU      AMD Ryzen 7 7435HS, 8 cores, 3.1 GHz nominal
+    OS       Windows 10.0.26200, MSYS2 UCRT64
+    Hash     16 MB (1,048,576 entries), 1 thread
+    depth    4, 5, 6 over the nine benchmark positions
+
+Node counts, recorded before anything was touched and confirmed bit-identical
+afterwards:
+
+    depth 4     217,696
+    depth 5     851,078
+    depth 6   5,377,795
+
+The Phase 3A wall-clock figures are labelled **instrumented / potentially
+measurement-contaminated** and are not treated as authoritative below. Their node
+counts are authoritative.
+
+### Experiment table
+
+| ID | Hypothesis | Configuration | Correctness | Main nodes | Qnodes | Wall time | Decision |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| P3B-INST-01 | Diagnostic counters in the hot path are costing real time | `POCKET_INSTRUMENT=0` vs `=1`, interleaved, depth 4, 10 rounds | nodes identical every round | 217,696 both | n/a in production build | 20,032ms vs 19,995ms minimum | **REJECTED as a hypothesis.** Overhead -0.2%, noise floor 3.3%. The counters are free. |
+| P3B-INST-02 | Same, where quiescence dominates more | depth 6, 4 rounds | nodes identical every round | 5,377,795 both | n/a | 81,044ms vs 81,407ms minimum | **REJECTED.** Overhead +0.4% against a 54.1% noise floor. |
+| P3B-EVAL-01 | The evaluation dominates search time | `tools/eval_microbench`, 20,000 deterministic positions | n/a, isolated | n/a | n/a | 2,895.5 ns per evaluate() | **ACCEPTED as the bottleneck.** |
+| P3B-EVAL-02 | `pawnAttacksBBAll` is being called per pawn inside the pawn loop | hoisted out of the loop | EVAL OK 152 | 851,078 unchanged | unchanged | evaluate 2,895 -> 1,938 ns | **ACCEPTED.** 3.4x on that term. |
+| P3B-EVAL-03 | `evalThreats` calls `attackersTo` up to 3x per square | merged the two colour loops into one pass | EVAL OK 152, mirror invariance caught two errors on the way | 851,078 unchanged | unchanged | evaluate 1,938 -> 1,209 ns | **ACCEPTED.** |
+| P3B-EVAL-04 | Cheap-evaluation build confirms the attribution | `POCKET_CHEAP_EVAL=1`, depth 5 | different engine, different tree by construction | 747,608 | n/a | 8.7us vs 40.3us per main node | **CONFIRMED.** Evaluation is 78% of search time. |
+| P3B-EVAL-05 | Incremental evaluation is worth building | would have covered material and piece-square tables first | n/a | n/a | n/a | those terms are 4.4% of evaluate() between them | **DEFERRED, with reason.** The terms it would cover cost almost nothing while the two expensive ones cost 72%. Reconsider only after threats and pawn structure are cheaper. |
+| P3B-QS-01 | Quiescence generates moves it then discards | instrumentation counters | n/a | 851,078 | 22,568,968 | n/a | **CONFIRMED.** 25.69 moves generated per call, 3.11 searched. |
+| P3B-QS-02 | Capture-only generation inside quiescence | `generateLegal(..., capturesOnly)` | SEARCH OK 306, TACTICAL 17/17 | **851,078 unchanged** | 22,568,906 | 38,404ms -> 31,681ms minimum | **ACCEPTED.** -17.5%, identical tree. |
+| P3B-QS-03 | Cap quiescence depth | not attempted | n/a | n/a | n/a | n/a | **DEFERRED.** P3B-QS-02 bought the same saving with no semantic change at all. A depth cap changes the horizon and would need tactical validation; there is no reason to take that risk while a lossless saving is still available. |
+| P3B-QS-04 | Skip SEE in quiescence ordering | not attempted | n/a | n/a | n/a | seeCapture is 49 ns and is called 27.9M times, about 1.4s of a 31.7s run | **DEFERRED.** Measured at under 5% of runtime, so the Phase 3A finding that SEE costs a lot of time in wall clock does not generalise to quiescence once move generation was fixed. |
+| P3B-NET-01 | All of the above together | against the phase-start commit, depth 5, 4 rounds | all gates green | **851,078 unchanged** | unchanged | 45,504ms -> 30,354ms minimum | **ACCEPTED.** -33.3%. |
+
+### Instrumentation overhead, measured
+
+The counters are now behind `POCKET_INSTRUMENT`, defined in `engine/types.hpp`
+and defaulting to 0. With it off the increments are discarded by `if constexpr`
+and nothing is emitted, so the production binary is not paying a branch either.
+Node counting is deliberately left outside the switch: node limits depend on it
+and node count is the only figure this repository treats as deterministic.
+
+The Phase 3A prediction was that the counters were contaminating every NPS figure.
+They were not:
+
+    depth 4, 10 rounds   production min 20,032ms, instrumented min 19,995ms
+                         overhead -0.2%, within-binary spread 3.3%
+    depth 6,  4 rounds   production min 81,044ms, instrumented min 81,407ms
+                         overhead +0.4%, within-binary spread 54.1%
+
+Both are below the noise floor. The useful finding is the second number rather
+than the first: on a long run this machine cannot resolve a 0.4% difference
+because its own spread is 54%. Node count therefore remains the primary metric
+and minimum-time the secondary one, and no timing claim below 20% on a long run
+should be believed without a tighter noise floor.
+
+### Where qsearch time actually goes
+
+Counted in the instrumented build at depth 5, and attributed using separately
+measured standalone costs:
+
+| quiescence operation | count | standalone cost | estimated time | share |
+| --- | --- | --- | --- | --- |
+| stand-pat evaluations | 19,639,738 | 788-1,220 ns | 15.5-24.0 s | 55-82% |
+| move generation | 12,424,708 calls | 593 ns | 7.4 s | ~25% |
+| SEE | 27,895,052 calls | 49 ns | 1.4 s | ~5% |
+| make/unmake | 21,958,173 pairs | ~30 ns | 0.7 s | ~2% |
+
+The evaluation range is wide because evaluate() itself varied between 788 and
+1,220 ns across runs on this machine. The cheap-evaluation build settles which end
+matters: with the evaluation reduced to a material count, time per main node falls
+from 40.3us to 8.7us, so evaluation is 78% of search time and everything else is
+22%.
+
+The answer to "why is qsearch expensive" is therefore not that quiescence does
+anything expensive. It is that quiescence calls evaluate() 26 times for every
+main-search node. Two independent fixes follow from that, and both were taken:
+make evaluate() cheaper, and stop generating the moves quiescence throws away.
+
+### Qsearch optimization: capture-only generation
+
+Quiescence was generating 25.69 moves per call and discarding all but the 3.11
+that were captures or promotions. The quiet moves were paid for in full.
+`generateLegal` and `generatePseudoLegal` now take a `capturesOnly` flag that
+restricts piece targets to enemy-occupied squares, skips quiet pawn pushes and
+double pushes, and skips castling. A pawn push that promotes is still generated,
+because promotion is one of the classes quiescence searches.
+
+When the side to move is in check the flag is not used at all: every legal reply is
+needed there, quiet ones included, because stand pat is unavailable.
+
+The move set is identical to what the old code generated and then filtered by
+`captureOrPromotion()`, so the tree cannot change. The evidence is node counts:
+
+    depth 4   217,696 before, 217,696 after
+    depth 5   851,078 before, 851,078 after
+    depth 6 5,377,795 before, 5,377,795 after
+
+Moves generated inside quiescence fell from 319,210,475 to 98,816,480, and
+interleaved wall clock at depth 5 fell 17.5%, faster in all five rounds.
+
+**A real bug surfaced during this change and the node counts caught it.** With
+capture-only generation, a call returning zero moves no longer means "no legal
+moves"; it usually means "no captures available". The old code treated zero as
+stalemate and returned a draw score, which was scoring most quiet quiescence leaves
+as draws. Node counts moved by 6 and 53 before it was found and they are now
+exactly unchanged.
+
+### Evaluation cost
+
+| term | before | after | share after |
+| --- | --- | --- | --- |
+| threats | 1,050.6 ns | 533.7 ns | 43.7% |
+| pawn structure | 1,035.8 ns | 342.6 ns | 28.1% |
+| king safety | 219.7 ns | 168.5 ns | 13.8% |
+| mobility | 152.0 ns | 108.1 ns | 8.9% |
+| piece squares | 99.8 ns | 108.3 ns | 8.9% |
+| material | 15.7 ns | 30.9 ns | 2.5% |
+| space | 8.0 ns | 9.9 ns | 0.8% |
+| **total** | **2,895.5 ns** | **~1,209 ns** | |
+
+2.4x cheaper overall, with the search visiting bit-for-bit the same tree.
+
+Two causes, neither related to chess. `pawnAttacksBBAll()` walks all sixty-four
+squares and was being called once per pawn, inside the per-pawn loop, for a test
+only the rare backward-pawn case needs. And `evalThreats` looped once per colour,
+so `attackersTo()` was called up to three times for the same square: once for
+defenders, once for "we attack it", and again in the second loop for "they attack
+it". `attackersTo()` probes sliding attacks and is the most expensive thing in the
+evaluation.
+
+The threats rewrite needed two attempts. The first merged the loops but applied
+only one of the two contributions a hanging piece receives: the old code scored
+each hanging piece twice, once as "their piece we attack" and once as "our piece
+they attack", and the net is (value-weighted attacked) minus (flat hanging). The
+second failure was a shadowing bug, an inner `bool white` hiding an outer
+`Bitboard white`, so the own/enemy masks were computed from 0 and 1. Both were
+caught by the mirror-invariance test in tests/eval_test.cpp, which is the single
+best thing in this repository.
+
+Because mirror invariance caught that only as an aggregate, `testThreatTermSemantics`
+now asserts the term directly: a hanging minor is positive, colour antisymmetry
+holds exactly, and a defended piece contributes nothing.
+
+### Tactical regression
+
+`tests/tactical_test.cpp`, 17 positions, all solved. It is a regression check and
+is labelled as such in the file: no matches are played, no Elo is claimed, and
+"solved 17 of 17" says nothing about any position not in the set.
+
+Coverage is aimed at what a quiescence change would break: mates found only
+because quiescence kept searching, promotions, capture-promotions, en passant, a
+position already checkmated, and a stalemate with no move.
+
+Two cases failed on the first run and the engine was right both times. The en
+passant case asserted that exd6 was best with a black king on e8; after exd6 Black
+plays Kd7 and then Kxd6, leaving bare kings and a draw, so the capture scores zero
+and a king move scores slightly better. The test had assumed a capture wins
+material without asking whether it survives.
+
+### Known limitations after this phase
+
+  * Evaluation is still 78% of search time and still recomputes everything from
+    the whole position. `threats` at 43.7% and `pawnStructure` at 28.1% are the
+    remaining targets, and both still call `attackersTo` once per piece.
+  * Incremental evaluation was deferred on measured grounds, not dismissed. If
+    threats and pawn structure get cheaper, the balance changes and the cheap
+    additive terms become worth revisiting.
+  * SEE ordering still changes node count by very little. The Phase 3A result
+    that it was worth 2.4x on wall clock does not survive the move-generation fix,
+    because the original benefit was keeping losing captures out of the ordering,
+    which is what stopped quiescence running away. That effect is real; the
+    2.4x figure should not be carried forward.
+  * Wall clock on this machine cannot resolve differences below about 20% on a
+    long run. A tighter measurement method is needed before the next round of
+    claims.
+  * The transposition table hit rate is still around 6-7% and remains undiagnosed.
+  * Strength is still unmeasured. Every number here is correctness or cost. The
+    first real strength measurement will be the first match, which is Phase 3C
+    work and is deliberately not started.
