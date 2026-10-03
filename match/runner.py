@@ -105,20 +105,33 @@ def git_commit(path):
     return None
 
 
-def git_tree_state(path):
-    """Whether the working tree is clean.
+def git_tree_state(path, ignore_dirs=()):
+    """Whether the working tree is clean, and which paths differ.
 
     A commit hash alone is not provenance when the tree is dirty: the binary
     under test may have been built from changes that were never committed, and
     the record would then look reproducible while nothing about it can be
     rebuilt. Recording the dirtiness keeps that visible instead of implied.
+
+    The runner's own output directory is excluded. A match always writes its
+    results, so without this every run would report itself as the thing that
+    dirtied the tree, which would make the signal useless in practice.
     """
+    ignored = tuple(d.replace("\\", "/").rstrip("/") for d in ignore_dirs)
     try:
         out = subprocess.run(["git", "-C", path, "status", "--porcelain"],
                              capture_output=True, text=True, timeout=30)
         if out.returncode == 0:
-            changed = [line for line in out.stdout.splitlines() if line.strip()]
-            return {"clean": not changed, "changed_count": len(changed)}
+            changed = []
+            for line in out.stdout.splitlines():
+                if not line.strip():
+                    continue
+                name = line[3:].strip().strip('"').replace("\\", "/")
+                if any(name == i or name.startswith(i + "/") for i in ignored):
+                    continue
+                changed.append(name)
+            return {"clean": not changed, "changed_count": len(changed),
+                    "changed": changed[:20]}
     except Exception:  # noqa: BLE001
         pass
     return None
@@ -352,11 +365,11 @@ def main():
             args.baseline_name: args.baseline_args.split(),
             args.candidate_name: args.candidate_args.split(),
         },
-        "baseline_commit": git_commit(args.repo),
+        "baseline_commit": args.baseline_commit or git_commit(args.repo),
         "candidate_commit": None,
         "baseline_build": args.baseline_build,
         "candidate_build": args.candidate_build,
-        "tree_state": git_tree_state(args.repo),
+        "tree_state": git_tree_state(args.repo, ignore_dirs=(root_dir,)),
     }
 
     # The candidate may be a binary built from a different commit, in which case

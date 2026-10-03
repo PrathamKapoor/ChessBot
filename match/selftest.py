@@ -19,9 +19,9 @@ assumed.
 Run:  py -3 match/selftest.py
 """
 import io
-import random
+import json
 import os
-import stat
+import random
 import subprocess
 import sys
 import tempfile
@@ -164,8 +164,9 @@ def write_engine(directory, name, source):
     path = os.path.join(directory, name)
     with open(path, "w", encoding="utf-8") as handle:
         handle.write(source)
-    # Windows needs this to be directly executable.
-    os.chmod(path, os.stat(path).st_mode | stat.S_IEXEC)
+    # No exec bit is set. These fakes are launched through the interpreter via
+    # the runner's launch-argument support, which is what a script or a jar
+    # engine needs anyway, and it avoids a chmod that means nothing on Windows.
     return path
 
 
@@ -298,6 +299,52 @@ class TestUciContract(unittest.TestCase):
             self.assertTrue(deadline_ok, "no bestmove seen")
         finally:
             engine.stop()
+
+
+class TestProvenance(unittest.TestCase):
+    """A record that names the wrong commit is worse than no record at all."""
+
+    def test_declared_commits_win_over_repo_head(self):
+        # An explicit --baseline-commit used to be overwritten by the repository
+        # HEAD, so an A/B between two historical binaries recorded HEAD for both
+        # sides and claimed a reproducibility that did not exist.
+        exe = os.path.join(HERE, "..", "build", "pocketchess.exe")
+        if not os.path.exists(exe):
+            self.skipTest("pocketchess.exe not built")
+        out = tempfile.mkdtemp(prefix="pocket_prov_")
+        cmd = [sys.executable, os.path.join(HERE, "runner.py"),
+               "--baseline", exe, "--candidate", exe,
+               "--baseline-name", "old", "--candidate-name", "new",
+               "--baseline-commit", "base-sha", "--candidate-commit", "cand-sha",
+               "--baseline-build", "b", "--candidate-build", "c",
+               "--id", "PROV-001", "--out", out, "--games", "1",
+               "--depth", "1", "--control", "depth"]
+        subprocess.run(cmd, capture_output=True, text=True, timeout=600)
+        with open(os.path.join(out, "PROV-001", "results.json"),
+                  encoding="utf-8") as fh:
+            data = json.load(fh)
+        prov = data["provenance"]
+        self.assertEqual(prov["baseline_commit"], "base-sha")
+        self.assertEqual(prov["candidate_commit"], "cand-sha")
+        self.assertEqual(prov["baseline_build"], "b")
+        self.assertEqual(prov["candidate_build"], "c")
+        self.assertIn("sha256", prov["baseline_binary"])
+        self.assertIn("version", prov["chess_library"])
+
+    def test_runner_output_does_not_count_as_a_dirty_tree(self):
+        # Otherwise every run reports itself as the thing that dirtied the
+        # repository, and the cleanliness signal means nothing.
+        repo = os.path.abspath(os.path.join(HERE, ".."))
+        if not os.path.exists(os.path.join(repo, ".git")):
+            self.skipTest("not a git repository")
+        dirty = runner_mod.git_tree_state(repo)
+        self.assertIsNotNone(dirty)
+        ignoring = runner_mod.git_tree_state(repo, ignore_dirs=("match/results",))
+        self.assertIsNotNone(ignoring)
+        # The point is the exclusion, not that the tree happens to be clean:
+        # this test runs while the runner itself is being edited.
+        self.assertNotIn("match/results", ignoring["changed"])
+        self.assertNotIn("match/results", dirty["changed"])
 
 
 class TestMatchRunner(unittest.TestCase):
