@@ -599,6 +599,28 @@ int seeCapture(const Position& pos, Move m) {
 // --- Entry point ------------------------------------------------------------
 
 int evaluate(const Position& pos) {
+#ifdef POCKET_CHEAP_EVAL
+  // DIAGNOSTIC BUILD ONLY. Material and nothing else: no piece-square tables, no
+  // pawn structure, no mobility, no king safety, no threats, no space.
+  //
+  // This exists to answer one question by experiment rather than by argument: is
+  // the search's low nodes-per-second caused by the evaluation, or by move
+  // generation and state management? If replacing the evaluation with something
+  // trivial barely moves the wall clock, the evaluation is not the bottleneck.
+  //
+  // It is NOT a strength improvement and must never be enabled in a playable
+  // build; it changes what the engine plays. The same middlegame material
+  // constants are used so the scores stay in a sane range and the search does not
+  // degenerate in a way that would distort the comparison. See the Phase 3B
+  // measurements in RESEARCH.md.
+  int score = 0;
+  for (int pt = kPawn; pt <= kKing; ++pt) {
+    const int n = popcount(pos.pieces(kWhite, PieceType(pt))) -
+                  popcount(pos.pieces(kBlack, PieceType(pt)));
+    score += n * kMgValue[pt];
+  }
+  return pos.sideToMove() == kWhite ? score : -score;
+#else
   TaperedScore total;  // every term below is from White's perspective
   total += evalMaterial(pos);
   total += evalPieceSquares(pos);
@@ -615,6 +637,7 @@ int evaluate(const Position& pos) {
   // applied after the flip: folding it into the White-perspective sum would make
   // evaluate(b) differ from -evaluate(w) on an identical board.
   return pos.sideToMove() == kWhite ? white + kTempoMg : -white + kTempoMg;
+#endif  // POCKET_CHEAP_EVAL
 }
 
 }  // namespace pocket
