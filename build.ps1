@@ -46,6 +46,7 @@ $targets = @(
   @{ name = "eval_test"; sources = @("tests/eval_test.cpp") + $engineEval;      flags = $testFlags },
   @{ name = "tt_test"; sources = @("tests/tt_test.cpp") + @("engine/tt.cpp");  flags = $testFlags },
   @{ name = "search_test"; sources = @("tests/search_test.cpp") + $engineUci;   flags = $testFlags },
+  @{ name = "tactical_test"; sources = @("tests/tactical_test.cpp") + $engineSearch; flags = $testFlags },
   @{ name = "pocketchess"; sources = @("tools/engine_main.cpp") + $engineUci;    flags = $noInstrument },
   @{ name = "search_bench"; sources = @("tools/search_bench.cpp") + $engineSearch; flags = $noInstrument },
   @{ name = "search_bench_instr"; sources = @("tools/search_bench.cpp") + $engineSearch; flags = $instrument },
