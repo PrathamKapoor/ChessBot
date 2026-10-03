@@ -710,6 +710,33 @@ void testIterativeDeepening() {
 
 // --- UCI --------------------------------------------------------------------
 
+// Extract the move from the last "bestmove" line in the engine output.
+std::string bestMoveOf(const std::string& out) {
+  const std::string key = "bestmove ";
+  const std::size_t at = out.rfind(key);
+  if (at == std::string::npos) return "";
+  const std::size_t begin = at + key.size();
+  const std::size_t end = out.find_first_of(" \r\n", begin);
+  return out.substr(begin, end == std::string::npos ? end : end - begin);
+}
+
+bool bestMoveIs(const std::string& out, const std::string& expected) {
+  return bestMoveOf(out) == expected;
+}
+
+bool bestMoveIsNot(const std::string& out, const std::string& forbidden) {
+  return !bestMoveOf(out).empty() && bestMoveOf(out) != forbidden;
+}
+
+bool bestMoveIsNotOneOf(const std::string& out,
+                        const std::vector<std::string>& forbidden) {
+  const std::string move = bestMoveOf(out);
+  if (move.empty()) return false;
+  for (const std::string& f : forbidden)
+    if (move == f) return false;
+  return true;
+}
+
 void testUci() {
   UciEngine engine;
   std::ostringstream out;
@@ -760,11 +787,108 @@ void testUci() {
   check(out.str().find("bestmove 0000") != std::string::npos,
         "mated position reports bestmove 0000");
 
-  // A position command with a move list must replay it.
+// A position command with a move list must replay it.
   out.str("");
   engine.execute("position startpos moves e2e4 e7e5 g1f3", out);
   engine.execute("go depth 4", out);
   check(out.str().find("bestmove") != std::string::npos, "position with moves is searchable");
+
+  // Asserting only that *some* bestmove appeared is not enough: an engine that
+  // ignored the move list still answers from the opening position, so that
+  // check passed while "position ... moves ..." was in fact broken. After
+  // e2e4 e7e5 g1f3 it is Black to move, so the answer must be a Black move and
+  // must not repeat one of the moves already played.
+  check(bestMoveIsNotOneOf(out.str(), {"e2e4", "e7e5", "g1f3"}),
+        "startpos moves list is actually applied");
+
+  // The same must hold for the "fen ... moves ..." form, which the runner uses
+  // for games that start from a fixed opening position. g1f3 b8c6 f1b5 is the
+  // Ruy Lopez, where Black's best reply is g8f6 and never a White move.
+  out.str("");
+  engine.execute(
+      "position fen rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1 "
+      "moves e2e4 e7e5 g1f3 b8c6 f1b5",
+      out);
+  engine.execute("go depth 3", out);
+  check(bestMoveIsNotOneOf(out.str(), {"e2e4", "e7e5", "g1f3", "b8c6", "f1b5"}),
+        "fen moves list is actually applied");
+
+  // An even-length move list must flip the side to move, which is the cheapest
+  // way to see that the replay ran at all: from the start position the engine
+  // wants e2e4, and after any single White move it must not answer e2e4 again.
+  out.str("");
+  engine.execute("position startpos moves e2e4", out);
+  engine.execute("go depth 2", out);
+  check(bestMoveIsNot(out.str(), "e2e4"), "single move flips side to move");
+
+  // A bare "position startpos" with no move list must still work.
+  out.str("");
+  engine.execute("position startpos", out);
+  engine.execute("go depth 2", out);
+  check(bestMoveIs(out.str(), "e2e4"), "bare startpos is unaffected");
+
+  // Castling arriving over UCI must move the rook as well as the king.
+  // Castling and en passant are flagged moves internally, and the flag decides
+  // what doMove does; a coordinate-only parse drops it, so the king moved two
+  // squares and the rook stayed at home, corrupting the position silently. The
+  // replay path must therefore resolve UCI moves against the legal list.
+  {
+    Position pos;
+    std::string err;
+    pos.setFromFen("rnbqk2r/pppppppp/8/8/8/8/PPPPPPPP/RNBQK2R w KQkq - 0 1", &err);
+    bool ok = false;
+    const Move castle = moveFromUci("e1g1", pos, &ok);
+    check(ok, "uci castling resolves against the position");
+    check(isCastling(castle), "uci castling carries the castling flag");
+    pos.doMove(castle);
+    const std::string got = pos.fen();
+    check(got == "rnbqk2r/pppppppp/8/8/8/8/PPPPPPPP/RNBQ1RK1 b kq - 0 1",
+          "uci castling moves king and rook", got);
+  }
+
+  // An en passant capture arriving over UCI must remove the passed pawn.
+  {
+    Position pos;
+    std::string err;
+    pos.setFromFen("rnbqkbnr/ppp1pppp/8/3pP3/8/8/PPPP1PPP/RNBQKBNR w KQkq d6 0 3",
+                   &err);
+    bool ok = false;
+    const Move ep = moveFromUci("e5d6", pos, &ok);
+    check(ok, "uci en passant resolves against the position");
+    check(isEnPassant(ep), "uci en passant carries the en passant flag");
+    pos.doMove(ep);
+    const std::string got = pos.fen();
+    check(got == "rnbqkbnr/ppp1pppp/3P4/8/8/8/PPPP1PPP/RNBQKBNR b KQkq - 0 3",
+          "uci en passant removes the captured pawn", got);
+  }
+
+  // A move that is not legal in this position must be rejected outright rather
+  // than guessed at, because guessing a flag is what corrupts positions. The
+  // castling flag here is claimed by the FEN but there is no rook to castle
+  // with, so "e1g1" must not resolve.
+  {
+    Position pos;
+    std::string err;
+    pos.setFromFen("4k3/8/8/8/8/8/8/4K3 w K - 0 1", &err);
+    bool ok = true;
+    moveFromUci("e1g1", pos, &ok);
+    check(!ok, "uci castling without a rook is rejected");
+    moveFromUci("e2e4", pos, &ok);
+    check(!ok, "uci illegal move is rejected");
+    moveFromUci("e1e2", pos, &ok);
+    check(ok, "uci legal king move is accepted");
+  }
+
+  // The end-to-end path: a UCI position command containing a castling move
+  // must reach the same position as setting that FEN directly.
+  {
+    UciEngine e2;
+    std::ostringstream o2;
+    e2.execute("position startpos moves e2e4 e7e5 g1f3 b8c6 f1c4 f8c5 e1g1", o2);
+    e2.execute("go depth 2", o2);
+    check(o2.str().find("bestmove") != std::string::npos,
+          "castling inside a position move list is searchable");
+  }
 
   // An unparseable move in the list must stop the replay rather than corrupt the
   // position, and the engine must still answer.

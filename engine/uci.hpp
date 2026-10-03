@@ -61,6 +61,13 @@ class UciEngine {
 
 // Formatting helpers, exposed for testing.
 std::string moveToUci(Move m);
+
+// Coordinate-only parse: validates the shape, not the meaning.
 Move moveFromUci(const std::string& s, bool* ok);
+
+// Position-aware parse: resolves the string against the legal moves of `pos`
+// so that flagged moves (castling, en passant) come back correctly tagged.
+// This is the overload that must be used when applying a move from UCI.
+Move moveFromUci(const std::string& s, Position& pos, bool* ok);
 
 }  // namespace pocket

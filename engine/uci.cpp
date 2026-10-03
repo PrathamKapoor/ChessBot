@@ -6,6 +6,7 @@
 #include <sstream>
 
 #include "evaluate.hpp"
+#include "movegen.hpp"
 #include "tt.hpp"
 
 namespace pocket {
@@ -30,6 +31,9 @@ std::string moveToUci(Move m) {
   return s;
 }
 
+// Coordinate-only parser. It reports whether the string is shaped like a UCI
+// move; it cannot say what the move *means* in a given position. See the
+// overload below for that, and prefer it wherever a position is available.
 Move moveFromUci(const std::string& s, bool* ok) {
   *ok = false;
   if (s.size() != 4 && s.size() != 5) return kMoveNone;
@@ -53,6 +57,60 @@ Move moveFromUci(const std::string& s, bool* ok) {
   }
   *ok = true;
   return m;
+}
+
+// Resolve a UCI move string against an actual position.
+//
+// Castling and en passant cannot be expressed by the four coordinate
+// characters alone: inside this engine both are *flagged* moves, and it is the
+// flag that decides what doMove does with them. A coordinate-only parse of
+// "e1g1" yields an unflagged move, so doMove takes the ordinary "move the
+// piece" path and teleports the king two squares while leaving the rook on its
+// home square. Likewise an en passant capture arrives as a plain capture and
+// leaves the pawn that was meant to be captured still standing.
+//
+// Both corrupt the position silently -- the engine keeps searching and still
+// prints a plausible bestmove -- so a UCI move is resolved by matching it
+// against the generated legal moves, which carry the correct flags with them.
+//
+// When nothing matches, ok is false and kMoveNone is returned. Guessing a flag
+// from the coordinates alone would reintroduce the same corruption on
+// malformed input, which is exactly the case where correctness matters most.
+Move moveFromUci(const std::string& s, Position& pos, bool* ok) {
+  bool shaped = false;
+  const Move plain = moveFromUci(s, &shaped);
+  if (!shaped) {
+    *ok = false;
+    return kMoveNone;
+  }
+
+  // Only from/to and the promotion piece identify a move; the flag is derived,
+  // never parsed.
+  const bool wantsPromotion = s.size() == 5;
+  PieceType promo = kQueen;
+  if (wantsPromotion) {
+    switch (s[4]) {
+      case 'q': promo = kQueen; break;
+      case 'r': promo = kRook; break;
+      case 'b': promo = kBishop; break;
+      default: promo = kKnight; break;
+    }
+  }
+
+  Move buf[256];
+  int n = 0;
+  generateLegal(pos, buf, n);
+  for (int i = 0; i < n; ++i) {
+    const Move m = buf[i];
+    if (fromSq(m) != fromSq(plain) || toSq(m) != toSq(plain)) continue;
+    if (isPromotion(m) != wantsPromotion) continue;
+    if (wantsPromotion && promotionType(m) != promo) continue;
+    *ok = true;
+    return m;
+  }
+
+  *ok = false;
+  return kMoveNone;
 }
 
 namespace {
@@ -89,10 +147,14 @@ void UciEngine::applyPosition(std::istream& in) {
   // from a temporary. Position holds a pointer into its own state stack, so a
   // default copy would leave that pointer aliasing the source object's stack.
   std::string err;
+  bool movesFollows = false;
   if (token == "fen") {
     std::string fen, part;
     while (in >> part) {
-      if (part == "moves") break;
+      if (part == "moves") {
+        movesFollows = true;
+        break;
+      }
       fen += (fen.empty() ? "" : " ") + part;
     }
     if (fen.empty() || !pos_.setFromFen(fen, &err)) return;  // keep the old position
@@ -100,24 +162,37 @@ void UciEngine::applyPosition(std::istream& in) {
     const char* kStart = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     if (!pos_.setFromFen(kStart, &err)) return;
     std::string part;
-    while (in >> part)
-      if (part == "moves") break;
+    while (in >> part) {
+      if (part == "moves") {
+        movesFollows = true;
+        break;
+      }
+      // "startpos" takes no tokens before "moves"; anything else is not a
+      // position this engine understands, so leave the position alone rather
+      // than half-applying it.
+      return;
+    }
   } else {
     return;  // unknown; leave the position alone
   }
 
   // Replay the move list. An illegal or unparseable move stops the replay where
   // it failed rather than corrupting the position.
-  std::string part;
-  if (in >> part) {
-    if (part == "moves") {
-      std::string ms;
-      while (in >> ms) {
-        bool ok = false;
-        const Move m = moveFromUci(ms, &ok);
-        if (!ok || !pos_.legal(m)) break;
-        pos_.doMove(m);
-      }
+  //
+  // The "moves" keyword has already been consumed by the scan above, so the
+  // list follows immediately. Reading a fresh token here instead would pick up
+  // the first move, fail to recognise it as "moves", and silently skip the
+  // replay entirely -- leaving every "position ... moves ..." command stuck on
+  // the opening position while still returning a plausible bestmove.
+  if (movesFollows) {
+    std::string ms;
+    while (in >> ms) {
+      bool ok = false;
+      // Position-aware on purpose: this is what gives castling and en passant
+      // their flags back, and a coordinate-only parse silently drops both.
+      const Move m = moveFromUci(ms, pos_, &ok);
+      if (!ok || !pos_.legal(m)) break;
+      pos_.doMove(m);
     }
   }
 
