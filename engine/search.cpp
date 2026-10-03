@@ -252,7 +252,7 @@ void Search::scoreQuiescenceMoves(const Position& pos, Move* moves, int count,
 // --- Quiescence search ------------------------------------------------------
 
 int Search::qsearch(Position& pos, int alpha, int beta, int ply) {
-  ++stats_.qnodes;
+  countQNode();
   if (ply > seldepth_) seldepth_ = ply;
   pvLength_[ply] = ply;
 
@@ -415,26 +415,26 @@ int Search::negamax(Position& pos, int depth, int alpha, int beta, int ply) {
 
   Move ttMove = kMoveNone;
   if (opts_.useTT && ply > 0) {
-    ++stats_.ttProbes;
+    countTtProbe();
     const TTProbeResult r = tt_.probe(pos.key(), ply);
     if (r.hit) {
-      ++stats_.ttHits;
+      countTtHit();
       ttMove = r.move;
       // A shallower entry can still be worth having as a move to try first, but
       // its score says nothing about this node at this depth.
       if (r.depth >= depth) {
         if (r.bound == kBoundExact) {
-          ++stats_.ttCutoffs;
+          countTtCutoff();
           pvTable_[ply][ply] = r.move;
           pvLength_[ply] = ply + 1;
           return r.score;
         }
         if (r.bound == kBoundLower && r.score >= beta) {
-          ++stats_.ttCutoffs;
+          countTtCutoff();
           return r.score;
         }
         if (r.bound == kBoundUpper && r.score <= alpha) {
-          ++stats_.ttCutoffs;
+          countTtCutoff();
           return r.score;
         }
       }
@@ -450,7 +450,7 @@ int Search::negamax(Position& pos, int depth, int alpha, int beta, int ply) {
   // its contribution can be measured rather than assumed.
   if (inCheck && opts_.useCheckExtension) {
     ++depth;
-    ++stats_.checkExtensions;
+    countCheckExtension();
   }
 
   if (depth <= 0) {
@@ -497,8 +497,7 @@ int Search::negamax(Position& pos, int depth, int alpha, int beta, int ply) {
     }
     if (score > alpha) alpha = score;
     if (alpha >= beta) {
-      ++stats_.betaCutoffs;
-      if (i == 0) ++stats_.firstMoveCutoffs;
+      countBetaCutoff(i == 0);
       if (!pos.captureOrPromotion(m)) {
         noteKiller(m, ply);
         updateHistory(pos, m, depth);

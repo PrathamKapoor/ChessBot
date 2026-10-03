@@ -54,7 +54,7 @@ bool TranspositionTable::shouldReplace(const TTEntry& existing,
 }
 
 TTProbeResult TranspositionTable::probe(uint64_t key, int ply) const {
-  ++probes_;
+  if constexpr (kInstrumented) ++probes_;
   if (entries_.empty()) return {};
 
   const TTEntry& e = entries_[key % entries_.size()];
@@ -63,7 +63,7 @@ TTProbeResult TranspositionTable::probe(uint64_t key, int ply) const {
   // reports a miss; it can never yield another position's data.
   if (e.key == 0 || e.key != key) return {};
 
-  ++hits_;
+  if constexpr (kInstrumented) ++hits_;
 
   TTProbeResult r;
   r.hit = true;
@@ -78,10 +78,10 @@ TTProbeResult TranspositionTable::probe(uint64_t key, int ply) const {
 
 void TranspositionTable::store(const TTEntry& entry, uint8_t generation) {
   if (entries_.empty()) return;
-  ++stores_;
+  if constexpr (kInstrumented) ++stores_;
 
   TTEntry& slot = entries_[entry.key % entries_.size()];
-  if (slot.key != 0 && slot.key != entry.key) ++collisions_;
+  if constexpr (kInstrumented) { if (slot.key != 0 && slot.key != entry.key) ++collisions_; }
 
   TTEntry incoming = entry;
   incoming.generation = generation;

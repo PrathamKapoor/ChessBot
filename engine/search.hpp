@@ -194,6 +194,31 @@ class Search {
   void updateHistory(const Position& pos, Move m, int depth);
   int historyValue(const Position& pos, Move m) const;
 
+  // Diagnostic counters. Each is `if constexpr`, so with POCKET_INSTRUMENT at 0
+  // the body is discarded at compile time rather than skipped at run time.
+  // Defined in the class body so they inline.
+  void countQNode() {
+    if constexpr (kInstrumented) ++stats_.qnodes;
+  }
+  void countTtProbe() {
+    if constexpr (kInstrumented) ++stats_.ttProbes;
+  }
+  void countTtHit() {
+    if constexpr (kInstrumented) ++stats_.ttHits;
+  }
+  void countTtCutoff() {
+    if constexpr (kInstrumented) ++stats_.ttCutoffs;
+  }
+  void countBetaCutoff(bool firstMove) {
+    if constexpr (kInstrumented) {
+      ++stats_.betaCutoffs;
+      if (firstMove) ++stats_.firstMoveCutoffs;
+    }
+  }
+  void countCheckExtension() {
+    if constexpr (kInstrumented) ++stats_.checkExtensions;
+  }
+
   Position& root_;
   SearchOptions opts_;
   TranspositionTable tt_;

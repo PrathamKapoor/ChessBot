@@ -4,7 +4,30 @@
 
 #include <cstdint>
 
+// Diagnostic accounting switch.
+//
+// Phase 3A left plain counters incrementing inside the search and
+// transposition-table hot paths and never measured what they cost. Until that
+// was quantified, every nodes-per-second figure the engine reported was
+// untrustworthy, because an unknown fraction of it was accounting rather than
+// search.
+//
+// With this at 0 the increments compile away entirely: the counter helpers are
+// `if constexpr`, so no code is emitted and nothing is left to branch on at run
+// time. With it at 1 the counters are collected and the engine is slower; that
+// build exists to be measured against the other one, not to be used for
+// performance figures.
+//
+// Node counting is deliberately NOT behind this switch. Node limits and abort
+// checks depend on it, and node count is the one measurement this repository
+// treats as deterministic, so it is always paid for.
+#ifndef POCKET_INSTRUMENT
+#define POCKET_INSTRUMENT 0
+#endif
+
 namespace pocket {
+
+constexpr bool kInstrumented = POCKET_INSTRUMENT != 0;
 
 using Bitboard = std::uint64_t;
 
