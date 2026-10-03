@@ -331,7 +331,7 @@ class TestMatchRunner(unittest.TestCase):
                "--hard-timeout-per-move", "15"]
         proc = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
         import json
-        path = os.path.join(out, "results.json")
+        path = os.path.join(out, "TEST-001", "results.json")
         data = json.load(open(path, encoding="utf-8")) if os.path.exists(path) else None
         return proc.returncode, data
 

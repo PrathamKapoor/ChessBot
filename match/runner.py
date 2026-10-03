@@ -309,7 +309,13 @@ def main():
     args = ap.parse_args()
 
     openings = load_suite(args.suite)
-    out_dir = args.out or os.path.join("match", "results", args.experiment_id)
+    # Always nest under the experiment id, even when --out is given. An earlier
+    # version wrote results.json directly into --out, so running two experiments
+    # into the same directory silently overwrote the first one's record. The
+    # experiment id is what makes a record identifiable, so it belongs in the
+    # path rather than only inside the file.
+    root_dir = args.out or os.path.join("match", "results")
+    out_dir = os.path.join(root_dir, args.experiment_id)
     os.makedirs(out_dir, exist_ok=True)
     pgn_dir = os.path.join(out_dir, "pgn")
 
