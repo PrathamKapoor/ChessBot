@@ -27,7 +27,7 @@ inline bool offsetSquare(Square from, int delta, Color us, Square& out) {
   return std::abs(int(fileOf(out)) - int(fileOf(from))) <= 1;
 }
 
-void addPawnMoves(Position& pos, Move* out, int& count, Color us) {
+void addPawnMoves(Position& pos, Move* out, int& count, Color us, bool capturesOnly) {
   const Color them = ~us;
   const Bitboard pawns = pos.pieces(us, kPawn);
   const Bitboard enemies = pos.pieces(them);
@@ -91,7 +91,8 @@ void addPawnMoves(Position& pos, Move* out, int& count, Color us) {
 
 // Emits moves for one piece type. King moves are handled separately because
 // they need castling too.
-void addPieceMoves(Position& pos, Move* out, int& count, Color us, PieceType pt) {
+void addPieceMoves(Position& pos, Move* out, int& count, Color us, PieceType pt,
+                   bool capturesOnly) {
   const Bitboard occ = pos.pieces();
   Bitboard b = pos.pieces(us, pt);
 
@@ -106,17 +107,28 @@ void addPieceMoves(Position& pos, Move* out, int& count, Color us, PieceType pt)
       default: att = 0; break;
     }
     att &= ~pos.pieces(us);
+    // Captures only: keep just the squares an enemy piece stands on. This is the
+    // line that removes the quiet moves quiescence would have discarded anyway,
+    // and it is why capture-only generation is worth anything at all.
+    if (capturesOnly) att &= pos.pieces(~us);
 
     while (att) out[count++] = makeMove(from, popLsb(att));
   }
 }
 
-void addKingMoves(Position& pos, Move* out, int& count, Color us) {
+void addKingMoves(Position& pos, Move* out, int& count, Color us, bool capturesOnly) {
   const Square from = pos.kingSquare(us);
   Bitboard att = kKingAttacksBB[from] & ~pos.pieces(us);
+  // Captures only: keep just the squares an enemy piece stands on, so that a king
+  // capturing is retained. A king that cannot capture generates nothing, which is
+  // correct here: quiescence is not allowed to answer a check by moving the king to
+  // safety, it only sees replies when it is already resolving one.
+  if (capturesOnly) att &= pos.pieces(~us);
   while (att) out[count++] = makeMove(from, popLsb(att));
 
-  // Castling is emitted here and validated by Position::legal().
+  // Castling is emitted here and validated by Position::legal(). It is never a
+  // capture, so captures-only mode skips it.
+  if (capturesOnly) return;
   for (int kingSide = 0; kingSide < 2; ++kingSide) {
     const CastlingRight cr = Position::castlingRight(us, kingSide != 0);
     if (!pos.canCastle(cr)) continue;
@@ -129,22 +141,22 @@ void addKingMoves(Position& pos, Move* out, int& count, Color us) {
 
 }  // namespace
 
-void generatePseudoLegal(Position& pos, Move* out, int& count) {
+void generatePseudoLegal(Position& pos, Move* out, int& count, bool capturesOnly) {
   count = 0;
   const Color us = pos.sideToMove();
 
-  addPawnMoves(pos, out, count, us);
-  addPieceMoves(pos, out, count, us, kKnight);
-  addPieceMoves(pos, out, count, us, kBishop);
-  addPieceMoves(pos, out, count, us, kRook);
-  addPieceMoves(pos, out, count, us, kQueen);
-  addKingMoves(pos, out, count, us);
+  addPawnMoves(pos, out, count, us, capturesOnly);
+  addPieceMoves(pos, out, count, us, kKnight, capturesOnly);
+  addPieceMoves(pos, out, count, us, kBishop, capturesOnly);
+  addPieceMoves(pos, out, count, us, kRook, capturesOnly);
+  addPieceMoves(pos, out, count, us, kQueen, capturesOnly);
+  addKingMoves(pos, out, count, us, capturesOnly);
 }
 
 void generateLegalReference(Position& pos, Move* out, int& count) {
   Move buf[256];
   int n = 0;
-  generatePseudoLegal(pos, buf, n);
+  generatePseudoLegal(pos, buf, n, false);
 
   count = 0;
   for (int i = 0; i < n; ++i)
@@ -198,7 +210,7 @@ bool castlingIsLegal(Position& pos, Color us, Square from, Square to) {
 
 }  // namespace
 
-void generateLegal(Position& pos, Move* out, int& count) {
+void generateLegal(Position& pos, Move* out, int& count, bool capturesOnly) {
   const Color us = pos.sideToMove();
   const Square ksq = pos.kingSquare(us);
   const Bitboard checkers = pos.checkers();
@@ -232,7 +244,7 @@ void generateLegal(Position& pos, Move* out, int& count) {
   // Generate straight into the caller's buffer and compact in place. Filtering
   // through a second 1 KB array costs an extra pass and extra stack, for no
   // benefit: the write index never overtakes the read index.
-  generatePseudoLegal(pos, out, count);
+  generatePseudoLegal(pos, out, count, capturesOnly);
 
   int write = 0;
   for (int i = 0; i < count; ++i) {

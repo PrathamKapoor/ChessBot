@@ -165,7 +165,7 @@ void Search::updateHistory(const Position& pos, Move m, int depth) {
 }
 
 void Search::scoreMoves(const Position& pos, Move* moves, int count, int* scores,
-                        Move ttMove, int ply) const {
+                        Move ttMove, int ply) {
   for (int i = 0; i < count; ++i) {
     const Move m = moves[i];
     const Square to = toSq(m);
@@ -193,6 +193,7 @@ void Search::scoreMoves(const Position& pos, Move* moves, int count, int* scores
         // SEE decides whether the capture actually wins material. A capture that
         // loses an exchange is worth much less than MVV-LVA alone suggests, and
         // search order that ignores this wastes its budget early.
+        countQ(false, &SearchStats::mainSeeCalls);
         const int see = seeCapture(pos, m);
         if (see >= 0) {
           // Small SEE bonus breaks ties among equal MVV-LVA captures, which
@@ -228,7 +229,7 @@ void Search::scoreMoves(const Position& pos, Move* moves, int count, int* scores
 }
 
 void Search::scoreQuiescenceMoves(const Position& pos, Move* moves, int count,
-                                  int* scores) const {
+                                  int* scores) {
   for (int i = 0; i < count; ++i) {
     const Move m = moves[i];
     if (!pos.captureOrPromotion(m)) {
@@ -240,6 +241,7 @@ void Search::scoreQuiescenceMoves(const Position& pos, Move* moves, int count,
     const int attackerValue = isPromotion(m) ? pieceValue(promotionType(m))
                                              : pieceValue(typeOf(mover));
     if (opts_.useSeeOrdering) {
+      countQ(true, &SearchStats::qSeeCalls);
       const int see = seeCapture(pos, m);
       scores[i] = see >= 0 ? order::kGoodCapture + see * 16
                            : order::kLosingCapture + victimValue * 16 - attackerValue;
@@ -265,6 +267,7 @@ int Search::qsearch(Position& pos, int alpha, int beta, int ply) {
   if (alpha >= beta) return alpha;
 
   const bool inCheck = pos.inCheck();
+  if (inCheck) countQ(true, &SearchStats::qInCheckNodes);
   int best;
 
   if (inCheck) {
@@ -273,20 +276,37 @@ int Search::qsearch(Position& pos, int alpha, int beta, int ply) {
     // as fine. Every legal reply is searched instead.
     best = -kValueInfinity;
   } else {
+    countQ(true, &SearchStats::qEvalCalls);
     best = evaluate(pos);
     if (best >= beta) return best;  // fail-soft: beta is a lower bound we beat
     if (best > alpha) alpha = best;
   }
 
+  countQ(true, &SearchStats::qMovegenCalls);
   Move moves[256];
   int count = 0;
-  generateLegal(pos, moves, count);
+  // When not in check, quiescence will only ever search captures and promotions,
+  // so they are generated directly instead of being generated and then discarded.
+  // The set of moves returned is identical, so the searched tree is unchanged and
+  // node counts must stay bit-identical; that is the check that this is a pure
+  // saving rather than a behaviour change.
+  //
+  // When in check, EVERY legal reply is needed, including quiet ones, because
+  // standing pat is not available and the position has to be resolved properly.
+  const bool capturesOnly = !inCheck && opts_.useQsearchCaptureGeneration;
+  generateLegal(pos, moves, count, capturesOnly);
+  countQAdd(true, &SearchStats::qMovesGenerated, uint64_t(count));
 
   if (count == 0) {
-    // Only reachable while in check: no legal reply to a check is mate.
-    // Without a check this is stalemate, and the stand-pat score above already
-    // handled it by returning the static evaluation.
-    return inCheck ? matedInScore(ply) : 0;
+    // Only terminal while in check. With capture-only generation a count of zero
+    // in an unchecked position means "no captures available", which is the
+    // common case, not a stalemate. Returning zero here would score almost every
+    // quiet quiescence leaf as a draw.
+    //
+    // An unchecked position with genuinely no legal move is already handled: its
+    // stand-pat score above is returned below.
+    if (inCheck) return matedInScore(ply);
+    return best;
   }
 
   // Select the moves quiescence is allowed to look at. When in check that is
@@ -301,7 +321,10 @@ int Search::qsearch(Position& pos, int alpha, int beta, int ply) {
     for (int i = 0; i < count; ++i) scores[i] = 0;
   } else {
     scoreQuiescenceMoves(pos, moves, count, scores);
-    // Compact, keeping only captures and promotions.
+    // Compact, keeping only captures and promotions. With capture-only
+    // generation this keeps everything, and the loop is a no-op that costs one
+    // pass; it is kept because generateLegal may also have been called with the
+    // option switched off.
     int keep = 0;
     for (int i = 0; i < count; ++i) {
       if (pos.captureOrPromotion(moves[i])) {
@@ -312,6 +335,10 @@ int Search::qsearch(Position& pos, int alpha, int beta, int ply) {
     }
     searchCount = keep;
   }
+  countQAdd(true, &SearchStats::qMovesSearched, uint64_t(searchCount));
+  // One selection-sort pass per move searched. Summed, this is the ordering work
+  // the quiescence node performs before it recurses.
+  countQAdd(true, &SearchStats::qSelectionSortPasses, uint64_t(searchCount * searchCount));
 
   for (int i = 0; i < searchCount; ++i) {
     // Selection sort by remaining score. Positions have at most a few dozen
@@ -327,6 +354,7 @@ int Search::qsearch(Position& pos, int alpha, int beta, int ply) {
 
     const Move m = moves[i];
     pos.doMove(m);
+    countQ(true, &SearchStats::qMakeUnmake);
     const int score = -qsearch(pos, -beta, -alpha, ply + 1);
     pos.undoMove(m);
 

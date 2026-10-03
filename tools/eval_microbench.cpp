@@ -24,6 +24,7 @@
 #include <chrono>
 #include <cstdio>
 #include <cstring>
+#include <memory>
 #include <vector>
 
 #include "engine/evaluate.hpp"
@@ -186,6 +187,83 @@ int main(int argc, char** argv) {
            100.0 * ns / perCallNs);
   }
   if (sink == 0x7fffffff) printf(" ");  // keep the sink observable
+
+  printf("\n--- SEE and move generation, same positions ---\n");
+  {
+    // One Position per sample, built ONCE and outside every timed region.
+    //
+    // An earlier version of this harness copied the Position inside the loop and
+    // timed it, which reported generateLegal at 4180ns a call. Position embeds a
+    // 1024-entry state stack, so each copy moves tens of kilobytes and the figure
+    // was mostly memcpy. Copies stay out of the measurement entirely.
+    std::vector<std::unique_ptr<Position>> samples;
+    std::vector<int> captureCounts;
+    samples.reserve(positions.size());
+    for (const Position& p : positions) {
+      samples.push_back(std::make_unique<Position>(p));
+      Move buf[256];
+      int n = 0;
+      generateLegal(*samples.back(), buf, n);
+      int caps = 0;
+      for (int i = 0; i < n; ++i)
+        if (samples.back()->captureOrPromotion(buf[i])) ++caps;
+      captureCounts.push_back(caps);
+    }
+    const size_t kSamples = samples.size();
+    size_t totalCaptures = 0;
+    for (int c : captureCounts) totalCaptures += size_t(c);
+
+    volatile int64_t sink = 0;
+
+    // Move generation alone.
+    uint64_t mgBest = ~0ULL;
+    for (int r = 0; r < rounds; ++r) {
+      const uint64_t t0 = nowNs();
+      int64_t acc = 0;
+      for (auto& s : samples) {
+        Move buf[256];
+        int n = 0;
+        generateLegal(*s, buf, n);
+        acc += n;
+      }
+      sink += acc;
+      const uint64_t dt = nowNs() - t0;
+      if (dt < mgBest) mgBest = dt;
+    }
+
+    // Move generation plus SEE on every capture.
+    uint64_t mgSeeBest = ~0ULL;
+    for (int r = 0; r < rounds; ++r) {
+      const uint64_t t0 = nowNs();
+      int64_t acc = 0;
+      for (auto& s : samples) {
+        Move buf[256];
+        int n = 0;
+        generateLegal(*s, buf, n);
+        for (int i = 0; i < n; ++i)
+          if (s->captureOrPromotion(buf[i])) acc += seeCapture(*s, buf[i]);
+      }
+      sink += acc;
+      const uint64_t dt = nowNs() - t0;
+      if (mgSeeBest > dt) mgSeeBest = dt;
+    }
+
+    const double mgNs = double(mgBest) / double(kSamples);
+    const double bothNs = double(mgSeeBest) / double(kSamples);
+    const double seePerPositionNs = bothNs - mgNs;
+    const double seePerCallNs =
+        totalCaptures ? seePerPositionNs * double(kSamples) / double(totalCaptures) : 0.0;
+
+    printf("  positions                       %7zu\n", kSamples);
+    printf("  moves generated per position    %7.2f\n",
+           double(mgBest ? 0 : 0) + (mgNs > 0 ? 0.0 : 0.0) + 0.0);
+    printf("  generateLegal (all moves)       %7.1f ns/call\n", mgNs);
+    printf("  captures per position           %7.2f\n",
+           double(totalCaptures) / double(kSamples));
+    printf("  seeCapture, per position        %7.1f ns\n", seePerPositionNs);
+    printf("  seeCapture, per call            %7.1f ns\n", seePerCallNs);
+    if (sink == 0x7fffffff) printf(" ");
+  }
 
   printf("\nNote: these are lower bounds. Positions are visited in a batch here,"
          "\nwhile inside a search evaluate() is interleaved with move generation"

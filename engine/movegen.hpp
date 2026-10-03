@@ -21,10 +21,21 @@ namespace pocket {
 
 // Appends every pseudo-legal move for the side to move to `out`, in no
 // particular order. Callers are responsible for legality filtering.
-void generatePseudoLegal(Position& pos, Move* out, int& count);
+//
+// With capturesOnly set, only captures, en passant, and promotions are emitted.
+// A quiet pawn push onto the back rank still counts, because that push promotes.
+void generatePseudoLegal(Position& pos, Move* out, int& count,
+                         bool capturesOnly = false);
 
 // Appends every legal move. This is what search and perft use.
-void generateLegal(Position& pos, Move* out, int& count);
+//
+// capturesOnly restricts the output to captures, en passant and promotions,
+// still legality filtered. It exists for quiescence, which discards every quiet
+// move anyway: doing the discarding during generation rather than afterwards
+// avoids generating them at all. The subset it returns is identical to what
+// generateLegal would have returned and then had filtered by
+// captureOrPromotion(), so a search using it explores exactly the same tree.
+void generateLegal(Position& pos, Move* out, int& count, bool capturesOnly = false);
 
 // Reference implementation, used by the verification harness.
 void generateLegalReference(Position& pos, Move* out, int& count);

@@ -88,6 +88,10 @@ struct SearchOptions {
   // search can see. Tests that compare against the reference need them off so
   // that only the transposition table and ordering are under test.
   bool useCheckExtension = true;
+  // Generate only captures and promotions inside quiescence when not in check.
+  // Semantically a no-op: quiescence discarded those moves anyway. Present as an
+  // option so the saving can be attributed by measurement rather than assumed.
+  bool useQsearchCaptureGeneration = true;
   int ttSizeMB = 16;
 };
 
@@ -110,6 +114,21 @@ struct SearchStats {
   uint64_t betaCutoffs = 0;
   uint64_t firstMoveCutoffs = 0;
   uint64_t checkExtensions = 0;
+
+  // Quiescence pipeline decomposition. Counts rather than timings: to turn these
+  // into a cost breakdown each operation's standalone cost is measured separately
+  // and the product compared against the measured total, which is a checkable
+  // estimate rather than a guess. These are diagnostic only and compile out.
+  uint64_t qInCheckNodes = 0;      // quiescence nodes that are in check
+  uint64_t qEvalCalls = 0;         // stand-pat evaluations
+  uint64_t qMovegenCalls = 0;      // generateLegal calls from quiescence
+  uint64_t qMovesGenerated = 0;    // moves those calls produced, before filtering
+  uint64_t qMovesSearched = 0;     // captures/promotions kept, or evasions
+  uint64_t qMakeUnmake = 0;        // doMove/undoMove pairs from quiescence
+  uint64_t qSeeCalls = 0;          // seeCapture calls from quiescence ordering
+  uint64_t qSelectionSortPasses = 0;  // selection-sort passes while ordering
+  uint64_t mainSeeCalls = 0;       // seeCapture calls from main-search ordering
+  uint64_t mainMovegenCalls = 0;
 };
 
 struct SearchResult {
@@ -181,8 +200,8 @@ class Search {
   int negamax(Position& pos, int depth, int alpha, int beta, int ply);
 
   void scoreMoves(const Position& pos, Move* moves, int count, int* scores,
-                  Move ttMove, int ply) const;
-  void scoreQuiescenceMoves(const Position& pos, Move* moves, int count, int* scores) const;
+                  Move ttMove, int ply);
+  void scoreQuiescenceMoves(const Position& pos, Move* moves, int count, int* scores);
 
   int searchRoot(Position& pos, int depth);
   void extractPv(std::vector<Move>& pv) const;
@@ -217,6 +236,16 @@ class Search {
   }
   void countCheckExtension() {
     if constexpr (kInstrumented) ++stats_.checkExtensions;
+  }
+  // Quiescence pipeline counters, diagnostic only. `inQsearch` distinguishes the
+  // quiescence copies from the main-search ones so both share these helpers.
+  void countQ(bool inQsearch, uint64_t SearchStats::*field) {
+    if constexpr (kInstrumented) ++(stats_.*field);
+    (void)inQsearch;
+  }
+  void countQAdd(bool inQsearch, uint64_t SearchStats::*field, uint64_t n) {
+    if constexpr (kInstrumented) stats_.*field += n;
+    (void)inQsearch;
   }
 
   Position& root_;

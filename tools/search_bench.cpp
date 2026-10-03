@@ -67,6 +67,16 @@ struct Totals {
   uint64_t ttCutoffs = 0;
   uint64_t betaCutoffs = 0;
   uint64_t firstMoveCutoffs = 0;
+  uint64_t qInCheckNodes = 0;
+  uint64_t qEvalCalls = 0;
+  uint64_t qMovegenCalls = 0;
+  uint64_t qMovesGenerated = 0;
+  uint64_t qMovesSearched = 0;
+  uint64_t qMakeUnmake = 0;
+  uint64_t qSeeCalls = 0;
+  uint64_t qSelectionSortPasses = 0;
+  uint64_t mainSeeCalls = 0;
+  uint64_t mainMovegenCalls = 0;
   uint64_t elapsedMs = 0;
   int positionsOk = 0;
   int positionsIllegal = 0;
@@ -99,6 +109,16 @@ Totals runOnce(const SearchOptions& opts, int depth) {
     t.ttCutoffs += r.stats.ttCutoffs;
     t.betaCutoffs += r.stats.betaCutoffs;
     t.firstMoveCutoffs += r.stats.firstMoveCutoffs;
+    t.qInCheckNodes += r.stats.qInCheckNodes;
+    t.qEvalCalls += r.stats.qEvalCalls;
+    t.qMovegenCalls += r.stats.qMovegenCalls;
+    t.qMovesGenerated += r.stats.qMovesGenerated;
+    t.qMovesSearched += r.stats.qMovesSearched;
+    t.qMakeUnmake += r.stats.qMakeUnmake;
+    t.qSeeCalls += r.stats.qSeeCalls;
+    t.qSelectionSortPasses += r.stats.qSelectionSortPasses;
+    t.mainSeeCalls += r.stats.mainSeeCalls;
+    t.mainMovegenCalls += r.stats.mainMovegenCalls;
   }
   t.elapsedMs = nowMs() - start;
   return t;
@@ -122,6 +142,45 @@ void report(const char* label, const SearchOptions& opts, int depth, int reps) {
       printf("  *** %d ILLEGAL BESTMOVES ***\n", t.positionsIllegal);
   }
   printf("  best-nodes=%llu\n", (unsigned long long)bestNodes);
+}
+
+// Quiescence pipeline decomposition. Diagnostic only, and only meaningful in the
+// instrumented build: the production build compiles these counters out entirely.
+void doDecompose(int depth) {
+  const Totals t = runOnce(SearchOptions{}, depth);
+
+  printf("\n=== quiescence pipeline decomposition, depth %d ===\n", depth);
+  printf("counts are from the instrumented build; the production build has no such"
+         " counters\n\n");
+  printf("  main-search nodes            %14llu\n", (unsigned long long)t.nodes);
+  printf("  quiescence nodes             %14llu\n", (unsigned long long)t.qnodes);
+  if (t.qnodes)
+    printf("  ratio qnodes per main node   %14.2f\n",
+           double(t.qnodes) / double(t.nodes));
+  printf("\n  -- inside quiescence --\n");
+  printf("  stand-pat evaluations        %14llu\n", (unsigned long long)t.qEvalCalls);
+  printf("  nodes in check               %14llu\n", (unsigned long long)t.qInCheckNodes);
+  printf("  generateLegal calls          %14llu\n", (unsigned long long)t.qMovegenCalls);
+  printf("  moves generated (unfiltered) %14llu\n", (unsigned long long)t.qMovesGenerated);
+  printf("  moves actually searched      %14llu\n", (unsigned long long)t.qMovesSearched);
+  printf("  doMove/undoMove pairs        %14llu\n", (unsigned long long)t.qMakeUnmake);
+  printf("  seeCapture calls             %14llu\n", (unsigned long long)t.qSeeCalls);
+  printf("  selection-sort passes        %14llu\n",
+         (unsigned long long)t.qSelectionSortPasses);
+  printf("\n  -- main search, for contrast --\n");
+  printf("  generateLegal calls          %14llu\n",
+         (unsigned long long)t.mainMovegenCalls);
+  printf("  seeCapture calls             %14llu\n", (unsigned long long)t.mainSeeCalls);
+
+  if (t.qMovegenCalls)
+    printf("\n  quiescence generated %.2f moves per call, searched %.2f of them "
+           "(%.0f%% discarded)\n",
+           double(t.qMovesGenerated) / double(t.qMovegenCalls),
+           double(t.qMovesSearched) / double(t.qMovegenCalls),
+           100.0 * (1.0 - double(t.qMovesSearched) / double(t.qMovesGenerated)));
+  if (t.qEvalCalls)
+    printf("  evaluations per quiescence node: %.3f\n",
+           double(t.qEvalCalls) / double(t.qnodes));
 }
 
 void doBench(int depth, int reps) {
@@ -209,18 +268,20 @@ void doAblate(int depth, int reps) {
 }  // namespace
 
 int main(int argc, char** argv) {
-  bool doBenchMode = false, doAblateMode = false;
+  bool doBenchMode = false, doAblateMode = false, doDecomposeMode = false;
   int depth = 6, reps = 3;
 
   for (int i = 1; i < argc; ++i) {
     if (!std::strcmp(argv[i], "--bench")) doBenchMode = true;
     else if (!std::strcmp(argv[i], "--ablate")) doAblateMode = true;
+    else if (!std::strcmp(argv[i], "--decompose")) doDecomposeMode = true;
     else if (!std::strcmp(argv[i], "--depth") && i + 1 < argc) depth = std::atoi(argv[++i]);
     else if (!std::strcmp(argv[i], "--reps") && i + 1 < argc) reps = std::atoi(argv[++i]);
   }
-  if (!doBenchMode && !doAblateMode) doBenchMode = true;
+  if (!doBenchMode && !doAblateMode && !doDecomposeMode) doBenchMode = true;
 
   if (doBenchMode) doBench(depth, reps);
   if (doAblateMode) doAblate(depth, reps);
+  if (doDecomposeMode) doDecompose(depth);
   return 0;
 }
