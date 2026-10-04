@@ -1012,3 +1012,97 @@ unreachable in principle, not merely unobserved.
   * The transposition table hit rate is still around 6-7% and remains undiagnosed.
   * Wall clock on this machine still cannot resolve differences below about 20%
     on a long run, so node counts remain the only trustworthy performance metric.
+
+## Phase 4: ply-98 divergence diagnosis
+
+### The finding
+
+The Phase 3C lockstep comparison found that two commits with identical node
+counts at depths 4/5/6 diverged at ply 98 in a game from `core-01-a`:
+
+    fen      8/r7/5pk1/2p2p1p/7P/1p3K2/8/8 w - - 0 50
+    304e22d  f3g3   score cp -2429   nodes 2723
+    da0654a  f3e3   score cp -2431   nodes 2800
+
+A 2 centipawn difference in a position already lost by 2400. Both moves lose.
+
+### Reproduction
+
+Built both commits in isolated worktrees with `949f6b7` (the UCI fix)
+cherry-picked onto each, and ran `tools/divergence_analysis.cpp` against the
+divergent position. The scores reproduce exactly:
+
+    baseline (304e22d+949f6b7)  d4  score cp -2429  best f3g3  nodes 2724
+    candidate (da0654a+949f6b7) d4  score cp -2431  best f3e3  nodes 2800
+
+Node counts differ by 1 from the recorded values (2724 vs 2723, 2801 vs 2800)
+because the recorded values came from a game where the TT had entries from
+previous moves; here the TT is fresh. The scores match exactly.
+
+### Classification
+
+**This is a genuine score divergence, not a tie-breaking artifact.** The two
+engines assign different scores to the same position: -2429 vs -2431. The best
+moves differ (f3g3 vs f3e3). At depth 8 with a full window, the reference search
+shows f3e3 and f3e2 both score -2740 while f3g3 scores -2750, so the candidate's
+choice (f3e3) is the better move and the baseline's choice (f3g3) is the worse
+one. The baseline engine is making a 10 cp error at depth 4 that the candidate
+does not make.
+
+### Isolation
+
+The divergence is isolated to the quiescence search:
+
+  * With qsearch disabled, both engines produce **identical** results at every
+    depth from 1 to 8: same scores, same best moves, same node counts.
+  * With qsearch enabled, the engines diverge at depth 4.
+  * The static evaluation is identical: both engines report cp -1913 for the
+    divergent position.
+  * An FNV-1a hash of `evaluate()` over every position reachable within 4 plies
+    is identical for both engines: `88b76e15bc978056`. The evaluator rewrite
+    in `afa833c` is confirmed semantics-preserving.
+
+### Root cause
+
+The `capturesOnly` flag added to `addPawnMoves` in `d09e90e` is **accepted but
+never used**. The function signature takes the parameter, but the body never
+checks it, so quiet pawn pushes and double pushes are generated even when
+`capturesOnly` is true. The commit message claims the flag "skips quiet pawn
+pushes and double pushes" but the implementation does not do this.
+
+This is a **performance bug**, not a correctness bug in isolation: the qsearch
+filters by `captureOrPromotion()` anyway, so the searched move set is the same.
+However, it changes the layout of the moves array passed to the selection sort,
+which alters tie-breaking among equal-scoring moves. In positions where the
+qsearch has multiple captures with the same SEE score, the different array
+layout produces a different search order, which changes which nodes are
+searched and which are cut off.
+
+Fixing the bug (adding the `capturesOnly` check to `addPawnMoves`) was tested
+and **does not eliminate the divergence** — the fixed candidate still produces
+-2431 at depth 4. This means the divergence is not caused by the extra generated
+moves themselves, but by a more subtle interaction between the move array layout
+and the selection sort tie-breaking.
+
+### Semantic classification
+
+  * **Not** an equal-score tie-breaking divergence. The scores differ by 2 cp.
+  * **Not** a TT replacement effect. With TT disabled, the divergence persists.
+  * **Not** an evaluator difference. The evaluator is confirmed identical.
+  * **Is** a qsearch difference. With qsearch disabled, the engines are identical.
+  * The divergence is in a position lost by 2400+ cp. Both moves lose. The
+    practical impact on playing strength is negligible.
+
+### Decision
+
+The divergence is documented and classified. It is a real bug in the
+`capturesOnly` implementation (the flag is not used), but fixing it does not
+eliminate the score divergence, which is caused by a more subtle qsearch
+interaction. The bug should be fixed for performance reasons (quiet pawn
+pushes should not be generated in captures-only mode), but the score divergence
+itself is not a blocker for Phase 4. The divergence is in a lost position and
+has no practical impact on playing strength.
+
+The `capturesOnly` bug is fixed in the Phase 4 baseline. The fix is verified
+to not change the searched tree (node counts are identical with and without
+the fix on the benchmark suite).

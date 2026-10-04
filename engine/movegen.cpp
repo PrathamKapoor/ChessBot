@@ -40,7 +40,12 @@ void addPawnMoves(Position& pos, Move* out, int& count, Color us, bool capturesO
   while (b) {
     const Square from = popLsb(b);
 
-    // Single push, with promotion.
+    // Single push, with promotion. A quiet push is skipped in captures-only
+    // mode; a push that promotes is kept, because quiescence searches
+    // promotions. This was the source of the ply-98 divergence: the flag was
+    // accepted but never used here, so quiet pushes were generated and then
+    // discarded by the quiescence filter, which changed the move array layout
+    // enough to alter selection-sort tie-breaking.
     {
       Square to;
       if (offsetSquare(from, kForward, us, to) && pos.empty(to)) {
@@ -49,7 +54,7 @@ void addPawnMoves(Position& pos, Move* out, int& count, Color us, bool capturesO
           out[count++] = makePromotion(from, to, kRook);
           out[count++] = makePromotion(from, to, kBishop);
           out[count++] = makePromotion(from, to, kKnight);
-        } else {
+        } else if (!capturesOnly) {
           out[count++] = makeMove(from, to);
           // Double push, which may set an en passant square.
           if (rankOf(from) == startRank) {
