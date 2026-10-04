@@ -416,6 +416,7 @@ int Search::searchRoot(Position& pos, int depth) {
 
   int best = -kValueInfinity;
   rootBest_ = kMoveNone;
+  int rootAlpha = -kValueInfinity;
 
   for (int i = 0; i < count; ++i) {
     int bestIdx = i;
@@ -428,7 +429,17 @@ int Search::searchRoot(Position& pos, int depth) {
 
     const Move m = moves[i];
     pos.doMove(m);
-    const int score = -negamax(pos, depth - 1, -kValueInfinity, kValueInfinity, 1);
+    int score;
+    if (opts_.usePVS && i > 0) {
+      // Null window: prove the move does NOT beat alpha.
+      score = -negamax(pos, depth - 1, -rootAlpha - 1, -rootAlpha, 1);
+      if (score > rootAlpha && !aborted_) {
+        // It might be the PV move, so re-search with a full window.
+        score = -negamax(pos, depth - 1, -kValueInfinity, -rootAlpha, 1);
+      }
+    } else {
+      score = -negamax(pos, depth - 1, -kValueInfinity, kValueInfinity, 1);
+    }
     pos.undoMove(m);
 
     if (score > best) {
@@ -439,6 +450,7 @@ int Search::searchRoot(Position& pos, int depth) {
       for (int j = 1; j < pvLength_[1]; ++j) pvTable_[0][j] = pvTable_[1][j];
       pvLength_[0] = pvLength_[1] > 0 ? pvLength_[1] : 1;
     }
+    if (score > rootAlpha) rootAlpha = score;
 
     if (aborted_ || timeUp()) break;
   }
@@ -529,7 +541,17 @@ int Search::negamax(Position& pos, int depth, int alpha, int beta, int ply) {
   for (int i = 0; i < count; ++i) {
     const Move m = moves[i];
     pos.doMove(m);
-    const int score = -negamax(pos, depth - 1, -beta, -alpha, ply + 1);
+    int score;
+    if (opts_.usePVS && i > 0) {
+      // Null window: prove the move does NOT beat alpha.
+      score = -negamax(pos, depth - 1, -alpha - 1, -alpha, ply + 1);
+      if (score > alpha && score < beta && !aborted_) {
+        // It might be the PV move, so re-search with a full window.
+        score = -negamax(pos, depth - 1, -beta, -alpha, ply + 1);
+      }
+    } else {
+      score = -negamax(pos, depth - 1, -beta, -alpha, ply + 1);
+    }
     pos.undoMove(m);
 
     if (aborted_ && i == 0) return 0;

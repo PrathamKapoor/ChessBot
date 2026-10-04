@@ -92,6 +92,11 @@ struct SearchOptions {
   // Semantically a no-op: quiescence discarded those moves anyway. Present as an
   // option so the saving can be attributed by measurement rather than assumed.
   bool useQsearchCaptureGeneration = true;
+  // Principal Variation Search: search the first move with a full window and
+  // the rest with a null window, re-searching only when the null-window
+  // result beats alpha. Present as an option so the node-count effect can be
+  // attributed by measurement rather than assumed.
+  bool usePVS = true;
   int ttSizeMB = 16;
 };
 
