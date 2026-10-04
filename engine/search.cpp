@@ -528,6 +528,16 @@ int Search::negamax(Position& pos, int depth, int alpha, int beta, int ply) {
     return qsearch(pos, alpha, beta, ply);
   }
 
+  // Razoring: at depth 1 with a static eval far below alpha, skip the move
+  // search and drop to quiescence. The position is so bad that no quiet move
+  // can rescue it, and any capture that helps is found by quiescence.
+  if (opts_.useRazoring && depth == 1 && !inCheck && ply > 0) {
+    const int staticEval = evaluate(pos);
+    if (staticEval + 300 <= alpha) {
+      return qsearch(pos, alpha, beta, ply);
+    }
+  }
+
   // Null move pruning: if passing and giving the opponent two moves in a row
   // still leaves us ahead, the position is so good that no real move can
   // fail. Only tried when not in check, with enough depth left, and when the

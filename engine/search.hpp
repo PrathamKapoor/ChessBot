@@ -108,6 +108,10 @@ struct SearchOptions {
   // unlikely to be best, so search them with reduced depth. A reduced move
   // that still beats alpha is re-searched with the full window.
   bool useLMR = true;
+  // Razoring: at depth 1, if the static evaluation is far below alpha,
+  // skip the move search entirely and drop straight to quiescence. The
+  // position is so bad that even the best move cannot save it.
+  bool useRazoring = true;
   int ttSizeMB = 16;
 };
 
