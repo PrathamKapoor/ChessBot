@@ -106,7 +106,10 @@ struct SearchOptions {
   bool useNullMove = true;
   // Late Move Reductions: quiet moves searched late in the move loop are
   // unlikely to be best, so search them with reduced depth. A reduced move
-  // that still beats alpha is re-searched with the full window.
+  // that still beats alpha is re-searched at full depth with the null
+  // window, then with the full window only if the null window also cannot
+  // refute it. Excludes captures, promotions, checking moves, TT moves,
+  // and killer moves.
   bool useLMR = false;
   // Razoring: at depth 1, if the static evaluation is far below alpha,
   // skip the move search entirely and drop straight to quiescence. The

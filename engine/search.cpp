@@ -601,21 +601,37 @@ int Search::negamax(Position& pos, int depth, int alpha, int beta, int ply) {
     int score;
     if (opts_.usePVS && i > 0) {
       // Null window: prove the move does NOT beat alpha.
-      // LMR: quiet moves searched late get a one-ply shallower null window.
+      // LMR: quiet moves searched late get a one-ply shallower null window,
+      // followed by a full-depth null window, followed by a full-width
+      // re-search only if both fail to refute the move.
       bool wasLmr = false;
-      if (opts_.useLMR && i >= 3 && depth >= 3 && !inCheck &&
-          !isCaptureOrPromo) {
+      // LMR exclusions: PV moves (handled by full window), TT move (tries
+      // first, so unlikely to be reduced), captures, promotions, checking
+      // moves, and killer moves are all excluded. Only quiet non-PV moves
+      // at sufficient index and depth are candidates.
+      const bool lmrCandidate = opts_.useLMR && i >= 4 && depth >= 4 &&
+                                !inCheck && !isCaptureOrPromo &&
+                                m != ttMove && !isKiller(m, ply);
+      if (lmrCandidate) {
         if constexpr (kInstrumented) ++stats_.lmrReductions;
         score = -negamax(pos, depth - 2, -alpha - 1, -alpha, ply + 1);
         wasLmr = true;
       } else {
         score = -negamax(pos, depth - 1, -alpha - 1, -alpha, ply + 1);
       }
-      if (score > alpha && score < beta && !aborted_) {
-        if constexpr (kInstrumented) {
-          if (wasLmr) ++stats_.lmrResearches;
+      if (score > alpha && !aborted_) {
+        if (wasLmr) {
+          // LMR verification: the reduced search did not refute the move,
+          // so re-check at full depth with the null window. Only if that
+          // also fails to refute do we need a full-width re-search.
+          if constexpr (kInstrumented) ++stats_.lmrResearches;
+          score = -negamax(pos, depth - 1, -alpha - 1, -alpha, ply + 1);
+          if (score > alpha && score < beta && !aborted_) {
+            score = -negamax(pos, depth - 1, -beta, -alpha, ply + 1);
+          }
+        } else if (score < beta) {
+          score = -negamax(pos, depth - 1, -beta, -alpha, ply + 1);
         }
-        score = -negamax(pos, depth - 1, -beta, -alpha, ply + 1);
       }
     } else {
       score = -negamax(pos, depth - 1, -beta, -alpha, ply + 1);
