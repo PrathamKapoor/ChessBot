@@ -1,0 +1,215 @@
+{
+  "experiment_id": "P4-SMOKE-004",
+  "started_utc": "2026-10-04T05:27:04.836547+00:00",
+  "finished_utc": "2026-10-04T05:27:30.434045+00:00",
+  "elapsed_s": 25.6,
+  "configuration": {
+    "suite": "match/suite_core-01.txt",
+    "openings": 12,
+    "games_requested": 4,
+    "control": "depth 4",
+    "hash_mb": 16,
+    "threads": 1,
+    "options": [
+      "name Hash value 16"
+    ],
+    "max_plies": 200,
+    "hard_timeout_per_move_s": 60.0
+  },
+  "provenance": {
+    "repo": "C:\\Projects\\ChessBot",
+    "baseline_commit": "760b2e0",
+    "candidate_commit": "7dc3234",
+    "baseline_binary": {
+      "path": "C:\\Users\\LENOVO\\AppData\\Local\\Temp\\opencode\\p3c-base\\build\\pocketchess.exe",
+      "size_bytes": 265674,
+      "mtime": "2026-10-04T05:19:38.211065+00:00",
+      "sha256": "cb154e4079608ca38d59066648c8b12cc91121426563a3b5fb9e6e497cf85214"
+    },
+    "candidate_binary": {
+      "path": "C:\\Projects\\ChessBot\\build\\pocketchess.exe",
+      "size_bytes": 266188,
+      "mtime": "2026-10-04T05:27:04.124857+00:00",
+      "sha256": "e269e982919ea0007879fe684075a72f43da82bdbfdc93d53506d56b1a6368f5"
+    },
+    "baseline_build": null,
+    "candidate_build": null,
+    "tree_state": {
+      "clean": true,
+      "changed_count": 0,
+      "changed": []
+    },
+    "runner": "match/runner.py first-party",
+    "runner_version": "1.0.0",
+    "machine": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "processor": "AMD64 Family 25 Model 68 Stepping 1, AuthenticAMD",
+      "python": "3.13.2"
+    },
+    "chess_library": {
+      "name": "python-chess",
+      "version": "1.11.2",
+      "license": "GPL-3.0+"
+    },
+    "sprt": "sprt"
+  },
+  "games": [
+    {
+      "experiment_id": "P4-SMOKE-004",
+      "game_id": 1,
+      "opening_id": "core-01-a",
+      "opening_structure": "open",
+      "opening_plies": 0,
+      "baseline_engine": "P3C-BASE",
+      "candidate_engine": "P4-NO-LMR",
+      "baseline_white": true,
+      "white_engine": "P3C-BASE",
+      "black_engine": "P4-NO-LMR",
+      "baseline_commit": "760b2e0",
+      "candidate_commit": "7dc3234",
+      "control": "depth 4",
+      "hash_mb": 16,
+      "threads": 1,
+      "result": "0-1",
+      "termination": "checkmate",
+      "candidate_score": 1.0,
+      "plies": 148,
+      "moves_played": 148,
+      "elapsed_s": 7.784,
+      "is_chess_result": true,
+      "is_failure": false,
+      "error": null,
+      "pgn": "P4-SMOKE-004-0001.pgn"
+    },
+    {
+      "experiment_id": "P4-SMOKE-004",
+      "game_id": 2,
+      "opening_id": "core-01-a",
+      "opening_structure": "open",
+      "opening_plies": 0,
+      "baseline_engine": "P3C-BASE",
+      "candidate_engine": "P4-NO-LMR",
+      "baseline_white": false,
+      "white_engine": "P4-NO-LMR",
+      "black_engine": "P3C-BASE",
+      "baseline_commit": "760b2e0",
+      "candidate_commit": "7dc3234",
+      "control": "depth 4",
+      "hash_mb": 16,
+      "threads": 1,
+      "result": "1-0",
+      "termination": "checkmate",
+      "candidate_score": 1.0,
+      "plies": 111,
+      "moves_played": 111,
+      "elapsed_s": 4.891,
+      "is_chess_result": true,
+      "is_failure": false,
+      "error": null,
+      "pgn": "P4-SMOKE-004-0002.pgn"
+    },
+    {
+      "experiment_id": "P4-SMOKE-004",
+      "game_id": 3,
+      "opening_id": "core-01-b",
+      "opening_structure": "open",
+      "opening_plies": 8,
+      "baseline_engine": "P3C-BASE",
+      "candidate_engine": "P4-NO-LMR",
+      "baseline_white": true,
+      "white_engine": "P3C-BASE",
+      "black_engine": "P4-NO-LMR",
+      "baseline_commit": "760b2e0",
+      "candidate_commit": "7dc3234",
+      "control": "depth 4",
+      "hash_mb": 16,
+      "threads": 1,
+      "result": "0-1",
+      "termination": "checkmate",
+      "candidate_score": 1.0,
+      "plies": 122,
+      "moves_played": 114,
+      "elapsed_s": 7.607,
+      "is_chess_result": true,
+      "is_failure": false,
+      "error": null,
+      "pgn": "P4-SMOKE-004-0003.pgn"
+    },
+    {
+      "experiment_id": "P4-SMOKE-004",
+      "game_id": 4,
+      "opening_id": "core-01-b",
+      "opening_structure": "open",
+      "opening_plies": 8,
+      "baseline_engine": "P3C-BASE",
+      "candidate_engine": "P4-NO-LMR",
+      "baseline_white": false,
+      "white_engine": "P4-NO-LMR",
+      "black_engine": "P3C-BASE",
+      "baseline_commit": "760b2e0",
+      "candidate_commit": "7dc3234",
+      "control": "depth 4",
+      "hash_mb": 16,
+      "threads": 1,
+      "result": "0-1",
+      "termination": "checkmate",
+      "candidate_score": 0.0,
+      "plies": 94,
+      "moves_played": 86,
+      "elapsed_s": 5.269,
+      "is_chess_result": true,
+      "is_failure": false,
+      "error": null,
+      "pgn": "P4-SMOKE-004-0004.pgn"
+    }
+  ],
+  "summary": {
+    "chess_results": 4,
+    "infrastructure_failures": 0,
+    "failures_by_termination": {},
+    "colour_balance": {
+      "baseline_white": 2,
+      "candidate_white": 2
+    },
+    "candidate_wins": 3,
+    "draws": 0,
+    "baseline_wins": 1,
+    "total_games": 4,
+    "score": 0.75,
+    "elo_estimate": 190.848501887865,
+    "sprt": {
+      "elo0": 0.0,
+      "elo1": 5.0,
+      "alpha": 0.05,
+      "beta": 0.05,
+      "games": 4,
+      "wins": 3,
+      "draws": 0,
+      "losses": 1,
+      "decisive_games": 4,
+      "draw_rate": 0.0,
+      "score": 0.75,
+      "elo_estimate": 190.848501887865,
+      "llr": 0.028368117169302945,
+      "upper_boundary": 2.9444389791664403,
+      "lower_boundary": -2.9444389791664403,
+      "decision": "inconclusive",
+      "status": "inconclusive: continue"
+    },
+    "terminations": {
+      "checkmate": 4
+    },
+    "by_opening": {
+      "core-01-a": {
+        "w": 2,
+        "d": 0,
+        "l": 0
+      },
+      "core-01-b": {
+        "w": 1,
+        "d": 0,
+        "l": 1
+      }
+    }
+  }
+}

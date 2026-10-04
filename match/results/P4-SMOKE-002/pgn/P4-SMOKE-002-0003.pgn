@@ -1,0 +1,24 @@
+[Event "P4-SMOKE-002"]
+[Site "PocketChess local match"]
+[Date "2026.10.04"]
+[Round "3"]
+[White "P3C-BASE"]
+[Black "P4-NO-RAZOR"]
+[Result "1/2-1/2"]
+[FEN "rnbqkb1r/pp2pppp/3p1n2/8/3NP3/8/PPP2PPP/RNBQKB1R w KQkq - 1 5"]
+[SetUp "1"]
+[Opening "core-01-b"]
+
+5. Nc3 e5 6. Bb5+ Bd7 7. Bxd7+ Qxd7 8. Nb3 Qc6 9. Qf3 a5 10. Bg5 a4 11. Nd2
+Nbd7 12. O-O h6 13. Bxf6 Nxf6 14. b3 Rc8 15. Ndb1 b5 16. a3 axb3 17. cxb3 Be7
+18. h3 O-O 19. Rd1 g6 20. Qe3 Kh7 21. b4 Qa8 22. a4 Rfd8 23. g3 Nxe4 24. Nxe4
+d5 25. Nc5 f6 26. Ne6 d4 27. Qa3 Rd6 28. Nc5 Rd5 29. axb5 Qxa3 30. Rxa3 Bxc5
+31. bxc5 Rcxc5 32. b6 Rb5 33. Ra7+ Kg8 34. Ra8+ Kf7 35. Ra7+ Ke6 36. b7 Rd7 37.
+Ra6+ Kf7 38. Nc3 Rbxb7 39. Ne4 f5 40. Nc5 Rdc7 41. Nd3 Rb5 42. Nxe5+ Rxe5 43.
+Rxd4 Re6 44. Ra8 Re1+ 45. Kg2 Re2 46. Rd6 Rcc2 47. Rd3 Rxf2+ 48. Kg1 Rg2+ 49.
+Kf1 Rgf2+ 50. Kg1 h5 51. Ra7+ Ke6 52. Ra6+ Ke5 53. Rxg6 Rg2+ 54. Kf1 Rh2 55.
+Kg1 Rxh3 56. Rd7 Rhh2 57. Rgg7 Rhg2+ 58. Kf1 Rgf2+ 59. Kg1 f4 60. gxf4+ Rxf4
+61. Rge7+ Kf6 62. Rf7+ Ke5 63. Rde7+ Kd6 64. Rd7+ Kc5 65. Rxf4 Re2 66. Rh7 Re5
+67. Rh4 Rg5+ 68. Kh2 Kd6 69. R4xh5 Rxh5+ 70. Rxh5 Kc6 71. Kg3 Kb6 72. Kf4 Ka6
+73. Rh1 Ka5 74. Ra1+ Kb4 75. Rb1+ Ka3 76. Ra1+ Kb2 77. Rb1+ Kxb1 1/2-1/2
+

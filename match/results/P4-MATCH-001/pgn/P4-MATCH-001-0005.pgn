@@ -1,0 +1,20 @@
+[Event "P4-MATCH-001"]
+[Site "PocketChess local match"]
+[Date "2026.10.04"]
+[Round "5"]
+[White "P3C-BASE"]
+[Black "P4-FINAL"]
+[Result "1-0"]
+[FEN "r1bqk2r/1pppbppp/p1n2n2/4p3/B3P3/5N2/PPPP1PPP/RNBQ1RK1 w kq - 4 6"]
+[SetUp "1"]
+[Opening "core-01-c"]
+
+6. Nc3 b5 7. Bb3 b4 8. Nd5 Nxe4 9. Qe2 Nc5 10. Nxe5 Nxb3 11. axb3 Bb7 12. Nd3
+Nd4 13. Qxe7+ Qxe7 14. Nxe7 Nxc2 15. Ra4 Kxe7 16. Nxb4 Nd4 17. Re1+ Kf8 18.
+Nxa6 Nxb3 19. Nxc7 Rc8 20. Rc4 Bc6 21. Nd5 Ra8 22. Nc7 Rc8 23. Nb5 Ra8 24. Na3
+Na1 25. b4 Nb3 26. Re3 Nxc1 27. Rxc1 Rb8 28. b5 Bb7 29. Rc7 d6 30. Nc4 Ra8 31.
+Re1 Bd5 32. Nb6 g6 33. Nxd5 Ra5 34. Nc3 Kg7 35. b6 Re8 36. Rf1 Rb8 37. Rb1 Rxb6
+38. Rxb6 Ra1+ 39. Nb1 h6 40. d4 d5 41. Rc5 Kg8 42. h4 Kg7 43. g3 h5 44. Rxd5
+Ra7 45. Rd8 Rc7 46. Nd2 Rc1+ 47. Kg2 Rd1 48. Nf3 Rc1 49. d5 Rd1 50. d6 Rd3 51.
+d7 Rd5 52. Ng5 Rd2 53. Rbb8 Rxd7 54. Rxd7 Kh6 55. Rg8 f6 56. Rh7# 1-0
+

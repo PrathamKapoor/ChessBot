@@ -1,0 +1,19 @@
+[Event "P4-SMOKE-003"]
+[Site "PocketChess local match"]
+[Date "2026.10.04"]
+[Round "2"]
+[White "P4-NO-LMR"]
+[Black "P3C-BASE"]
+[Result "1-0"]
+[Opening "core-01-a"]
+
+1. Nc3 Nc6 2. d4 d5 3. Bf4 Bf5 4. e3 e6 5. h3 h6 6. Nf3 Nf6 7. Bd3 Bd6 8. Bxf5
+exf5 9. Be5 Be7 10. O-O O-O 11. Qd3 g6 12. Qb5 Nxe5 13. dxe5 c6 14. Qxb7 Qd7
+15. Qxd7 Nxd7 16. g3 Rfe8 17. Rad1 Rac8 18. Nxd5 cxd5 19. Rxd5 Nxe5 20. Nxe5
+Rxc2 21. Rd7 Rxb2 22. a4 a6 23. Rc1 Ra2 24. Rcc7 Kf8 25. Nc6 Rxa4 26. Nxe7 Ra1+
+27. Kg2 Kg7 28. Rc6 Ra2 29. h4 h5 30. Kf3 Rb8 31. Rxg6+ fxg6 32. Nc6+ Kf6 33.
+Nxb8 a5 34. Rd6+ Kg7 35. Nc6 a4 36. Ne5 Kh7 37. Nxg6 a3 38. Ra6 Rb2 39. Nf4 a2
+40. Nxh5 Kh8 41. Nf6 Kg7 42. Nd5 Rc2 43. Nb4 f4 44. Nxc2 fxe3 45. fxe3 Kf7 46.
+h5 a1=N 47. Nxa1 Kg7 48. h6+ Kh7 49. e4 Kg8 50. e5 Kh7 51. g4 Kg8 52. e6 Kh8
+53. Ra7 Kg8 54. g5 Kf8 55. h7 Ke8 56. h8=R# 1-0
+

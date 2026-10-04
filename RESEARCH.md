@@ -1106,3 +1106,92 @@ has no practical impact on playing strength.
 The `capturesOnly` bug is fixed in the Phase 4 baseline. The fix is verified
 to not change the searched tree (node counts are identical with and without
 the fix on the benchmark suite).
+
+## Phase 4: search strength improvements
+
+### P4-BASELINE
+
+    commit   7dc3234 (Disable LMR after match showed it loses strength)
+    gcc      g++ 15.1.0 (MSYS2 UCRT64)
+    flags    -std=c++20 -O3 -DNDEBUG -mavx2 -mbmi -mbmi2 -mpopcnt -funroll-loops
+    CPU      AMD Ryzen 7 7435HS, 8 cores, 3.1 GHz nominal
+    Hash     16 MB (1,048,576 entries), 1 thread
+    depth    4, 5, 6 over the nine benchmark positions
+    suite    match/suite_core-01.txt (12 openings)
+
+### Feature experiments
+
+| Feature | Nodes at d5 | Change | Match result | Decision |
+| --- | --- | --- | --- | --- |
+| PVS | 851,078 -> 291,829 | -65.7% | not yet match-tested alone | **accepted** |
+| Aspiration | 291,829 -> 264,577 | -9.4% | not yet match-tested alone | **accepted** |
+| Null move | 264,577 -> 216,586 | -18.1% | not yet match-tested alone | **accepted** |
+| LMR | 216,586 -> 89,423 | -58.7% | 0.1250 (smoke match) | **rejected** |
+| Razoring | 89,423 -> 65,689 | -26.5% | not yet match-tested alone | **accepted** |
+| RFP | 65,689 -> 58,590 | -10.8% | 0.7500 (smoke match, same as without RFP) | **accepted** |
+
+Combined accepted features: PVS + aspiration + null move + razoring + RFP.
+Depth-5 benchmark: 58,590 nodes (down from 851,078, -93.1%).
+
+### LMR rejection
+
+LMR reduced quiet moves at index >= 3 by one ply with a null window, and only
+re-searched when the reduced score beat alpha. In practice the reduced search
+almost always failed low (5,428 reductions, only 20 re-searches), so nearly
+every quiet move was pruned at reduced depth and never re-searched. A 4-game
+smoke match against the Phase 3C baseline scored 0.1250 with LMR on versus
+0.7500 with it off. The reduction heuristic needs more work (continuation
+history, more nuanced depth/index formula, and possibly verification from the
+parent node) before it is safe to enable.
+
+### Check extension ablation
+
+With check extension: 65,689 nodes at depth 5. Without check extension:
+56,974 nodes. The extension costs 15.3% more nodes. This is not evidence that
+removing it is better — it searches less because it sees less. Judging by
+playing strength requires a match with and without the extension.
+
+### P4-MATCH-001: combined Phase 4 vs Phase 3C baseline
+
+    baseline  760b2e0 (Phase 3C)
+    candidate 7dc3234 (PVS+aspiration+nullmove+razoring+RFP)
+    control   fixed depth 4, hash 16MB, threads 1, 12 games
+    suite     match/suite_core-01.txt (12 openings, played once each)
+
+Result: 6 wins, 3 draws, 3 losses, score 0.6250, Elo estimate +88.74,
+SPRT inconclusive (continue). All games completed with no infrastructure
+failures.
+
+### Correctness after Phase 4
+
+| gate | result |
+| --- | --- |
+| BITBOARD | OK |
+| GEOMETRY | OK |
+| EVAL | OK (152 checks) |
+| TT | OK (5147 checks) |
+| SEARCH | OK (320 checks) |
+| TACTICAL | OK (28 checks) |
+| depth-5 benchmark | 58,590 nodes |
+| build | warning-free |
+
+### Bugs found during Phase 4
+
+1. **`captureOrPromotion` checked after `doMove` in LMR**: the LMR condition
+   used `!pos.captureOrPromotion(m)` after `pos.doMove(m)`, which always
+   returns false because the destination square holds a piece after the move.
+   LMR therefore never triggered. Fixed by checking before `doMove`. After the
+   fix, LMR triggered 5,428 times — and was rejected by match results.
+2. **`capturesOnly` flag in `addPawnMoves` was accepted but never used**:
+   quiet pawn pushes were still generated in captures-only mode. Fixed in
+   commit 39336b1. The fix is verified to preserve node counts on the
+   benchmark suite.
+
+### Known limitations after Phase 4
+
+  * The 12-game match is too small for a statistically significant strength
+    claim. A larger SPRT match (hundreds of decisive games) is needed.
+  * LMR was rejected but not investigated further. A more careful LMR
+    implementation with verification search would be worth revisiting.
+  * No cube/NNUE/self-play work has started. The classical engine is the
+    experimental baseline.

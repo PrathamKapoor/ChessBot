@@ -1,0 +1,16 @@
+[Event "P4-SMOKE-001"]
+[Site "PocketChess local match"]
+[Date "2026.10.04"]
+[Round "4"]
+[White "P4-CAND"]
+[Black "P3C-BASE"]
+[Result "0-1"]
+[FEN "rnbqkb1r/pp2pppp/3p1n2/8/3NP3/8/PPP2PPP/RNBQKB1R w KQkq - 1 5"]
+[SetUp "1"]
+[Opening "core-01-b"]
+
+5. Nc3 e5 6. Nf3 Be6 7. Ng5 d5 8. Nxe6 fxe6 9. f3 Bb4 10. Bd3 d4 11. a3 Qa5 12.
+Rb1 Bd6 13. Bd2 dxc3 14. bxc3 Qc7 15. h3 O-O 16. O-O Bxa3 17. c4 Bc5+ 18. Kh2
+a5 19. f4 Nc6 20. g3 g6 21. Rb5 Nd4 22. fxe5 Nh5 23. Rxf8+ Rxf8 24. Rxa5 Rf2+
+25. Kg1 Ne2+ 26. Bxe2 Rxe2+ 27. Rxc5 Qxc5+ 28. Be3 Qxe3+ 29. Kf1 Nxg3# 0-1
+
