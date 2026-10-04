@@ -1107,6 +1107,65 @@ The `capturesOnly` bug is fixed in the Phase 4 baseline. The fix is verified
 to not change the searched tree (node counts are identical with and without
 the fix on the benchmark suite).
 
+### Divergence classification (final)
+
+The divergence between `304e22d` and `da0654a+fix` on the ply-98 position is
+classified as **D. search-order difference that changes the explored tree but
+not semantics**:
+
+  * The evaluator is confirmed identical (FNV-1a hash `88b76e15bc978056` at
+    depth 4, covering every position within 4 plies of the divergent position).
+  * With qsearch disabled, both engines produce identical scores, best moves,
+    and node counts at every depth from 1 to 8.
+  * With qsearch enabled and TT disabled, the engines still diverge at depth 4
+    (baseline -2429, candidate -2431). This proves the difference is not a TT
+    state effect.
+  * With TT disabled and qsearch enabled, the TT cannot influence the
+    divergence. The only remaining difference is the move array layout inside
+    qsearch: the old code generates ALL pseudo-legal moves and then filters
+    them by `captureOrPromotion()` in the compacting step, while the new code
+    generates ONLY captures and promotions directly. After compaction the
+    searched move SET is identical, but the selection sort in qsearch
+    tie-breaks among equal-scoring captures differently because the input
+    array has a different layout. This changes the order in which captures
+    are searched, which changes which alpha-beta cutoffs occur, which changes
+    the returned bound at depth 4.
+  * This is not a semantic bug: the set of legal moves and the evaluator are
+    identical. It is a deterministic search-order difference. The two
+    configurations explore different trees and therefore can return different
+    bounds at shallow depths. At greater depths (where the tree is deep
+    enough that the ordering does not matter), the scores converge.
+
+This is **not** a reason to block Phase 5. The two configurations have
+semantically equivalent search; they differ only in qsearch move ordering,
+which is a known and accepted source of variation in alpha-beta engines.
+
+## Phase 5A: classical baseline freeze and SPRT confirmation
+
+### Frozen classical baseline
+
+    name     PocketChess-Classical-Baseline
+    commit   729923c
+    search   fail-soft negamax + alpha-beta + TT + SEE ordering + killers
+             + history + qsearch + iterative deepening + PVS + aspiration
+             + null move (R=2) + razoring + RFP + check extension
+    LMR      disabled (rejected in Phase 4)
+    eval     tapered classical (unchanged from Phase 3B)
+    TT       16 MB, 1 thread
+    build    g++ 15.1.0, -O3 -DNDEBUG -mavx2 -mbmi2 -mpopcnt -funroll-loops
+    CPU      AMD Ryzen 7 7435HS
+
+### SPRT confirmation match
+
+Comparing the frozen Phase 4 engine against the Phase 3C baseline
+(`760b2e0`) to confirm that Phase 4's changes improve strength.
+
+Configuration: fixed depth 4, hash 16 MB, 1 thread, core-01 suite,
+balanced colours (interleaved), max 200 plies per game, 60s hard timeout.
+SPRT: elo0=0, elo1=5, alpha=beta=0.05.
+
+Running 100 games. The runner stops early if SPRT reaches a boundary.
+
 ## Phase 4: search strength improvements
 
 ### P4-BASELINE
