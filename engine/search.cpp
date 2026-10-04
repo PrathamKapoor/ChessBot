@@ -34,6 +34,16 @@ uint64_t nowMs() {
   return uint64_t(duration_cast<milliseconds>(steady_clock::now().time_since_epoch()).count());
 }
 
+// True when the side to move has at least one non-pawn, non-king piece. This
+// is the cheap zugzwang guard: in king-and-pawn endgames null move is unsafe,
+// but with minor pieces on the board the side to move almost always has a
+// useful move, so passing is a safe assumption.
+bool hasNonPawnPieces(const Position& pos) {
+  const Color c = pos.sideToMove();
+  return pos.pieces(c, kKnight) || pos.pieces(c, kBishop) ||
+         pos.pieces(c, kRook) || pos.pieces(c, kQueen);
+}
+
 // Maximum value the history table may reach. History is a heuristic, so letting
 // it grow without bound would let early searches permanently dominate ordering
 // in a later search, and would eventually overflow the int.
@@ -56,6 +66,7 @@ void Search::resetSearchState() {
   stats_ = SearchStats{};
   seldepth_ = 0;
   aborted_ = false;
+  lastMoveWasNull_ = false;
   prevScore = kValueNone;
   std::memset(pvLength_, 0, sizeof(pvLength_));
   if (opts_.useTT) {
@@ -515,6 +526,26 @@ int Search::negamax(Position& pos, int depth, int alpha, int beta, int ply) {
   if (depth <= 0) {
     if (!opts_.useQsearch) return evaluate(pos);
     return qsearch(pos, alpha, beta, ply);
+  }
+
+  // Null move pruning: if passing and giving the opponent two moves in a row
+  // still leaves us ahead, the position is so good that no real move can
+  // fail. Only tried when not in check, with enough depth left, and when the
+  // side to move has non-pawn material (the cheap zugzwang guard).
+  if (opts_.useNullMove && ply > 0 && !inCheck && depth > 3 &&
+      hasNonPawnPieces(pos) && !lastMoveWasNull_) {
+    if constexpr (kInstrumented) ++stats_.nullMoveAttempts;
+    pos.doNullMove();
+    lastMoveWasNull_ = true;
+    const int score = -negamax(pos, depth - 3, -beta, -beta + 1, ply + 1);
+    lastMoveWasNull_ = false;
+    pos.undoNullMove();
+    if (score >= beta) {
+      if constexpr (kInstrumented) ++stats_.nullMoveCutoffs;
+      // A null-move cutoff score is a valid lower bound: the opponent can
+      // only do better by passing, so the true score is at least this.
+      return score;
+    }
   }
 
   Move moves[256];

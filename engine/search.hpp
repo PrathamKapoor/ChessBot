@@ -100,6 +100,10 @@ struct SearchOptions {
   // Aspiration windows: use the previous iteration's score to narrow the
   // search window, with fail-low/fail-high recovery.
   bool useAspiration = true;
+  // Null move pruning: if passing still leaves the position strong enough to
+  // beat beta, the opponent cannot save themselves. Conservative baseline:
+  // R=2, only when not in check and with non-pawn material on the board.
+  bool useNullMove = true;
   int ttSizeMB = 16;
 };
 
@@ -163,6 +167,8 @@ struct SearchStats {
   uint64_t betaCutoffs = 0;
   uint64_t firstMoveCutoffs = 0;
   uint64_t checkExtensions = 0;
+  uint64_t nullMoveAttempts = 0;
+  uint64_t nullMoveCutoffs = 0;
 
   // Quiescence pipeline decomposition. Counts rather than timings: to turn these
   // into a cost breakdown each operation's standalone cost is measured separately
@@ -309,6 +315,7 @@ class Search {
   SearchStats stats_;
   int seldepth_ = 0;
   bool aborted_ = false;
+  bool lastMoveWasNull_ = false;
   int prevScore = kValueNone;  // marks "no previous score" for aspiration
 
   // Principal variation, stored as a triangular table rather than re-derived
