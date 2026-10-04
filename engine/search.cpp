@@ -56,6 +56,7 @@ void Search::resetSearchState() {
   stats_ = SearchStats{};
   seldepth_ = 0;
   aborted_ = false;
+  prevScore = kValueNone;
   std::memset(pvLength_, 0, sizeof(pvLength_));
   if (opts_.useTT) {
     tt_.clear();
@@ -394,7 +395,7 @@ int Search::qsearch(Position& pos, int alpha, int beta, int ply) {
 
 // --- Main search ------------------------------------------------------------
 
-int Search::searchRoot(Position& pos, int depth) {
+int Search::searchRoot(Position& pos, int depth, int alpha, int beta) {
   pvLength_[0] = 0;
 
   Move moves[256];
@@ -416,7 +417,7 @@ int Search::searchRoot(Position& pos, int depth) {
 
   int best = -kValueInfinity;
   rootBest_ = kMoveNone;
-  int rootAlpha = -kValueInfinity;
+  int rootAlpha = alpha;
 
   for (int i = 0; i < count; ++i) {
     int bestIdx = i;
@@ -435,10 +436,10 @@ int Search::searchRoot(Position& pos, int depth) {
       score = -negamax(pos, depth - 1, -rootAlpha - 1, -rootAlpha, 1);
       if (score > rootAlpha && !aborted_) {
         // It might be the PV move, so re-search with a full window.
-        score = -negamax(pos, depth - 1, -kValueInfinity, -rootAlpha, 1);
+        score = -negamax(pos, depth - 1, -beta, -rootAlpha, 1);
       }
     } else {
-      score = -negamax(pos, depth - 1, -kValueInfinity, kValueInfinity, 1);
+      score = -negamax(pos, depth - 1, -beta, -rootAlpha, 1);
     }
     pos.undoMove(m);
 
@@ -642,8 +643,31 @@ SearchResult Search::search(const SearchLimits& limits) {
 
   for (int depth = 1; depth <= maxDepth; ++depth) {
     aborted_ = false;
-    const int score = searchRoot(root_, depth);
+    int alpha = -kValueInfinity;
+    int beta = kValueInfinity;
+    if (opts_.useAspiration && depth > 1 && prevScore != kValueNone) {
+      // Use the previous iteration's score to narrow the window. A fixed
+      // margin of 25 cp is a common starting point; the fail-low/fail-high
+      // recovery below widens it gradually.
+      alpha = prevScore - 25;
+      beta = prevScore + 25;
+    }
+    int score = searchRoot(root_, depth, alpha, beta);
+
+    // Fail-low: the true score is at or below alpha. Widen the window
+    // downward and re-search to recover the exact score.
+    if (opts_.useAspiration && depth > 1 && score <= alpha && !aborted_) {
+      score = searchRoot(root_, depth, -kValueInfinity, beta);
+    }
+    // Fail-high: the true score is at or above beta. Widen the window
+    // upward and re-search to recover the exact score. A score that still
+    // fails high after widening is a valid lower bound and needs no further
+    // recovery: the engine will prefer this line because it scores well.
+    if (opts_.useAspiration && depth > 1 && score >= beta && !aborted_) {
+      score = searchRoot(root_, depth, alpha, kValueInfinity);
+    }
     const bool completed = !aborted_;
+    if (completed) prevScore = score;
 
     if (completed) {
       // Remember the answer only from an iteration that finished to the end.

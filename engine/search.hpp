@@ -97,6 +97,9 @@ struct SearchOptions {
   // result beats alpha. Present as an option so the node-count effect can be
   // attributed by measurement rather than assumed.
   bool usePVS = true;
+  // Aspiration windows: use the previous iteration's score to narrow the
+  // search window, with fail-low/fail-high recovery.
+  bool useAspiration = true;
   int ttSizeMB = 16;
 };
 
@@ -249,7 +252,7 @@ class Search {
                   Move ttMove, int ply);
   void scoreQuiescenceMoves(const Position& pos, Move* moves, int count, int* scores);
 
-  int searchRoot(Position& pos, int depth);
+  int searchRoot(Position& pos, int depth, int alpha, int beta);
   void extractPv(std::vector<Move>& pv) const;
 
   void resetSearchState();
@@ -306,6 +309,7 @@ class Search {
   SearchStats stats_;
   int seldepth_ = 0;
   bool aborted_ = false;
+  int prevScore = kValueNone;  // marks "no previous score" for aspiration
 
   // Principal variation, stored as a triangular table rather than re-derived
   // from the transposition table, so it is correct even when the TT is off.
