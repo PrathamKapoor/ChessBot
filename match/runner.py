@@ -181,9 +181,11 @@ def run_one_game(cfg, opening, baseline_white, game_id, pgn_dir, verbose=False):
     white_name = cfg["baseline_name"] if baseline_white else cfg["candidate_name"]
     black_name = cfg["candidate_name"] if baseline_white else cfg["baseline_name"]
 
-    white_engine = UciEngine(white_path, white_name, cfg["options"], log,
+    white_opts = cfg["baseline_options"] if baseline_white else cfg["candidate_options"]
+    black_opts = cfg["candidate_options"] if baseline_white else cfg["baseline_options"]
+    white_engine = UciEngine(white_path, white_name, white_opts, log,
                              cfg["launch_args"].get(white_name))
-    black_engine = UciEngine(black_path, black_name, cfg["options"], log,
+    black_engine = UciEngine(black_path, black_name, black_opts, log,
                              cfg["launch_args"].get(black_name))
 
     termination = None
@@ -326,6 +328,10 @@ def main():
                     help="extra launch arguments for the candidate")
     ap.add_argument("--setoption", action="append", default=[],
                     help="engine option, e.g. 'name Hash value 16'")
+    ap.add_argument("--candidate-setoption", action="append", default=[],
+                    help="engine option passed only to the candidate")
+    ap.add_argument("--baseline-setoption", action="append", default=[],
+                    help="engine option passed only to the baseline")
     ap.add_argument("--elo0", type=float, default=0.0)
     ap.add_argument("--elo1", type=float, default=5.0)
     ap.add_argument("--alpha", type=float, default=0.05)
@@ -359,7 +365,8 @@ def main():
         control_desc = (f"clock {args.base_seconds}s+{args.inc_seconds}s "
                         f"mtg {args.movestogo}")
 
-    options = list(args.setoption) + [f"name Hash value {args.hash_mb}"]
+    baseline_options = list(args.setoption) + [f"name Hash value {args.hash_mb}"] + list(args.baseline_setoption)
+    candidate_options = list(args.setoption) + [f"name Hash value {args.hash_mb}"] + list(args.candidate_setoption)
 
     cfg = {
         "baseline": args.baseline,
@@ -371,7 +378,7 @@ def main():
         "control_desc": control_desc,
         "base_seconds": args.base_seconds,
         "hash_mb": args.hash_mb,
-        "options": options,
+        "options": candidate_options,
         "max_plies": args.max_plies,
         "hard_timeout_per_move": args.hard_timeout_per_move,
         "launch_args": {
@@ -384,6 +391,8 @@ def main():
         "candidate_build": args.candidate_build,
         "tree_state": git_tree_state(args.repo, ignore_dirs=(root_dir,)),
     }
+    cfg["baseline_options"] = baseline_options
+    cfg["candidate_options"] = candidate_options
 
     # The candidate may be a binary built from a different commit, in which case
     # its commit is recorded explicitly. Otherwise both are the current tree.
@@ -457,7 +466,7 @@ def main():
             "control": control_desc,
             "hash_mb": args.hash_mb,
             "threads": 1,
-            "options": options,
+            "options": candidate_options,
             "max_plies": args.max_plies,
             "hard_timeout_per_move_s": args.hard_timeout_per_move,
         },

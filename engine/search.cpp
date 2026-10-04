@@ -1,4 +1,5 @@
 #include "search.hpp"
+#include "../nnue/evaluation_bridge.hpp"
 
 #include <algorithm>
 #include <chrono>
@@ -100,7 +101,7 @@ int Search::negamaxReference(Position& pos, int depth, int alpha, int beta, int 
 
   // Depth zero evaluates. There is no quiescence search here on purpose: the
   // reference must be the simplest thing that could work.
-  if (depth <= 0) return evaluate(pos);
+  if (depth <= 0) return evalPosition(pos);
 
   Move moves[256];
   int count = 0;
@@ -307,7 +308,7 @@ int Search::qsearch(Position& pos, int alpha, int beta, int ply) {
     best = -kValueInfinity;
   } else {
     countQ(true, &SearchStats::qEvalCalls);
-    best = evaluate(pos);
+    best = evalPosition(pos);
     if (best >= beta) return best;  // fail-soft: beta is a lower bound we beat
     if (best > alpha) alpha = best;
   }
@@ -524,7 +525,7 @@ int Search::negamax(Position& pos, int depth, int alpha, int beta, int ply) {
   }
 
   if (depth <= 0) {
-    if (!opts_.useQsearch) return evaluate(pos);
+    if (!opts_.useQsearch) return evalPosition(pos);
     return qsearch(pos, alpha, beta, ply);
   }
 
@@ -532,7 +533,7 @@ int Search::negamax(Position& pos, int depth, int alpha, int beta, int ply) {
   // search and drop to quiescence. The position is so bad that no quiet move
   // can rescue it, and any capture that helps is found by quiescence.
   if (opts_.useRazoring && depth == 1 && !inCheck && ply > 0) {
-    const int staticEval = evaluate(pos);
+    const int staticEval = evalPosition(pos);
     if (staticEval + 300 <= alpha) {
       return qsearch(pos, alpha, beta, ply);
     }
@@ -544,7 +545,7 @@ int Search::negamax(Position& pos, int depth, int alpha, int beta, int ply) {
   // safe because the parent will only use it for a beta cutoff.
   if (opts_.useRFP && depth <= 2 && depth >= 1 && !inCheck && ply > 0 &&
       hasNonPawnPieces(pos)) {
-    const int staticEval = evaluate(pos);
+    const int staticEval = evalPosition(pos);
     if (staticEval - (depth == 1 ? 200 : 400) >= beta) {
       return staticEval;
     }

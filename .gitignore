@@ -19,6 +19,12 @@ nets/
 *.nnue
 *.npz
 *.pt
+nnue/checkpoints/
+
+# Detached build / run logs
+build_log.txt
+build_err.txt
+match/results/_logs/
 
 # Python
 __pycache__/

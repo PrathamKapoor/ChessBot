@@ -1,0 +1,220 @@
+{
+  "experiment_id": "P6-SMOKE-002",
+  "started_utc": "2026-10-04T08:40:35.179868+00:00",
+  "finished_utc": "2026-10-04T08:40:40.801974+00:00",
+  "elapsed_s": 5.6,
+  "configuration": {
+    "suite": "match/suite_core-01.txt",
+    "openings": 12,
+    "games_requested": 4,
+    "control": "depth 3",
+    "hash_mb": 16,
+    "threads": 1,
+    "options": [
+      "name Hash value 16"
+    ],
+    "max_plies": 100,
+    "hard_timeout_per_move_s": 60.0
+  },
+  "provenance": {
+    "repo": "C:\\Projects\\ChessBot",
+    "baseline_commit": "7f9c1c985b81cbd06d7149e0ef01f9daa666232c",
+    "candidate_commit": "7f9c1c985b81cbd06d7149e0ef01f9daa666232c",
+    "baseline_binary": {
+      "path": "C:\\Projects\\ChessBot\\build\\pocketchess.exe",
+      "size_bytes": 287461,
+      "mtime": "2026-10-04T08:17:54.546837+00:00",
+      "sha256": "52eb44625d7a62e1b36c39de931f60d1ffa4e3d0824e05b94fbcc679c5c40198"
+    },
+    "candidate_binary": {
+      "path": "C:\\Projects\\ChessBot\\build\\pocketchess.exe",
+      "size_bytes": 287461,
+      "mtime": "2026-10-04T08:17:54.546837+00:00",
+      "sha256": "52eb44625d7a62e1b36c39de931f60d1ffa4e3d0824e05b94fbcc679c5c40198"
+    },
+    "baseline_build": null,
+    "candidate_build": null,
+    "tree_state": {
+      "clean": false,
+      "changed_count": 4,
+      "changed": [
+        "engine/search.cpp",
+        "engine/uci.cpp",
+        "match/runner.py",
+        "nnue/"
+      ]
+    },
+    "runner": "match/runner.py first-party",
+    "runner_version": "1.0.0",
+    "machine": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "processor": "AMD64 Family 25 Model 68 Stepping 1, AuthenticAMD",
+      "python": "3.13.2"
+    },
+    "chess_library": {
+      "name": "python-chess",
+      "version": "1.11.2",
+      "license": "GPL-3.0+"
+    },
+    "sprt": "sprt"
+  },
+  "games": [
+    {
+      "experiment_id": "P6-SMOKE-002",
+      "game_id": 1,
+      "opening_id": "core-01-a",
+      "opening_structure": "open",
+      "opening_plies": 0,
+      "baseline_engine": "CLASSICAL",
+      "candidate_engine": "CLASSICAL2",
+      "baseline_white": true,
+      "white_engine": "CLASSICAL",
+      "black_engine": "CLASSICAL2",
+      "baseline_commit": "7f9c1c985b81cbd06d7149e0ef01f9daa666232c",
+      "candidate_commit": "7f9c1c985b81cbd06d7149e0ef01f9daa666232c",
+      "control": "depth 3",
+      "hash_mb": 16,
+      "threads": 1,
+      "result": "0-1",
+      "termination": "checkmate",
+      "candidate_score": 1.0,
+      "plies": 86,
+      "moves_played": 86,
+      "elapsed_s": 1.46,
+      "is_chess_result": true,
+      "is_failure": false,
+      "error": null,
+      "pgn": "P6-SMOKE-002-0001.pgn"
+    },
+    {
+      "experiment_id": "P6-SMOKE-002",
+      "game_id": 2,
+      "opening_id": "core-01-a",
+      "opening_structure": "open",
+      "opening_plies": 0,
+      "baseline_engine": "CLASSICAL",
+      "candidate_engine": "CLASSICAL2",
+      "baseline_white": false,
+      "white_engine": "CLASSICAL2",
+      "black_engine": "CLASSICAL",
+      "baseline_commit": "7f9c1c985b81cbd06d7149e0ef01f9daa666232c",
+      "candidate_commit": "7f9c1c985b81cbd06d7149e0ef01f9daa666232c",
+      "control": "depth 3",
+      "hash_mb": 16,
+      "threads": 1,
+      "result": "0-1",
+      "termination": "checkmate",
+      "candidate_score": 0.0,
+      "plies": 86,
+      "moves_played": 86,
+      "elapsed_s": 1.5,
+      "is_chess_result": true,
+      "is_failure": false,
+      "error": null,
+      "pgn": "P6-SMOKE-002-0002.pgn"
+    },
+    {
+      "experiment_id": "P6-SMOKE-002",
+      "game_id": 3,
+      "opening_id": "core-01-b",
+      "opening_structure": "open",
+      "opening_plies": 8,
+      "baseline_engine": "CLASSICAL",
+      "candidate_engine": "CLASSICAL2",
+      "baseline_white": true,
+      "white_engine": "CLASSICAL",
+      "black_engine": "CLASSICAL2",
+      "baseline_commit": "7f9c1c985b81cbd06d7149e0ef01f9daa666232c",
+      "candidate_commit": "7f9c1c985b81cbd06d7149e0ef01f9daa666232c",
+      "control": "depth 3",
+      "hash_mb": 16,
+      "threads": 1,
+      "result": "1-0",
+      "termination": "checkmate",
+      "candidate_score": 0.0,
+      "plies": 99,
+      "moves_played": 91,
+      "elapsed_s": 1.233,
+      "is_chess_result": true,
+      "is_failure": false,
+      "error": null,
+      "pgn": "P6-SMOKE-002-0003.pgn"
+    },
+    {
+      "experiment_id": "P6-SMOKE-002",
+      "game_id": 4,
+      "opening_id": "core-01-b",
+      "opening_structure": "open",
+      "opening_plies": 8,
+      "baseline_engine": "CLASSICAL",
+      "candidate_engine": "CLASSICAL2",
+      "baseline_white": false,
+      "white_engine": "CLASSICAL2",
+      "black_engine": "CLASSICAL",
+      "baseline_commit": "7f9c1c985b81cbd06d7149e0ef01f9daa666232c",
+      "candidate_commit": "7f9c1c985b81cbd06d7149e0ef01f9daa666232c",
+      "control": "depth 3",
+      "hash_mb": 16,
+      "threads": 1,
+      "result": "1-0",
+      "termination": "checkmate",
+      "candidate_score": 1.0,
+      "plies": 99,
+      "moves_played": 91,
+      "elapsed_s": 1.39,
+      "is_chess_result": true,
+      "is_failure": false,
+      "error": null,
+      "pgn": "P6-SMOKE-002-0004.pgn"
+    }
+  ],
+  "summary": {
+    "chess_results": 4,
+    "infrastructure_failures": 0,
+    "failures_by_termination": {},
+    "colour_balance": {
+      "baseline_white": 2,
+      "candidate_white": 2
+    },
+    "candidate_wins": 2,
+    "draws": 0,
+    "baseline_wins": 2,
+    "total_games": 4,
+    "score": 0.5,
+    "elo_estimate": -0.0,
+    "sprt": {
+      "elo0": 0.0,
+      "elo1": 5.0,
+      "alpha": 0.05,
+      "beta": 0.05,
+      "games": 4,
+      "wins": 2,
+      "draws": 0,
+      "losses": 2,
+      "decisive_games": 4,
+      "draw_rate": 0.0,
+      "score": 0.5,
+      "elo_estimate": -0.0,
+      "llr": -0.00041419649312249285,
+      "upper_boundary": 2.9444389791664403,
+      "lower_boundary": -2.9444389791664403,
+      "decision": "inconclusive",
+      "status": "inconclusive: continue"
+    },
+    "terminations": {
+      "checkmate": 4
+    },
+    "by_opening": {
+      "core-01-a": {
+        "w": 1,
+        "d": 0,
+        "l": 1
+      },
+      "core-01-b": {
+        "w": 1,
+        "d": 0,
+        "l": 1
+      }
+    }
+  }
+}

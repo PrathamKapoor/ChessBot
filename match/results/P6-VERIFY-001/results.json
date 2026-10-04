@@ -1,0 +1,166 @@
+{
+  "experiment_id": "P6-VERIFY-001",
+  "started_utc": "2026-10-04T18:01:33.429799+00:00",
+  "finished_utc": "2026-10-04T18:01:44.568441+00:00",
+  "elapsed_s": 11.1,
+  "configuration": {
+    "suite": "match/suite_core-01.txt",
+    "openings": 12,
+    "games_requested": 2,
+    "control": "depth 4",
+    "hash_mb": 16,
+    "threads": 1,
+    "options": [
+      "name Hash value 16",
+      "name NnuePath value nnue/checkpoints/v2.bin"
+    ],
+    "max_plies": 60,
+    "hard_timeout_per_move_s": 60.0
+  },
+  "provenance": {
+    "repo": "C:\\Projects\\ChessBot",
+    "baseline_commit": "7f9c1c985b81cbd06d7149e0ef01f9daa666232c",
+    "candidate_commit": "7f9c1c985b81cbd06d7149e0ef01f9daa666232c",
+    "baseline_binary": {
+      "path": "C:\\Projects\\ChessBot\\build\\pocketchess.exe",
+      "size_bytes": 343788,
+      "mtime": "2026-10-04T17:55:50.873847+00:00",
+      "sha256": "767f1acb1940e137af98494e184d3a9de7a05ea684b1c162d42de2400a046fc2"
+    },
+    "candidate_binary": {
+      "path": "C:\\Projects\\ChessBot\\build\\pocketchess.exe",
+      "size_bytes": 343788,
+      "mtime": "2026-10-04T17:55:50.873847+00:00",
+      "sha256": "767f1acb1940e137af98494e184d3a9de7a05ea684b1c162d42de2400a046fc2"
+    },
+    "baseline_build": null,
+    "candidate_build": null,
+    "tree_state": {
+      "clean": false,
+      "changed_count": 7,
+      "changed": [
+        ".gitignore",
+        "RESEARCH.md",
+        "build.ps1",
+        "engine/search.cpp",
+        "engine/uci.cpp",
+        "match/runner.py",
+        "nnue/"
+      ]
+    },
+    "runner": "match/runner.py first-party",
+    "runner_version": "1.0.0",
+    "machine": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "processor": "AMD64 Family 25 Model 68 Stepping 1, AuthenticAMD",
+      "python": "3.13.2"
+    },
+    "chess_library": {
+      "name": "python-chess",
+      "version": "1.11.2",
+      "license": "GPL-3.0+"
+    },
+    "sprt": "sprt"
+  },
+  "games": [
+    {
+      "experiment_id": "P6-VERIFY-001",
+      "game_id": 1,
+      "opening_id": "core-01-a",
+      "opening_structure": "open",
+      "opening_plies": 0,
+      "baseline_engine": "CLASSICAL",
+      "candidate_engine": "NNUE-V2",
+      "baseline_white": true,
+      "white_engine": "CLASSICAL",
+      "black_engine": "NNUE-V2",
+      "baseline_commit": "7f9c1c985b81cbd06d7149e0ef01f9daa666232c",
+      "candidate_commit": "7f9c1c985b81cbd06d7149e0ef01f9daa666232c",
+      "control": "depth 4",
+      "hash_mb": 16,
+      "threads": 1,
+      "result": "1-0",
+      "termination": "checkmate",
+      "candidate_score": 0.0,
+      "plies": 59,
+      "moves_played": 59,
+      "elapsed_s": 7.085,
+      "is_chess_result": true,
+      "is_failure": false,
+      "error": null,
+      "pgn": "P6-VERIFY-001-0001.pgn"
+    },
+    {
+      "experiment_id": "P6-VERIFY-001",
+      "game_id": 2,
+      "opening_id": "core-01-a",
+      "opening_structure": "open",
+      "opening_plies": 0,
+      "baseline_engine": "CLASSICAL",
+      "candidate_engine": "NNUE-V2",
+      "baseline_white": false,
+      "white_engine": "NNUE-V2",
+      "black_engine": "CLASSICAL",
+      "baseline_commit": "7f9c1c985b81cbd06d7149e0ef01f9daa666232c",
+      "candidate_commit": "7f9c1c985b81cbd06d7149e0ef01f9daa666232c",
+      "control": "depth 4",
+      "hash_mb": 16,
+      "threads": 1,
+      "result": "1/2-1/2",
+      "termination": "move_limit_reached",
+      "candidate_score": 0.5,
+      "plies": 60,
+      "moves_played": 60,
+      "elapsed_s": 4.031,
+      "is_chess_result": true,
+      "is_failure": false,
+      "error": null,
+      "pgn": "P6-VERIFY-001-0002.pgn"
+    }
+  ],
+  "summary": {
+    "chess_results": 2,
+    "infrastructure_failures": 0,
+    "failures_by_termination": {},
+    "colour_balance": {
+      "baseline_white": 1,
+      "candidate_white": 1
+    },
+    "candidate_wins": 0,
+    "draws": 1,
+    "baseline_wins": 1,
+    "total_games": 2,
+    "score": 0.25,
+    "elo_estimate": -190.84850188786498,
+    "sprt": {
+      "elo0": 0.0,
+      "elo1": 5.0,
+      "alpha": 0.05,
+      "beta": 0.05,
+      "games": 2,
+      "wins": 0,
+      "draws": 1,
+      "losses": 1,
+      "decisive_games": 1,
+      "draw_rate": 0.5,
+      "score": 0.25,
+      "elo_estimate": -190.84850188786498,
+      "llr": -0.014494705954493342,
+      "upper_boundary": 2.9444389791664403,
+      "lower_boundary": -2.9444389791664403,
+      "decision": "inconclusive",
+      "status": "inconclusive: continue"
+    },
+    "terminations": {
+      "checkmate": 1,
+      "move_limit_reached": 1
+    },
+    "by_opening": {
+      "core-01-a": {
+        "w": 0,
+        "d": 1,
+        "l": 1
+      }
+    }
+  }
+}

@@ -1,0 +1,16 @@
+[Event "P6-SPRT-002"]
+[Site "PocketChess local match"]
+[Date "2026.10.04"]
+[Round "46"]
+[White "NNUE-V2"]
+[Black "CLASSICAL"]
+[Result "0-1"]
+[FEN "r1bqk2r/ppp2ppp/2np1n2/2b1p3/2B1P3/2PP1N2/PP3PPP/RNBQK2R w KQkq - 2 6"]
+[SetUp "1"]
+[Opening "core-01-k"]
+
+6. O-O Bb6 7. Bxf7+ Kxf7 8. Qb3+ d5 9. Kh1 h6 10. Qxd5+ Nxd5 11. Rd1 Nf6 12.
+Be3 Nxe4 13. Nd4 Nc5 14. Nxc6 bxc6 15. Bxc5 Bxc5 16. c4 e4 17. h3 Bxf2 18. Nc3
+e3 19. b3 Qh4 20. Nd5 Bxh3 21. Nf4 Bg4+ 22. Nh3 Bf3 23. Kh2 Qg3+ 24. Kh1 Bxg2#
+0-1
+

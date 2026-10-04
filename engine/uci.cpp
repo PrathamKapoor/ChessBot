@@ -1,6 +1,7 @@
 #include "uci.hpp"
 
 #include <algorithm>
+#include <iostream>
 #include <istream>
 #include <ostream>
 #include <sstream>
@@ -8,6 +9,7 @@
 #include "evaluate.hpp"
 #include "movegen.hpp"
 #include "tt.hpp"
+#include "../nnue/evaluation_bridge.hpp"
 
 namespace pocket {
 
@@ -256,6 +258,20 @@ void UciEngine::runSearch(const SearchLimits& limits, std::ostream& out) {
     best = n > 0 ? buf[0] : kMoveNone;
   }
 
+  if (g_useNnue) {
+    std::cerr << "NNUEstats calls=" << g_nnueEvalCalls
+              << " evalms=" << (g_nnueEvalNs / 1000000.0)
+              << " featms=" << (g_nnueFeatNs / 1000000.0)
+              << " inferms=" << (g_nnueInferNs / 1000000.0)
+              << " ftms=" << (g_ftNs / 1000000.0)
+              << " fcms=" << (g_fcNs / 1000000.0) << "\n";
+    g_nnueEvalCalls = 0;
+    g_nnueEvalNs = 0;
+    g_nnueFeatNs = 0;
+    g_nnueInferNs = 0;
+    g_ftNs = 0;
+    g_fcNs = 0;
+  }
   emitInfo(out, r);
   out << "bestmove " << moveToUci(best) << "\n";
   out.flush();
@@ -384,6 +400,15 @@ bool UciEngine::execute(const std::string& line, std::ostream& out) {
       if (mb < 1) mb = 1;
       if (mb > 1024) mb = 1024;
       options_.ttSizeMB = mb;
+    }
+    if (name == "NnuePath") {
+      // Load a NNUE network from a file path.
+      if (loadGlobalNnue(value)) {
+        g_useNnue = true;
+      }
+    }
+    if (name == "UseNnue") {
+      g_useNnue = (value == "true" || value == "1");
     }
     return true;
   }

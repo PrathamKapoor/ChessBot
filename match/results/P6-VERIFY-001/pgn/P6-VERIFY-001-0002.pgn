@@ -1,0 +1,15 @@
+[Event "P6-VERIFY-001"]
+[Site "PocketChess local match"]
+[Date "2026.10.04"]
+[Round "2"]
+[White "NNUE-V2"]
+[Black "CLASSICAL"]
+[Result "1/2-1/2"]
+[Opening "core-01-a"]
+
+1. c3 Nf6 2. h3 e6 3. Qc2 Bd6 4. Nf3 Nc6 5. a4 h6 6. d3 O-O 7. e4 b6 8. a5 bxa5
+9. d4 Be7 10. e5 Nd5 11. Bd3 Re8 12. Bxh6 gxh6 13. O-O Nf4 14. Kh1 Nxd3 15.
+Qxd3 d6 16. d5 dxe5 17. dxc6 Qxd3 18. Nbd2 e4 19. Kh2 exf3 20. Nxf3 a4 21. Ne5
+Qb5 22. Nxf7 Kxf7 23. Rfe1 Bd6+ 24. Kh1 Qxc6 25. Rg1 e5 26. b3 axb3 27. Rge1 b2
+28. h4 Qxc3 29. Rad1 e4 30. Rxe4 Rxe4 1/2-1/2
+

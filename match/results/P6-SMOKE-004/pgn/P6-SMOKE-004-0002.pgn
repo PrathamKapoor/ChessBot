@@ -1,0 +1,13 @@
+[Event "P6-SMOKE-004"]
+[Site "PocketChess local match"]
+[Date "2026.10.04"]
+[Round "2"]
+[White "NNUE-PILOT"]
+[Black "CLASSICAL"]
+[Result "0-1"]
+[Opening "core-01-a"]
+
+1. a4 Nf6 2. b3 Nc6 3. d3 d5 4. g3 h6 5. Nf3 Bf5 6. Qd2 e6 7. Ne5 Nxe5 8. Qc3
+d4 9. Kd1 dxc3 10. Bg2 Nfg4 11. Bc6+ bxc6 12. h4 Nxf2+ 13. Ke1 Nxh1 14. Be3
+Nxg3 15. Bg1 Qxh4 16. Bd4 Qxd4 17. e3 Qxe3+ 18. Kd1 Bg4# 0-1
+

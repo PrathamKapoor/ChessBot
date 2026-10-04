@@ -1,0 +1,20 @@
+[Event "P6-SMOKE-002"]
+[Site "PocketChess local match"]
+[Date "2026.10.04"]
+[Round "4"]
+[White "CLASSICAL2"]
+[Black "CLASSICAL"]
+[Result "1-0"]
+[FEN "rnbqkb1r/pp2pppp/3p1n2/8/3NP3/8/PPP2PPP/RNBQKB1R w KQkq - 1 5"]
+[SetUp "1"]
+[Opening "core-01-b"]
+
+5. Nc3 Nc6 6. Bb5 Bd7 7. O-O e5 8. Nf3 a6 9. Bc4 b5 10. Bd3 b4 11. Nd5 Nxd5 12.
+exd5 Nd4 13. Be3 Bg4 14. c3 bxc3 15. bxc3 Nb5 16. Qa4 Bd7 17. Qb3 Rb8 18. Rab1
+Qe7 19. c4 e4 20. cxb5 exd3 21. Qxd3 axb5 22. a4 b4 23. Qc4 Bxa4 24. Rxb4 Rxb4
+25. Qxb4 Bd7 26. Ra1 Qd8 27. Bb6 Qb8 28. Qd4 Bf5 29. h3 f6 30. Qe3+ Kf7 31.
+Ra7+ Kg8 32. g4 Bc8 33. Nh4 h5 34. Ng6 hxg4 35. Qe8 Kh7 36. Nxf8+ Rxf8 37. Qxf8
+Qxa7 38. Bxa7 Bb7 39. hxg4 Bxd5 40. Qxd6 Be4 41. f3 Bb7 42. Qh2+ Kg8 43. Qb8+
+Kh7 44. Qxb7 Kg6 45. Qe4+ Kf7 46. Qd5+ Ke7 47. Bc5+ Ke8 48. f4 g6 49. Qe6+ Kd8
+50. Bb6# 1-0
+
