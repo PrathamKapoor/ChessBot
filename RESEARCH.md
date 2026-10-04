@@ -1161,10 +1161,41 @@ Comparing the frozen Phase 4 engine against the Phase 3C baseline
 (`760b2e0`) to confirm that Phase 4's changes improve strength.
 
 Configuration: fixed depth 4, hash 16 MB, 1 thread, core-01 suite,
-balanced colours (interleaved), max 200 plies per game, 60s hard timeout.
+balanced colours (interleaved), max 300 plies per game, 60s hard timeout.
 SPRT: elo0=0, elo1=5, alpha=beta=0.05.
 
-Running 100 games. The runner stops early if SPRT reaches a boundary.
+Result (P5A-SPRT-001, 100 games): candidate wins 39, draws 28, baseline
+wins 33. Score 0.5300. Elo estimate +20.87. SPRT inconclusive. The Phase
+4 12-game estimate of +88.74 was a small-sample artifact; the true
+difference is small and not yet statistically confirmed.
+
+Note on Phase 4 node counts: the Phase 4 report recorded 58,590 nodes at
+depth 5, but that measurement was taken with LMR enabled. With LMR disabled
+(the frozen baseline), the correct depth-5 node count is 131,863. This
+corrects the Phase 4 documentation.
+
+### LMR match test (P5A-LMR-001)
+
+The new conservative LMR (depth >= 4, index >= 4, excludes captures,
+promotions, checks, TT moves, killers; verification re-search with null
+window then full window) was match-tested against the same code with LMR
+disabled. 12 games: 4 wins, 4 draws, 4 losses, score 0.5000, SPRT
+inconclusive. LMR is not clearly stronger and remains disabled.
+
+### Check extension match test (P5A-EXT-001)
+
+12 games: version with check extension wins 6, version without wins 3,
+3 draws. Score for extension-off 0.3750, Elo estimate for extension-on
+~+88.74. Check extension stays enabled. The node-count penalty is
+justified by playing strength.
+
+### Final classical engine configuration
+
+All Phase 4 features accepted and frozen: PVS, aspiration windows, null
+move pruning, razoring, reverse futility pruning, check extension. LMR
+implemented but disabled (match-tested inconclusive). Depth-5 benchmark:
+131,863 nodes (corrected from the previously recorded 58,590 which
+included LMR).
 
 ## Phase 4: search strength improvements
 
