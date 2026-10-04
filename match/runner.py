@@ -137,6 +137,19 @@ def git_tree_state(path, ignore_dirs=()):
     return None
 
 
+def chess_library_license():
+    """Licence of the installed python-chess, read from its metadata.
+
+    Returned as-is or None. The point is that it is read rather than asserted,
+    so the provenance record cannot carry a licence claim that was never checked.
+    """
+    try:
+        import importlib.metadata as md
+        return md.metadata("chess").get("License")
+    except Exception:  # noqa: BLE001
+        return None
+
+
 def engine_fingerprint(path):
     """Identity of an engine binary for the record: path, size, mtime, sha256."""
     import hashlib
@@ -467,6 +480,10 @@ def main():
             "chess_library": {
                 "name": "python-chess",
                 "version": chess.__version__,
+                # Recorded from the installed distribution rather than from
+                # memory: a licence claim in a provenance record that turns out
+                # to be wrong is worse than no claim at all.
+                "license": chess_library_license(),
             },
             "sprt": sprt_mod.__name__,
         },

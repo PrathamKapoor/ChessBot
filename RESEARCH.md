@@ -816,3 +816,199 @@ material without asking whether it survives.
   * Strength is still unmeasured. Every number here is correctness or cost. The
     first real strength measurement will be the first match, which is Phase 3C
     work and is deliberately not started.
+## Phase 3C: match infrastructure, and the bugs only a match could find
+
+### Why this phase exists
+
+Every number in Phases 2, 3A and 3B is correctness or cost. None of it is
+strength. This phase built the thing that can finally measure strength, and the
+first thing it found was not a strength result at all: the engine could not
+correctly play a game over the UCI protocol it advertised.
+
+### Runner decision
+
+`fastchess`, `cutechess` and `cutechess-cli` are not installed on this machine,
+and vendoring a full runner is a large dependency to carry for a fixed-depth,
+single-clock, two-engine use case. So `match/runner.py` is first-party: a small
+runner covering exactly what a self-match and an A/B need. It deliberately does
+**not** implement endgame tablebase adjudication, an adjudication engine, cluster
+play, EPD/EPV loading beyond the suite file, or concurrent games. Those are
+documented omissions, not oversights.
+
+The only external dependency is `python-chess` 1.11.2, whose distribution
+metadata declares `GPL-3.0+`, used for the board representation, UCI/PGN parsing
+and FIDE draw rules. Nothing is vendored, and the dependency is confined to the
+test and match tooling rather than the engine. The runner itself is part of this
+repository.
+
+### Failures and chess results are disjoint in the data model
+
+A crash, an illegal move, a missing bestmove, a timeout, a malformed UCI string
+and a protocol violation are recorded with `result: null` and an
+`is_failure: true` flag. They are never averaged into a score, and the runner
+stops and exits non-zero on the first one. `move_limit_reached` and
+`flag_fall` are chess outcomes and live in the result set, not the failure set.
+
+One distinction worth stating because it was wrong first: an engine that exits
+*cleanly* while a search was outstanding is recorded as `no_bestmove`, not as
+`engine_crash`. The exit code is waited for, because `poll()` can still return
+`None` at the instant the pipe closes. These are different faults and the record
+is only useful if it says which.
+
+### Clock accounting
+
+Clock games decrement the side to move by the measured think time and then add
+the increment, matching the rules. Time runs out as a loss on time, a chess
+result. An earlier version passed the un-decremented clock on every move, which
+meant the clock never ran down and a timed match silently degraded into an
+unlimited one while still reporting a clock control.
+
+Verified with `P3C-CLOCK-001`: 4 games at 10s + 1s, all completed, no flag falls,
+the 30s per-move hard timeout never reached.
+
+### SPRT
+
+Two boundaries, `ln((1-beta)/alpha)` and `ln(beta/(1-alpha))`, with
+`alpha = beta = 0.05` giving +/-2.9445.
+
+    LLR = wins * ln(p1/p0) + losses * ln((1-p1)/(1-p0))
+
+Only decisive games enter the sum. Draws cancel under a common draw-rate
+assumption, which is stated in the module rather than left implicit. The
+`elo0` and `elo1` hypotheses are logistic **decisive-game win probabilities**, not
+scores that include draws, so `elo0 = 0` means "the candidate wins half of all
+decisive games", not "it scores 50%". That distinction is the difference between
+an honest SPRT and one that quietly needs a draw-rate estimate.
+
+Synthetic validation (`match/sprt.py --simulate`):
+
+  * truth beyond H1 accepts H1
+  * truth beyond H0 accepts H0
+  * truth inside the gap stays inconclusive
+
+For the inside-the-gap case a single run is not a valid test: a sequential test
+accepts early by mistake at rate `alpha` by design, and one fixed seed did exactly
+that. The self-test therefore measures the false-accept rate over 200 seeds and
+requires it below 0.20, with `alpha + beta = 0.10` as the expected value. It
+also checks that a strong effect still decides, so the test cannot pass by
+refusing to decide anything.
+
+### Opening suite
+
+12 fixed positions, `match/suite_core-01.txt`, each generated from a named SAN
+line and stored with its FEN. Coverage: open, closed, tactical, queenless,
+opposite-side castling, majority, endgame and asymmetric structures.
+`match/verify_openings.py` re-derives every FEN from the move list, checks it
+against the stored one, and confirms the engine accepts each FEN. All 12 pass.
+
+### Two real engine bugs, both invisible to perft
+
+The first match game played `b2b3` every ply until the runner rejected it as an
+illegal move. Chasing that down found two defects that no existing gate could
+see.
+
+**1. `position ... moves ...` never replayed anything.** `applyPosition` scanned
+for the `moves` keyword and then read a fresh token expecting to find it again.
+The keyword had already been consumed, so the comparison failed and the replay
+was skipped. Every position command with a move list silently kept the opening
+position, while the engine kept searching and printed a plausible bestmove.
+
+**2. Castling and en passant arriving over UCI lost their flags.** Both are
+flagged moves internally, and the flag is what tells `doMove` what to do.
+`moveFromUci` built a move from the four coordinate characters alone, so it never
+set those flags. `e1g1` became an ordinary king move: the king teleported two
+squares and the rook stayed on its home square. An en passant capture became a
+plain capture and left the passed pawn standing. `moveFromUci` now resolves the
+string against the generated legal moves, which carry the correct flags, and
+returns failure rather than guessing when nothing matches.
+
+Both are unreachable from perft, which generates moves internally with correct
+flags. They are only reachable through the protocol. The existing UCI test passed
+because it asserted that *some* bestmove appeared, not that the position
+advanced; that is a test that cannot fail for this class of bug. It now asserts
+that the side to move flips, that castling moves king and rook, that an en
+passant capture removes the captured pawn, and that a move which is not legal in
+that position is rejected rather than guessed at.
+
+The practical consequence: no match played before this fix is valid. Any engine
+built before `949f6b7` cannot play a UCI game at all, which is why the A/B below
+carries this fix on both sides.
+
+### Experiment: baseline vs candidate, P3C-AB-001
+
+Isolated worktrees of two historical commits, both with `949f6b7` applied so the
+protocol fix is held constant and the only difference is the Phase 3B engine
+work. Cherry-picking the fix onto both sides is what makes this a measurement of
+Phase 3B rather than a measurement of the UCI bug.
+
+  * baseline  `304e22d+949f6b7`, sha256 `d7d75874558e205c`
+  * candidate `da0654a+949f6b7`, sha256 `b20f5f6b219fa434`
+  * control: fixed depth 4, hash 16MB, 24 games, 12 openings played twice with
+    opposite colours, `max_plies` 200, hard timeout 60s per move
+  * build: MSYS2 UCRT64 g++ 15.1.0, `-O3 -DNDEBUG -mavx2 -mbmi2 -mpopcnt
+    -funroll-loops -DPOCKET_INSTRUMENT=0`
+  * tree clean at run time
+
+Result: **7 wins, 10 draws, 7 losses, score 0.5000**, LLR -0.0014 against
++/-2.9445, SPRT inconclusive. Terminations: checkmate, insufficient material,
+threefold repetition. Zero infrastructure failures.
+
+Both commits report identical node counts at depths 4, 5 and 6 on the benchmark
+suite, so it is reasonable to expect identical play. It is not identical, and
+that is worth being precise about rather than rounding away. Playing the two
+engines in lockstep from `core-01-a`, the first divergence is at ply 98:
+
+    fen      8/r7/5pk1/2p2p1p/7P/1p3K2/8/8 w - - 0 50
+    304e22d  f3g3   score cp -2429   nodes 2723
+    da0654a  f3e3   score cp -2431   nodes 2800
+
+A 2 centipawn difference in a position already lost by 2400. Both moves lose.
+The Phase 3B changes were intended to be semantics-preserving; the evaluator
+rewrite and the capture-only quiescence are very nearly so, but "very nearly" is
+not "exactly", and one position in this suite is enough to show it. The
+conclusion is not that Phase 3B changed strength. It is that the observed
+0.5000 is what equal strength looks like, and that a score of exactly 0.5000 over
+24 games carries no information about a 5 Elo hypothesis.
+
+### Determinism, P3C-AB-002
+
+The whole A/B was repeated with identical binaries and configuration. **24 of 24
+games reproduced exactly**: same result, same termination, same ply count, and
+every individual move identical. Both binaries' sha256 match across runs. This is
+the check that makes the ply-98 divergence above meaningful, because without it
+the divergence could have been ordinary nondeterminism.
+
+### Self-match, P3C-SELF-001
+
+`ed256f1` against itself, same control, same suite. **7 wins, 10 draws, 7
+losses, score 0.5000**, LLR -0.0014, SPRT inconclusive, zero infrastructure
+failures, colours balanced 12/12. A self-match landing on exactly 0.5000 with a
+symmetric win/loss split is the expected identity result and is the simplest
+end-to-end check that the harness has no colour bias and no scoring bias.
+
+Draw rate was 10/24 = 41.7%, which is high. Worth noting because it directly
+reduces SPRT power: with only 14 decisive games, a 5 Elo hypothesis is
+unreachable in principle, not merely unobserved.
+
+### Known limitations after this phase
+
+  * **No strength claim is possible from this data, and none is made.** 24 games
+    at 41.7% draws gives 14 decisive games. A 5 Elo SPRT at alpha = beta = 0.05
+    needs on the order of hundreds of decisive games. The SPRT correctly reports
+    inconclusive; that is the tool working, not the tool failing.
+  * Timed play is verified to work but is not characterised. A single 4-game
+    clock run says the accounting is right and nothing about time management.
+  * The runner has no concurrency, so a 24-game match takes about 13 minutes
+    here. Larger runs will need either more games than this phase budgeted for
+    or a parallel runner.
+  * The engine still treats twofold repetition as a draw inside search while the
+    runner adjudicates by FIDE rules through python-chess, where threefold is a
+    claim. The models differ deliberately and both are documented, but it does
+    mean the engine is not adjudicating its own games.
+  * En passant and castling through UCI were only found because a match was
+    played. There may be other protocol-level defects that this suite happens not
+    to reach, and the honest generalisation is that no amount of internal testing
+    substitutes for running the real interface.
+  * The transposition table hit rate is still around 6-7% and remains undiagnosed.
+  * Wall clock on this machine still cannot resolve differences below about 20%
+    on a long run, so node counts remain the only trustworthy performance metric.
