@@ -112,6 +112,10 @@ struct SearchOptions {
   // skip the move search entirely and drop straight to quiescence. The
   // position is so bad that even the best move cannot save it.
   bool useRazoring = true;
+  // Reverse futility pruning: at depth <= 2, if the static evaluation
+  // minus a margin is still >= beta, the position is so good that even
+  // a quiet move that loses the margin cannot drop it below beta.
+  bool useRFP = true;
   int ttSizeMB = 16;
 };
 

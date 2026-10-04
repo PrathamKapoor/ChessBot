@@ -538,6 +538,18 @@ int Search::negamax(Position& pos, int depth, int alpha, int beta, int ply) {
     }
   }
 
+  // Reverse futility pruning: at depth 1 or 2, if the static evaluation
+  // minus a margin is still >= beta, the position is so good that even
+  // losing the margin cannot bring it below beta. Returning this bound is
+  // safe because the parent will only use it for a beta cutoff.
+  if (opts_.useRFP && depth <= 2 && depth >= 1 && !inCheck && ply > 0 &&
+      hasNonPawnPieces(pos)) {
+    const int staticEval = evaluate(pos);
+    if (staticEval - (depth == 1 ? 200 : 400) >= beta) {
+      return staticEval;
+    }
+  }
+
   // Null move pruning: if passing and giving the opponent two moves in a row
   // still leaves us ahead, the position is so good that no real move can
   // fail. Only tried when not in check, with enough depth left, and when the
