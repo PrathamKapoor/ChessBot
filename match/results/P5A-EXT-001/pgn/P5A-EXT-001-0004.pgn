@@ -1,0 +1,18 @@
+[Event "P5A-EXT-001"]
+[Site "PocketChess local match"]
+[Date "2026.10.04"]
+[Round "4"]
+[White "EXT-OFF"]
+[Black "EXT-ON"]
+[Result "1-0"]
+[FEN "rnbqkb1r/pp2pppp/3p1n2/8/3NP3/8/PPP2PPP/RNBQKB1R w KQkq - 1 5"]
+[SetUp "1"]
+[Opening "core-01-b"]
+
+5. Bb5+ Bd7 6. Nc3 e5 7. Bxd7+ Qxd7 8. Nb3 a5 9. a4 h6 10. O-O Nc6 11. Be3 Be7
+12. Bb6 O-O 13. h3 Bd8 14. Be3 Bc7 15. Qf3 Nb4 16. Bxh6 Nxc2 17. Rad1 Rad8 18.
+Bg5 Qe6 19. Nd5 Nxd5 20. Bxd8 Rxd8 21. exd5 Qc8 22. Qe4 Nb4 23. h4 Qd7 24. Rc1
+Qxa4 25. Rxc7 Qxb3 26. Rxb7 g6 27. g4 Qh3 28. Ra1 Qxh4 29. Qf3 f6 30. Rxa5 Nc2
+31. Qe4 Qg5 32. Qxc2 Qxg4+ 33. Kh2 Qf4+ 34. Kg1 Qg4+ 35. Kf1 Rc8 36. Ra4 Rc3
+37. Qxg6+ Qxg6 38. Ra8+ Rc8 39. Rxc8+ Qe8 40. Rxe8# 1-0
+

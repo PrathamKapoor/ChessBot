@@ -1,0 +1,21 @@
+[Event "P5A-SPRT-001"]
+[Site "PocketChess local match"]
+[Date "2026.10.04"]
+[Round "75"]
+[White "P3C-BASE"]
+[Black "P4-FINAL"]
+[Result "0-1"]
+[FEN "rnbqkb1r/pp2pppp/3p1n2/8/3NP3/8/PPP2PPP/RNBQKB1R w KQkq - 1 5"]
+[SetUp "1"]
+[Opening "core-01-b"]
+
+5. Nc3 e5 6. Bb5+ Bd7 7. Bxd7+ Qxd7 8. Nb3 a5 9. a4 h6 10. O-O Nc6 11. Be3 Be7
+12. h3 O-O 13. Re1 Rfe8 14. f3 Nb4 15. Nb5 d5 16. c3 Nc6 17. exd5 Qxd5 18. Nc7
+Qc4 19. Nxe8 Rxe8 20. Bb6 Qa6 21. Bc7 Bf8 22. g3 b6 23. Kh2 Qb7 24. Bd6 Rd8 25.
+f4 exf4 26. Bxf4 Rxd1 27. Raxd1 b5 28. Nxa5 Nxa5 29. axb5 Qxb5 30. b4 Nc6 31.
+Bd6 Qf5 32. Bxf8 Qf2+ 33. Kh1 Qxg3 34. Bd6 Qxc3 35. b5 Nd4 36. Kg2 Qf3+ 37. Kh2
+Nxb5 38. Bc5 Ne4 39. Rd8+ Kh7 40. Rxe4 Qxe4 41. Bf2 f5 42. h4 f4 43. Rb8 Qe5
+44. Rf8 f3+ 45. Kh3 Qe6+ 46. Kg3 Qd6+ 47. Kxf3 Qxf8+ 48. Kg3 Qf5 49. Be3 Nc3
+50. Ba7 h5 51. Kg2 Qg4+ 52. Kf1 Qxh4 53. Bg1 Qf4+ 54. Kg2 g5 55. Bc5 g4 56. Bf2
+Qf3+ 57. Kg1 Ne2+ 58. Kf1 g3 59. Ke1 gxf2+ 60. Kd2 f1=Q 61. Kc2 Qc1# 0-1
+

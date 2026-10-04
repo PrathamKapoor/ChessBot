@@ -1,0 +1,17 @@
+[Event "P5A-SPRT-001"]
+[Site "PocketChess local match"]
+[Date "2026.10.04"]
+[Round "14"]
+[White "P4-FINAL"]
+[Black "P3C-BASE"]
+[Result "0-1"]
+[FEN "r1bqkb1r/pp1p1ppp/2n1pn2/8/3NP3/2N1B3/PPP2PPP/R2QKB1R b KQkq - 4 6"]
+[SetUp "1"]
+[Opening "core-01-g"]
+
+6... d5 7. Bb5 Bd7 8. exd5 exd5 9. O-O Bd6 10. Qf3 a6 11. Nf5 Bxf5 12. Bxc6+
+bxc6 13. Qxf5 g6 14. Qf3 O-O 15. a3 Re8 16. g3 Ne4 17. h3 Rb8 18. Rab1 h5 19.
+Rfd1 Qf6 20. Qxf6 Nxf6 21. Bd4 Ne4 22. b4 Nxc3 23. Bxc3 Re2 24. Rbc1 f5 25. Re1
+Re4 26. Red1 f4 27. Rd3 Kf7 28. Rf3 g5 29. Rd1 g4 30. hxg4 hxg4 31. Rfd3 Re2
+32. R1d2 Rbe8 33. Rd4 Re1+ 34. Kg2 f3+ 35. Kh2 Rh8# 0-1
+

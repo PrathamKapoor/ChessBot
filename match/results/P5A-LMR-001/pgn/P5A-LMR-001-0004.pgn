@@ -1,0 +1,17 @@
+[Event "P5A-LMR-001"]
+[Site "PocketChess local match"]
+[Date "2026.10.04"]
+[Round "4"]
+[White "LMR"]
+[Black "BASE"]
+[Result "0-1"]
+[FEN "rnbqkb1r/pp2pppp/3p1n2/8/3NP3/8/PPP2PPP/RNBQKB1R w KQkq - 1 5"]
+[SetUp "1"]
+[Opening "core-01-b"]
+
+5. Nc3 e5 6. Nf3 Be6 7. Ng5 d5 8. Nxe6 fxe6 9. f3 Bb4 10. Bd3 d4 11. a3 Qa5 12.
+Rb1 Bd6 13. Bd2 dxc3 14. bxc3 Qc7 15. h3 O-O 16. O-O Bxa3 17. c4 Bc5+ 18. Kh2
+a5 19. f4 Nc6 20. g3 g6 21. Rb5 Nd4 22. fxe5 Nd7 23. Rxf8+ Bxf8 24. Bxa5 Rxa5
+25. Rxa5 Qxa5 26. Bf1 Nxe5 27. Bd3 Qc3 28. Qb1 Bb4 29. Qa2 Bf8 30. Qb1 Nxc4 31.
+Qxb7 Qd2+ 32. Kh1 Nf3 33. Qxh7+ Kxh7 34. Be2 Qxe2 35. c3 Qf1# 0-1
+
