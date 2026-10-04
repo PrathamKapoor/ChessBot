@@ -1,0 +1,20 @@
+[Event "P3C-AB-001"]
+[Site "PocketChess local match"]
+[Date "2026.10.04"]
+[Round "17"]
+[White "304e22d"]
+[Black "da0654a"]
+[Result "0-1"]
+[FEN "r1bqk1nr/pppp1ppp/2n5/b7/2BpP3/2P2N2/P4PPP/RNBQK2R w KQkq - 0 7"]
+[SetUp "1"]
+[Opening "core-01-i"]
+
+7. Nxd4 Nf6 8. Bg5 h6 9. Bh4 g5 10. Bg3 Nxe4 11. Ne2 Nxg3 12. Nxg3 Qe7+ 13. Kf1
+d6 14. h3 O-O 15. a3 Ne5 16. Bd3 c6 17. Qe2 b5 18. a4 a6 19. axb5 axb5 20. Bc2
+d5 21. Nd2 Bd7 22. Nb1 Bb6 23. Rxa8 Rxa8 24. Nf5 Qf6 25. Nxh6+ Kg7 26. Ng4 Nxg4
+27. hxg4 Ra2 28. f3 Bxg4 29. Rh7+ Kf8 30. Qd3 Rxc2 31. Qxc2 Bxf3 32. gxf3 Qxf3+
+33. Ke1 Qe4+ 34. Kd1 g4 35. Rh6 g3 36. Rxc6 g2 37. Rc8+ Kg7 38. Qxg2+ Qxg2 39.
+Rc6 Be3 40. Ke1 Qa2 41. Rd6 f5 42. Rd7+ Kf6 43. c4 Qf2+ 44. Kd1 bxc4 45. Rd6+
+Ke5 46. Rxd5+ Kxd5 47. Nc3+ Kd4 48. Ne2+ Kd3 49. Nf4+ Qxf4 50. Ke1 c3 51. Kd1
+Qf1# 0-1
+

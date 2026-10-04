@@ -1,0 +1,215 @@
+{
+  "experiment_id": "P3C-CLOCK-001",
+  "started_utc": "2026-10-04T00:42:59.332909+00:00",
+  "finished_utc": "2026-10-04T00:49:19.432141+00:00",
+  "elapsed_s": 380.1,
+  "configuration": {
+    "suite": "match/suite_core-01.txt",
+    "openings": 12,
+    "games_requested": 4,
+    "control": "clock 10.0s+1.0s mtg 40",
+    "hash_mb": 16,
+    "threads": 1,
+    "options": [
+      "name Hash value 16"
+    ],
+    "max_plies": 120,
+    "hard_timeout_per_move_s": 30.0
+  },
+  "provenance": {
+    "repo": "C:\\Projects\\ChessBot",
+    "baseline_commit": "82f2273",
+    "candidate_commit": "82f2273",
+    "baseline_binary": {
+      "path": "C:\\Projects\\ChessBot\\build\\pocketchess.exe",
+      "size_bytes": 265674,
+      "mtime": "2026-10-03T23:45:11.566897+00:00",
+      "sha256": "ec6af2383cbd310aa1590299554fa60ed920ee0f858de3bf6c97e5e10ef09fb5"
+    },
+    "candidate_binary": {
+      "path": "C:\\Projects\\ChessBot\\build\\pocketchess.exe",
+      "size_bytes": 265674,
+      "mtime": "2026-10-03T23:45:11.566897+00:00",
+      "sha256": "ec6af2383cbd310aa1590299554fa60ed920ee0f858de3bf6c97e5e10ef09fb5"
+    },
+    "baseline_build": "MSYS2 UCRT64 g++ 15.1.0 -std=c++20 -O3 -DNDEBUG -mavx2 -mbmi2 -mpopcnt -funroll-loops -DPOCKET_INSTRUMENT=0",
+    "candidate_build": "MSYS2 UCRT64 g++ 15.1.0 -std=c++20 -O3 -DNDEBUG -mavx2 -mbmi2 -mpopcnt -funroll-loops -DPOCKET_INSTRUMENT=0",
+    "tree_state": {
+      "clean": true,
+      "changed_count": 0,
+      "changed": []
+    },
+    "runner": "match/runner.py first-party",
+    "runner_version": "1.0.0",
+    "machine": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "processor": "AMD64 Family 25 Model 68 Stepping 1, AuthenticAMD",
+      "python": "3.13.2"
+    },
+    "chess_library": {
+      "name": "python-chess",
+      "version": "1.11.2",
+      "license": "GPL-3.0+"
+    },
+    "sprt": "sprt"
+  },
+  "games": [
+    {
+      "experiment_id": "P3C-CLOCK-001",
+      "game_id": 1,
+      "opening_id": "core-01-a",
+      "opening_structure": "open",
+      "opening_plies": 0,
+      "baseline_engine": "HEAD-82f2273",
+      "candidate_engine": "HEAD-82f2273",
+      "baseline_white": true,
+      "white_engine": "HEAD-82f2273",
+      "black_engine": "HEAD-82f2273",
+      "baseline_commit": "82f2273",
+      "candidate_commit": "82f2273",
+      "control": "clock 10.0s+1.0s mtg 40",
+      "hash_mb": 16,
+      "threads": 1,
+      "result": "0-1",
+      "termination": "checkmate",
+      "candidate_score": 1.0,
+      "plies": 88,
+      "moves_played": 88,
+      "elapsed_s": 97.459,
+      "is_chess_result": true,
+      "is_failure": false,
+      "error": null,
+      "pgn": "P3C-CLOCK-001-0001.pgn"
+    },
+    {
+      "experiment_id": "P3C-CLOCK-001",
+      "game_id": 2,
+      "opening_id": "core-01-a",
+      "opening_structure": "open",
+      "opening_plies": 0,
+      "baseline_engine": "HEAD-82f2273",
+      "candidate_engine": "HEAD-82f2273",
+      "baseline_white": false,
+      "white_engine": "HEAD-82f2273",
+      "black_engine": "HEAD-82f2273",
+      "baseline_commit": "82f2273",
+      "candidate_commit": "82f2273",
+      "control": "clock 10.0s+1.0s mtg 40",
+      "hash_mb": 16,
+      "threads": 1,
+      "result": "0-1",
+      "termination": "checkmate",
+      "candidate_score": 0.0,
+      "plies": 82,
+      "moves_played": 82,
+      "elapsed_s": 91.597,
+      "is_chess_result": true,
+      "is_failure": false,
+      "error": null,
+      "pgn": "P3C-CLOCK-001-0002.pgn"
+    },
+    {
+      "experiment_id": "P3C-CLOCK-001",
+      "game_id": 3,
+      "opening_id": "core-01-b",
+      "opening_structure": "open",
+      "opening_plies": 8,
+      "baseline_engine": "HEAD-82f2273",
+      "candidate_engine": "HEAD-82f2273",
+      "baseline_white": true,
+      "white_engine": "HEAD-82f2273",
+      "black_engine": "HEAD-82f2273",
+      "baseline_commit": "82f2273",
+      "candidate_commit": "82f2273",
+      "control": "clock 10.0s+1.0s mtg 40",
+      "hash_mb": 16,
+      "threads": 1,
+      "result": "0-1",
+      "termination": "checkmate",
+      "candidate_score": 1.0,
+      "plies": 120,
+      "moves_played": 112,
+      "elapsed_s": 120.249,
+      "is_chess_result": true,
+      "is_failure": false,
+      "error": null,
+      "pgn": "P3C-CLOCK-001-0003.pgn"
+    },
+    {
+      "experiment_id": "P3C-CLOCK-001",
+      "game_id": 4,
+      "opening_id": "core-01-b",
+      "opening_structure": "open",
+      "opening_plies": 8,
+      "baseline_engine": "HEAD-82f2273",
+      "candidate_engine": "HEAD-82f2273",
+      "baseline_white": false,
+      "white_engine": "HEAD-82f2273",
+      "black_engine": "HEAD-82f2273",
+      "baseline_commit": "82f2273",
+      "candidate_commit": "82f2273",
+      "control": "clock 10.0s+1.0s mtg 40",
+      "hash_mb": 16,
+      "threads": 1,
+      "result": "0-1",
+      "termination": "checkmate",
+      "candidate_score": 0.0,
+      "plies": 70,
+      "moves_played": 62,
+      "elapsed_s": 70.742,
+      "is_chess_result": true,
+      "is_failure": false,
+      "error": null,
+      "pgn": "P3C-CLOCK-001-0004.pgn"
+    }
+  ],
+  "summary": {
+    "chess_results": 4,
+    "infrastructure_failures": 0,
+    "failures_by_termination": {},
+    "colour_balance": {
+      "baseline_white": 2,
+      "candidate_white": 2
+    },
+    "candidate_wins": 2,
+    "draws": 0,
+    "baseline_wins": 2,
+    "total_games": 4,
+    "score": 0.5,
+    "elo_estimate": -0.0,
+    "sprt": {
+      "elo0": 0.0,
+      "elo1": 5.0,
+      "alpha": 0.05,
+      "beta": 0.05,
+      "games": 4,
+      "wins": 2,
+      "draws": 0,
+      "losses": 2,
+      "decisive_games": 4,
+      "draw_rate": 0.0,
+      "score": 0.5,
+      "elo_estimate": -0.0,
+      "llr": -0.00041419649312249285,
+      "upper_boundary": 2.9444389791664403,
+      "lower_boundary": -2.9444389791664403,
+      "decision": "inconclusive",
+      "status": "inconclusive: continue"
+    },
+    "terminations": {
+      "checkmate": 4
+    },
+    "by_opening": {
+      "core-01-a": {
+        "w": 1,
+        "d": 0,
+        "l": 1
+      },
+      "core-01-b": {
+        "w": 1,
+        "d": 0,
+        "l": 1
+      }
+    }
+  }
+}

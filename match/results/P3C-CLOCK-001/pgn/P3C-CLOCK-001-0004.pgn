@@ -1,0 +1,17 @@
+[Event "P3C-CLOCK-001"]
+[Site "PocketChess local match"]
+[Date "2026.10.04"]
+[Round "4"]
+[White "HEAD-82f2273"]
+[Black "HEAD-82f2273"]
+[Result "0-1"]
+[FEN "rnbqkb1r/pp2pppp/3p1n2/8/3NP3/8/PPP2PPP/RNBQKB1R w KQkq - 1 5"]
+[SetUp "1"]
+[Opening "core-01-b"]
+
+5. Nc3 e5 6. Nf3 h6 7. Bc4 Qc7 8. Qe2 Nc6 9. Be3 Na5 10. b3 Nxc4 11. Qxc4 Qc6
+12. Nd5 Be6 13. Nc7+ Kd8 14. Nxe6+ fxe6 15. Rd1 Ke7 16. Nd2 d5 17. exd5 exd5
+18. Qe2 Qxc2 19. f4 exf4 20. Bxf4+ Kf7 21. h3 Re8 22. Be3 d4 23. Nc4 Qc3+ 24.
+Kf2 dxe3+ 25. Kf3 Ne4 26. Rd7+ Kg6 27. Qd3 Bc5 28. Qxc3 Rhf8+ 29. Kg4 Nxc3 30.
+Nxe3 Rxe3 31. a3 Rf4+ 32. Kxf4 Ne2+ 33. Kg4 h5+ 34. Kh4 Re4+ 35. g4 Bf2# 0-1
+
