@@ -572,13 +572,27 @@ int Search::negamax(Position& pos, int depth, int alpha, int beta, int ply) {
 
   for (int i = 0; i < count; ++i) {
     const Move m = moves[i];
+    // Check move category BEFORE doMove, because captureOrPromotion reads the
+    // destination square, which always holds a piece after the move.
+    const bool isCaptureOrPromo = pos.captureOrPromotion(m);
     pos.doMove(m);
     int score;
     if (opts_.usePVS && i > 0) {
       // Null window: prove the move does NOT beat alpha.
-      score = -negamax(pos, depth - 1, -alpha - 1, -alpha, ply + 1);
+      // LMR: quiet moves searched late get a one-ply shallower null window.
+      bool wasLmr = false;
+      if (opts_.useLMR && i >= 3 && depth >= 3 && !inCheck &&
+          !isCaptureOrPromo) {
+        if constexpr (kInstrumented) ++stats_.lmrReductions;
+        score = -negamax(pos, depth - 2, -alpha - 1, -alpha, ply + 1);
+        wasLmr = true;
+      } else {
+        score = -negamax(pos, depth - 1, -alpha - 1, -alpha, ply + 1);
+      }
       if (score > alpha && score < beta && !aborted_) {
-        // It might be the PV move, so re-search with a full window.
+        if constexpr (kInstrumented) {
+          if (wasLmr) ++stats_.lmrResearches;
+        }
         score = -negamax(pos, depth - 1, -beta, -alpha, ply + 1);
       }
     } else {

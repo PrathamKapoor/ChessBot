@@ -104,6 +104,10 @@ struct SearchOptions {
   // beat beta, the opponent cannot save themselves. Conservative baseline:
   // R=2, only when not in check and with non-pawn material on the board.
   bool useNullMove = true;
+  // Late Move Reductions: quiet moves searched late in the move loop are
+  // unlikely to be best, so search them with reduced depth. A reduced move
+  // that still beats alpha is re-searched with the full window.
+  bool useLMR = true;
   int ttSizeMB = 16;
 };
 
@@ -169,6 +173,8 @@ struct SearchStats {
   uint64_t checkExtensions = 0;
   uint64_t nullMoveAttempts = 0;
   uint64_t nullMoveCutoffs = 0;
+  uint64_t lmrReductions = 0;
+  uint64_t lmrResearches = 0;
 
   // Quiescence pipeline decomposition. Counts rather than timings: to turn these
   // into a cost breakdown each operation's standalone cost is measured separately

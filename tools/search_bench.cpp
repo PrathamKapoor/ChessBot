@@ -77,6 +77,10 @@ struct Totals {
   uint64_t qSelectionSortPasses = 0;
   uint64_t mainSeeCalls = 0;
   uint64_t mainMovegenCalls = 0;
+  uint64_t nullMoveAttempts = 0;
+  uint64_t nullMoveCutoffs = 0;
+  uint64_t lmrReductions = 0;
+  uint64_t lmrResearches = 0;
   uint64_t elapsedMs = 0;
   int positionsOk = 0;
   int positionsIllegal = 0;
@@ -119,6 +123,10 @@ Totals runOnce(const SearchOptions& opts, int depth) {
     t.qSelectionSortPasses += r.stats.qSelectionSortPasses;
     t.mainSeeCalls += r.stats.mainSeeCalls;
     t.mainMovegenCalls += r.stats.mainMovegenCalls;
+    t.nullMoveAttempts += r.stats.nullMoveAttempts;
+    t.nullMoveCutoffs += r.stats.nullMoveCutoffs;
+    t.lmrReductions += r.stats.lmrReductions;
+    t.lmrResearches += r.stats.lmrResearches;
   }
   t.elapsedMs = nowMs() - start;
   return t;
@@ -133,11 +141,14 @@ void report(const char* label, const SearchOptions& opts, int depth, int reps) {
     const double nps = t.elapsedMs ? double(t.nodes) * 1000.0 / double(t.elapsedMs) : 0;
     const double hitRate = t.ttProbes ? 100.0 * double(t.ttHits) / double(t.ttProbes) : 0;
     printf("  rep%d nodes=%-10llu qnodes=%-10llu nps=%-10.0f time=%-7llu "
-           "ttHits=%-8llu ttHitRate=%5.2f%% cutoffs=%llu betaCut=%llu firstMoveCut=%llu\n",
+           "ttHits=%-8llu ttHitRate=%5.2f%% cutoffs=%llu betaCut=%llu firstMoveCut=%llu "
+           "null=%llu nullCut=%llu lmr=%llu lmrRe=%llu\n",
            r, (unsigned long long)t.nodes, (unsigned long long)t.qnodes, nps,
            (unsigned long long)t.elapsedMs, (unsigned long long)t.ttHits, hitRate,
            (unsigned long long)t.ttCutoffs, (unsigned long long)t.betaCutoffs,
-           (unsigned long long)t.firstMoveCutoffs);
+           (unsigned long long)t.firstMoveCutoffs,
+           (unsigned long long)t.nullMoveAttempts, (unsigned long long)t.nullMoveCutoffs,
+           (unsigned long long)t.lmrReductions, (unsigned long long)t.lmrResearches);
     if (t.positionsIllegal != 0)
       printf("  *** %d ILLEGAL BESTMOVES ***\n", t.positionsIllegal);
   }
