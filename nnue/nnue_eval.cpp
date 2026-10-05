@@ -32,6 +32,9 @@ int main(int argc, char** argv) {
     }
     auto feats = activeFeatures(pos);
     float out = inference(net, feats);
-    std::printf("%.6f\n", out);
+    // Raw network output (score/400); golden_test.py applies the x400 the
+    // evaluation bridge uses. Printed with enough digits that the text form is
+    // not the limiting factor in the parity comparison.
+    std::printf("%.9g\n", out);
     return 0;
 }

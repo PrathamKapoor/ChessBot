@@ -51,7 +51,8 @@ $targets = @(
   @{ name = "search_bench"; sources = @("tools/search_bench.cpp") + $engineSearch; flags = $noInstrument },
   @{ name = "search_bench_instr"; sources = @("tools/search_bench.cpp") + $engineSearch; flags = $instrument },
   @{ name = "eval_microbench"; sources = @("tools/eval_microbench.cpp") + $engineEval; flags = $noInstrument },
-  @{ name = "nnue_eval"; sources = @("nnue/nnue_eval.cpp") + $engine; flags = $noInstrument }
+  @{ name = "nnue_eval"; sources = @("nnue/nnue_eval.cpp") + $engine; flags = $noInstrument },
+  @{ name = "feature_check"; sources = @("nnue/feature_check.cpp") + $engine; flags = $noInstrument }
 )
 
 New-Item -ItemType Directory -Force -Path "build" | Out-Null
