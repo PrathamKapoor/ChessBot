@@ -1700,16 +1700,33 @@ same lr schedule (MultiStepLR 8/14, gamma 0.5, base 5e-4).
     run                  target  loss   lr     epochs   best ep  val loss  val MAE  quiet MAE  minutes
     NNUE-V2-CTRL-REC     clip    huber  5e-4   20       17       0.6346    389.9    147.4      47.5
     NNUE-V2-MSE          clip    mse    5e-4   20       17       2.3213*   394.8    152.8      62.8
-    NNUE-V2-TANH         tanh    huber  5e-4   20       ...      ...       ...      ...        ...
-    NNUE-V2-LR2X         clip    huber  1e-3   20       ...      ...       ...      ...        ...
+    NNUE-V2-TANH         tanh    huber  5e-4   20       15       0.5659*   359.8*   140.6      48.4
+    NNUE-V2-LR2X         clip    huber  1e-3   20       17       0.6398    391.1    148.6      47.6
     NNUE-V2-EPOCHS40     clip    huber  5e-4   40       ...      ...       ...      ...        ...
 
-(*) MSE and Huber losses are not comparable numbers; the MAE columns are.
+(*) MSE and Huber losses, and tanh and clip MAEs, are not comparable numbers:
+each is measured against its own target. Cross-arm comparison happens through
+eval_labels.py (which inverts the target transform back to centipawns) and
+through matches.
 
-Validation MAE is measured against the arm's own target (tanh and clip produce
-different target scales), so cross-arm comparison happens through
-`eval_labels.py`, which inverts the target transform back to centipawns, and
-through matches - never by comparing the curve files directly.
+The learning-rate sweep is flat: doubling the rate (LR2X) converges no faster
+and plateaus 1.2 cp higher; the lower rate (batch 1b) is the other end of the
+same flat curve. The more useful finding is the shape of every trajectory.
+Validation error falls steeply for eight epochs and then essentially stops:
+
+    epoch    1     3     5     8     9    12    16    20
+    CTRL    512   426   405   400   392   394   390   391
+    LR2X    510   430   410   404   394   397   391   392
+    MSE     512   432   413   411   398   398   395   396
+
+From epoch 9 to epoch 20 the best arm gains 2 cp of validation MAE (0.5%)
+while the training loss falls from ~0.05 to ~0.004, i.e. every further epoch is
+memorisation of the training split with no generalisation benefit. Whatever
+the 12.6M-parameter net can learn from 61k records it has learned by epoch
+~9-12; early stopping there would have saved 30-50% of the training compute at
+no measurable cost. The 40-epoch arm (batch 1b) tests the other side of that
+claim - whether the second half of a long schedule eventually helps or only
+overfits harder.
 
 Held-out lineage, all scored on splits their net was actually held out from:
 
