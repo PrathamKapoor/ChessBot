@@ -1620,6 +1620,29 @@ match, not by the offline MAE, because offline MAE across target transforms is
 not comparable in the tail by construction (inverting tanh to centipawns
 amplifies output errors near the boundary).
 
+`tail_analysis.py` measures what the transforms actually did to the tail, on
+the held-out v2 split (Spearman rank correlation between prediction and raw
+label, sign agreement, prediction spread):
+
+    net       tail            spearman   sign agree   pred spread   pred sd
+    v2ctrl    |label| >= 1000   +0.703      89.7%        5085 cp      1060 cp
+    v2tanh    |label| >= 1000   +0.705      89.0%       19807 cp      1742 cp
+    v2mse     |label| >= 1000   +0.705      89.1%        5025 cp      1059 cp
+    v2ctrl    |label| >= 2000   +0.564      88.7%        5085 cp      1200 cp
+    v2tanh    |label| >= 2000   +0.577      88.3%       19807 cp      2356 cp
+    v2ctrl    |label| >= 10000  +0.663      86.6%        5085 cp      1126 cp
+    v2tanh    |label| >= 10000  +0.664      86.3%       19807 cp      2521 cp
+
+Two things fall out. First, the clip-trained net is not order-blind in the
+tail even though its target is a constant there: rank correlation is +0.56 to
++0.70 and its predictions span 5085 cp, i.e. it interpolates ordering from the
+learnable region into the collapsed one. "The tail trains a constant" is true
+of the target, not of the learned function. Second, the bounded transform
+bought no ordering - the rank correlations are the same to three decimals -
+and changed only the output scale, by a factor of four. That is the mechanism
+behind P7-AB-TANH's flat result: the two nets order the tail identically, and
+the search sees the same ordering.
+
 ### The label-order defect (negative result, and why the gate exists)
 
 `check_labels.py` re-labels a sample of a dataset with a fresh teacher and
