@@ -283,7 +283,14 @@ def main():
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     gpu_name = (torch.cuda.get_device_name(0) if device.type == "cuda" else "cpu")
-    print(f"device={device} gpu={gpu_name}")
+    environment = {
+        "torch": torch.__version__,
+        "cuda": torch.version.cuda,
+        "device": str(device),
+        "gpu": gpu_name,
+        "python": sys.version.split()[0],
+    }
+    print(f"device={device} gpu={gpu_name} torch={torch.__version__}")
 
     model = NNUEModel().to(device)
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr,
@@ -403,6 +410,7 @@ def main():
         "compute": {
             "device": str(device),
             "gpu": gpu_name,
+            "environment": environment,
             "total_seconds": round(total_seconds, 1),
             "steps": steps_total,
             "train_examples": train_examples,

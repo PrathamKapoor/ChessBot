@@ -27,6 +27,8 @@ build_err.txt
 match/results/_logs/
 nnue/*.log
 nnue/*.err.log
+nnue/*.pid
+nnue/curves/*.log
 nnue/data/*.shards/
 
 # Python

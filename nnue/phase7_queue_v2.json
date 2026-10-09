@@ -1,0 +1,60 @@
+{
+  "comment": "Phase 7 batch 1: loss, target and schedule variables on the v2 substrate. v2 is the actual dataset the weak Phase 6 net was trained on (76,605 records, depth 7, colour-balanced 50.1%). It has no game identity, so both arms of every comparison use the record-level split; the game-level split is exercised on the clean v4 pool instead. Arms differ only in the variable under test.",
+  "runs": [
+    {
+      "tag": "NNUE-V2-CTRL-REC",
+      "curve": "nnue/curves/NNUE-V2-CTRL-REC.json",
+      "args": ["--data", "nnue/data/v2.json", "--split-mode", "record",
+               "--target", "clip", "--clip", "2000", "--loss", "huber",
+               "--epochs", "20", "--batch-size", "64", "--lr", "5e-4",
+               "--lr-milestones", "8,14", "--lr-gamma", "0.5",
+               "--weight-decay", "1e-4", "--seed", "42",
+               "--output", "nnue/checkpoints/v2ctrl.pt",
+               "--tag", "NNUE-V2-CTRL-REC"]
+    },
+    {
+      "tag": "NNUE-V2-MSE",
+      "curve": "nnue/curves/NNUE-V2-MSE.json",
+      "args": ["--data", "nnue/data/v2.json", "--split-mode", "record",
+               "--target", "clip", "--clip", "2000", "--loss", "mse",
+               "--epochs", "20", "--batch-size", "64", "--lr", "5e-4",
+               "--lr-milestones", "8,14", "--lr-gamma", "0.5",
+               "--weight-decay", "1e-4", "--seed", "42",
+               "--output", "nnue/checkpoints/v2mse.pt",
+               "--tag", "NNUE-V2-MSE"]
+    },
+    {
+      "tag": "NNUE-V2-TANH",
+      "curve": "nnue/curves/NNUE-V2-TANH.json",
+      "args": ["--data", "nnue/data/v2.json", "--split-mode", "record",
+               "--target", "tanh", "--tanh-scale", "2000", "--loss", "huber",
+               "--epochs", "20", "--batch-size", "64", "--lr", "5e-4",
+               "--lr-milestones", "8,14", "--lr-gamma", "0.5",
+               "--weight-decay", "1e-4", "--seed", "42",
+               "--output", "nnue/checkpoints/v2tanh.pt",
+               "--tag", "NNUE-V2-TANH"]
+    },
+    {
+      "tag": "NNUE-V2-LR2X",
+      "curve": "nnue/curves/NNUE-V2-LR2X.json",
+      "args": ["--data", "nnue/data/v2.json", "--split-mode", "record",
+               "--target", "clip", "--clip", "2000", "--loss", "huber",
+               "--epochs", "20", "--batch-size", "64", "--lr", "1e-3",
+               "--lr-milestones", "8,14", "--lr-gamma", "0.5",
+               "--weight-decay", "1e-4", "--seed", "42",
+               "--output", "nnue/checkpoints/v2lr2x.pt",
+               "--tag", "NNUE-V2-LR2X"]
+    },
+    {
+      "tag": "NNUE-V2-EPOCHS40",
+      "curve": "nnue/curves/NNUE-V2-EPOCHS40.json",
+      "args": ["--data", "nnue/data/v2.json", "--split-mode", "record",
+               "--target", "clip", "--clip", "2000", "--loss", "huber",
+               "--epochs", "40", "--batch-size", "64", "--lr", "5e-4",
+               "--lr-milestones", "16,28", "--lr-gamma", "0.5",
+               "--weight-decay", "1e-4", "--seed", "42",
+               "--output", "nnue/checkpoints/v2ep40.pt",
+               "--tag", "NNUE-V2-EPOCHS40"]
+    }
+  ]
+}
