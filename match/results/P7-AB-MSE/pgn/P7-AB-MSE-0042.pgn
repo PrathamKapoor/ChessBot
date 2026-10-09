@@ -1,0 +1,18 @@
+[Event "P7-AB-MSE"]
+[Site "PocketChess local match"]
+[Date "2026.10.09"]
+[Round "42"]
+[White "v2mse"]
+[Black "v2ctrl"]
+[Result "1-0"]
+[FEN "r1bqk1nr/pppp1ppp/2n5/b7/2BpP3/2P2N2/P4PPP/RNBQK2R w KQkq - 0 7"]
+[SetUp "1"]
+[Opening "core-01-i"]
+
+7. O-O d6 8. Bxf7+ Kxf7 9. Nxd4 Nxd4 10. Qxd4 Nf6 11. e5 Bxc3 12. Qxc3 Ne4 13.
+Qf3+ Ke7 14. Qxe4 Kf7 15. Kh1 Bh3 16. gxh3 dxe5 17. Nc3 c6 18. Rg1 g6 19. Rb1
+b6 20. Qxc6 e4 21. Be3 Re8 22. Rb5 a5 23. Rf5+ Kg7 24. Rfg5 Qf6 25. Bd4 Qxd4
+26. Rxg6+ hxg6 27. Qxg6+ Kf8 28. Qh7 Qh8 29. Qxh8+ Ke7 30. Qe5+ Kd8 31. Qd6+
+Kc8 32. Qc6+ Kd8 33. Qxa8+ Ke7 34. Qb7+ Kf6 35. Qg7+ Kf5 36. Rg5+ Ke6 37. Rg6+
+Kf5 38. Qf6# 1-0
+

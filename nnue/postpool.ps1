@@ -65,6 +65,17 @@ if ($code -ne 0) {
   exit 1
 }
 
+# Label determinism: re-search a sample with a fresh teacher and require exact
+# reproduction of both stored labels. This is the check that caught the
+# score_cp/shallow_cp swap (check_labels.py, see fix_label_swap.py); a pool
+# that fails it must never feed a training run.
+$code = Run "labelcheck" "-3 -u nnue/check_labels.py nnue/data/v4_pool.json 8"
+if ($code -ne 0) {
+  Say "ABORT: label determinism failed on the new pool; nothing launched"
+  Set-Content $status "aborted-label-check-failed"
+  exit 1
+}
+
 Run "diagnose" "-3 -u nnue/diagnose.py nnue/data/v4_pool.json --out nnue/reports_phase7_pool_diagnostics_v4.json" | Out-Null
 Run "registry" "-3 -u nnue/dataset_registry.py" | Out-Null
 Run "subset30k" "-3 -u nnue/make_subset.py --data nnue/data/v4_pool.json --records 30000 --seed 51 --out nnue/data/v4_sub30k.json" | Out-Null

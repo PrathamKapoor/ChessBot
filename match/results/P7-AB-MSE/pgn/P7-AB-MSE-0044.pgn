@@ -1,0 +1,21 @@
+[Event "P7-AB-MSE"]
+[Site "PocketChess local match"]
+[Date "2026.10.09"]
+[Round "44"]
+[White "v2mse"]
+[Black "v2ctrl"]
+[Result "1-0"]
+[FEN "rnbqkbnr/pp2pppp/2p5/3p4/2PP4/8/PP2PPPP/RNBQKBNR w KQkq - 0 3"]
+[SetUp "1"]
+[Opening "core-01-j"]
+
+3. cxd5 cxd5 4. Nc3 Nf6 5. a4 h6 6. Bf4 g5 7. Bg3 Ne4 8. a5 Nc6 9. a6 bxa6 10.
+Qa4 Qd7 11. Nxe4 dxe4 12. e3 Nxd4 13. Qxd4 Qxd4 14. exd4 h5 15. Be5 f6 16. Bc7
+e5 17. Bxa6 exd4 18. Bxc8 Rxc8 19. Rxa7 d3 20. Ba5 Rd8 21. Bxd8 Kxd8 22. g3 g4
+23. b3 Bb4+ 24. Kf1 d2 25. Kg2 Bc3 26. Ne2 Ba1 27. Rhxa1 h4 28. Ra8+ Ke7 29.
+Rxh8 h3+ 30. Kg1 Kf7 31. f3 gxf3 32. Nf4 f5 33. Rxh3 Ke7 34. Rh5 Ke8 35. h4 e3
+36. Rh8+ Kf7 37. h5 Kg7 38. Nd5 f2+ 39. Kg2 Kxh8 40. Nxe3 f4 41. gxf4 f1=N 42.
+Kxf1 Kg7 43. Kf2 Kf6 44. f5 Kf7 45. Nd5 Kg8 46. b4 Kf7 47. Rd1 Kf8 48. h6 Kf7
+49. h7 Kg7 50. Rg1+ Kh8 51. f6 d1=N+ 52. Rxd1 Kxh7 53. Rg1 Kh6 54. f7 Kh5 55.
+f8=Q Kh4 56. Qh6# 1-0
+

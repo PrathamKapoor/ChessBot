@@ -128,6 +128,14 @@ def label_position(board, depths, teacher):
 
     The transposition table is cleared before every position so a label depends
     only on the position and the depth, exactly as a fresh process did.
+
+    `depths` is ordered deepest-first ([--depth, --shallow-depth]), and the
+    primary label must be the first entry. An earlier version returned
+    (values[depths[-1]], values[depths[0]]) - the two values swapped - which
+    went unnoticed for two pool generations because both fields were present
+    and plausible. check_labels.py caught it by re-labelling a sample and
+    finding every record's score_cp equal to a fresh shallow-depth search.
+    The order is pinned here; do not "simplify" it back.
     """
     values = {}
     for depth in depths:
@@ -147,7 +155,7 @@ def label_position(board, depths, teacher):
             values[depth] = 30000.0 if relative.mate() > 0 else -30000.0
         else:
             values[depth] = float(relative.score())
-    return values.get(depths[-1]), values.get(depths[0])
+    return values.get(depths[0]), values.get(depths[-1])
 
 
 def harvest_selfplay(engine, depth, rng, game_id, min_ply, harvest_every,
@@ -396,7 +404,7 @@ def main():
                     "flags": position_tags(board),
                     "endgame": endgame_labels(board),
                 })
-                if shallow is not None:
+                if args.shallow_depth and shallow is not None:
                     out[-1]["shallow_cp"] = shallow
                     out[-1]["shallow_depth"] = args.shallow_depth
         finally:
