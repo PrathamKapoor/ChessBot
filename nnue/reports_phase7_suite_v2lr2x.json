@@ -1,0 +1,257 @@
+{
+  "candidate": "v2lr2x",
+  "engine": "build/pocketchess.exe",
+  "setoptions": [
+    "name NnuePath value nnue/checkpoints/v2lr2x.bin"
+  ],
+  "tactical": {
+    "suite": "tactical",
+    "passed": 16,
+    "total": 17,
+    "results": [
+      {
+        "case": "mate in 1, back rank",
+        "fen": "6k1/5ppp/8/8/8/8/8/R5K1 w - - 0 1",
+        "depth": 2,
+        "pass": true,
+        "detail": "score=mate:1",
+        "why": "rook to the eighth rank",
+        "seconds": 0.04
+      },
+      {
+        "case": "mate in 2, back rank",
+        "fen": "6k1/5ppp/8/8/8/8/5PPP/3R2K1 w - - 0 1",
+        "depth": 4,
+        "pass": true,
+        "detail": "score=mate:1",
+        "why": "rook checks, king walks, rook mates",
+        "seconds": 0.04
+      },
+      {
+        "case": "smothered mate in 3",
+        "fen": "6rk/6pp/8/6N1/8/8/8/6K1 w - - 0 1",
+        "depth": 5,
+        "pass": true,
+        "detail": "score=mate:1",
+        "why": "knight and rook box the king in",
+        "seconds": 0.04
+      },
+      {
+        "case": "queen mate in 2",
+        "fen": "7k/6pp/8/8/8/8/6PP/3Q2K1 w - - 0 1",
+        "depth": 4,
+        "pass": true,
+        "detail": "score=mate:1",
+        "why": "queen to d8 followed by mate on the file",
+        "seconds": 0.04
+      },
+      {
+        "case": "mated already, no move exists",
+        "fen": "r1bqkb1r/pppp1Qpp/2n2n2/4p3/2B1P3/8/PPPP1PPP/RNB1K1NR b KQkq - 0 4",
+        "depth": 4,
+        "pass": true,
+        "detail": "no legal move",
+        "why": "Scholar's mate: Black is checkmated",
+        "seconds": 0.0
+      },
+      {
+        "case": "promotion wins",
+        "fen": "8/P6k/8/8/8/8/8/7K w - - 0 1",
+        "depth": 4,
+        "pass": false,
+        "detail": "best=h1g1 want one of ['a7a8q']",
+        "why": "queen promotion is the whole point",
+        "seconds": 0.05
+      },
+      {
+        "case": "promotion capture",
+        "fen": "1n5k/P7/8/8/8/8/8/7K w - - 0 1",
+        "depth": 5,
+        "pass": true,
+        "detail": "best=a7b8q want one of ['a7b8q']",
+        "why": "capture-promote takes the knight as well",
+        "seconds": 0.05
+      },
+      {
+        "case": "underpromotion avoids stalemate",
+        "fen": "8/8/8/8/8/1k6/2p5/2KR4 w - - 0 1",
+        "depth": 8,
+        "pass": true,
+        "detail": "cp=1280 want>=-150",
+        "why": "promoting is needed to win",
+        "seconds": 0.25
+      },
+      {
+        "case": "en passant is found",
+        "fen": "8/8/8/2pP4/8/8/8/K5k1 w - c6 0 2",
+        "depth": 5,
+        "pass": true,
+        "detail": "best=d5c6 want one of ['d5c6']",
+        "why": "en passant capture wins a pawn outright",
+        "seconds": 0.04
+      },
+      {
+        "case": "free queen",
+        "fen": "4k3/8/8/R2q4/8/8/8/4K3 w - - 0 1",
+        "depth": 4,
+        "pass": true,
+        "detail": "best=a5d5 want one of ['a5d5']",
+        "why": "undefended queen",
+        "seconds": 0.04
+      },
+      {
+        "case": "winning the exchange with check",
+        "fen": "4k3/8/8/3p4/8/2N5/8/4K3 w - - 0 1",
+        "depth": 6,
+        "pass": true,
+        "detail": "cp=191 want>=-150",
+        "why": "knight takes the pawn and Black cannot win it back",
+        "seconds": 0.05
+      },
+      {
+        "case": "must recapture or lose material",
+        "fen": "4k3/8/3q4/8/8/3R4/8/4K3 w - - 0 1",
+        "depth": 4,
+        "pass": true,
+        "detail": "cp=384 want>=-150",
+        "why": "queen is en prise to the rook",
+        "seconds": 0.04
+      },
+      {
+        "case": "absolute pin must not be broken by a capture",
+        "fen": "4k3/8/8/8/8/8/4R3/4K2r w - - 0 1",
+        "depth": 5,
+        "pass": true,
+        "detail": "cp=0 want>=-150",
+        "why": "the rook on e2 is pinned",
+        "seconds": 0.06
+      },
+      {
+        "case": "no mate claimed where none exists",
+        "fen": "4k3/8/8/8/8/8/8/R3K3 w - - 0 1",
+        "depth": 3,
+        "pass": true,
+        "detail": "cp=1228 want>=-150",
+        "why": "rook plus king needs far more than three plies",
+        "seconds": 0.06
+      },
+      {
+        "case": "opening position is roughly equal",
+        "fen": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+        "depth": 5,
+        "pass": true,
+        "detail": "cp=61 want>=-150",
+        "why": "no side is lost",
+        "seconds": 0.42
+      },
+      {
+        "case": "queen up is winning",
+        "fen": "4k3/8/8/8/8/8/4Q3/4K3 w - - 0 1",
+        "depth": 4,
+        "pass": true,
+        "detail": "mate:1",
+        "why": "a queen up scores clearly positive",
+        "seconds": 0.04
+      },
+      {
+        "case": "terminal stalemate scores zero",
+        "fen": "k7/2Q5/8/8/8/8/8/7K b - - 0 1",
+        "depth": 3,
+        "pass": true,
+        "detail": "no legal move",
+        "why": "no move exists; the engine must not invent one",
+        "seconds": 0.0
+      }
+    ]
+  },
+  "endgame": {
+    "suite": "endgame",
+    "passed": 7,
+    "total": 9,
+    "results": [
+      {
+        "case": "KQK wins",
+        "fen": "8/8/8/8/8/8/6k1/6KQ w - - 0 1",
+        "depth": 6,
+        "pass": true,
+        "detail": "mate:1",
+        "why": "queen ending, trivially winning",
+        "seconds": 0.05
+      },
+      {
+        "case": "KRK wins",
+        "fen": "8/8/8/8/8/8/6k1/6KR w - - 0 1",
+        "depth": 6,
+        "pass": true,
+        "detail": "mate:2",
+        "why": "rook ending, trivially winning",
+        "seconds": 0.04
+      },
+      {
+        "case": "KBBK wins",
+        "fen": "8/8/8/8/8/4k3/8/2B1KB2 w - - 0 1",
+        "depth": 6,
+        "pass": true,
+        "detail": "mate:1",
+        "why": "minor-piece ending, two bishops mate",
+        "seconds": 0.04
+      },
+      {
+        "case": "Lucena position wins",
+        "fen": "1K1k4/1P6/8/8/8/8/6r1/R7 w - - 0 1",
+        "depth": 8,
+        "pass": true,
+        "detail": "cp=848 want>=150",
+        "why": "rook ending, bridge building wins",
+        "seconds": 1.1
+      },
+      {
+        "case": "queen beats rook",
+        "fen": "8/8/8/3Q4/8/8/8/1r2K2k w - - 0 1",
+        "depth": 6,
+        "pass": true,
+        "detail": "mate:2",
+        "why": "queen ending against a rook; mate found by the control at d6",
+        "seconds": 0.12
+      },
+      {
+        "case": "KP far king wins",
+        "fen": "8/1k6/8/8/8/8/4P3/4K3 w - - 0 1",
+        "depth": 6,
+        "pass": true,
+        "detail": "cp=589 want>=150",
+        "why": "pawn ending, defender out of the square",
+        "seconds": 0.09
+      },
+      {
+        "case": "KPK front king draws",
+        "fen": "8/8/8/8/8/4k3/4P3/4K3 w - - 0 1",
+        "depth": 6,
+        "pass": false,
+        "detail": "cp=174 want|.|<=150",
+        "why": "pawn ending, defender in front with the opposition",
+        "seconds": 0.05
+      },
+      {
+        "case": "wrong bishop rook pawn draws",
+        "fen": "7k/8/8/8/8/8/7P/1K3B2 w - - 0 1",
+        "depth": 6,
+        "pass": false,
+        "detail": "cp=1484 want|.|<=150",
+        "why": "opposite-coloured bishop versus rook pawn is dead drawn; the control scores it +781 (control-limited case, see RESEARCH.md)",
+        "seconds": 0.08
+      },
+      {
+        "case": "bare kings evaluate level",
+        "fen": "8/8/8/4k3/8/4K3/8/8 w - - 0 1",
+        "depth": 4,
+        "pass": true,
+        "detail": "cp=0 want|.|<=150",
+        "why": "sparse pieces, no material",
+        "seconds": 0.05
+      }
+    ]
+  },
+  "total_passed": 23,
+  "total": 26
+}
