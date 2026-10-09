@@ -1752,6 +1752,67 @@ clip-MAE is therefore purchasable entirely in the tail the qsearch never
 trusts, and every strength claim in this phase has to come from matches for
 exactly that reason.
 
+### Sampling experiments (design)
+
+Two oversampling arms and a shared baseline, all on the same 100k whole-game
+selection of the pool - the same selection the learning curve's D1 point uses -
+so the only difference between arms is the weighting.
+
+  * tactical: records flagged in_check or promotion_available, or whose shallow
+    label differs from the deep label by >= 200 cp (the volatility proxy),
+    are repeated 3x in the training split. Measured on the v3 pool's
+    composition this hits 27.2% of records (volatility 56.7k, in_check 28.9k,
+    promotion 6.9k of 300k).
+  * endgame: records with a strict endgame class (pawnless, pawn_endgame,
+    minor_ending, rook_ending) or an endgame phase label, repeated 3x. The
+    first draft used "any endgame label" and hit 49.4% of the pool; half the
+    dataset duplicated is not oversampling, so the strict 24.5% set ships.
+  * baseline: the unweighted selection, which is also the curve's D1 point.
+
+The validation split is a fixed materialized set and is never reweighted, so
+the three arms' validation numbers are measured on identical, identically
+weighted records. Each arm's curve records the weight histogram from the
+policy, so what actually happened to the training data is auditable from the
+run record rather than from this paragraph.
+
+Metrics: validation MAE overall and per bucket (every curve carries a tactical
+and an endgame bucket computed from the recorded flags), the seed-independent
+suites, and a 50-game A/B against the baseline arm. The comparison that
+matters is the A/B; the bucket MAEs say which category moved, not whether the
+net plays better.
+
+### Teacher experiments (design)
+
+The ladder is chosen from measurement, not from ambition. Label throughput at
+14 workers: depth 7 runs at 15-22 positions/s, depth 8 at 2.75/s, depth 9 at
+0.61/s (2.27/s on a pool subset), depth 10 at 0.48/s and depth 11 at 0.07/s
+with 23.8M nodes per position. A 20k depth-11 set would take 76 hours, so
+depth 11 stays an agreement sample (512 positions, recorded for the ladder
+study) and the training ladder is depth 7 against depth 9.
+
+The matched subset: 30,000 records, whole games, seed 51, materialized from
+the pool with make_subset.py. `v4_sub30k_d9.json` is that exact file
+relabelled at depth 9 with --keep-original, so every record keeps its depth-7
+label alongside the depth-9 one and the position set, game ids and category
+metadata are bit-identical between arms. Both arms train on the same positions
+with the same game-level split, seed and schedule, so they are held out from
+exactly the same records, and each net is scored against both label sets:
+
+    d7 net vs d7 labels    its own training metric, for reference
+    d7 net vs d9 labels    how close the shallow teacher's function is to the
+                           deep teacher's verdicts
+    d9 net vs d9 labels    its own
+    d9 net vs d7 labels    symmetry
+
+   plus the suites and a 50-game A/B between the two nets. If depth 9 targets
+   produce a net that is closer to depth-9 verdicts on held-out positions but
+   no stronger in play, that is a Case D result and it will be reported as one.
+
+The agreement study (d7 vs d9 on 240 pool positions: median 19.5 cp, 4.2% of
+pairs >= 300 cp apart, 4 mate disagreements, tactical positions dominating the
+disagreement) says the two teachers differ exactly where being wrong is
+expensive, so this experiment has a signal to find - or to fail to find.
+
 ### Match results
 
 All matches: build/pocketchess.exe on both sides, depth 5, hash 16, threads 1,
