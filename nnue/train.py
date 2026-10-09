@@ -250,6 +250,16 @@ def main():
     ap.add_argument("--weight-decay", type=float, default=1e-4)
     ap.add_argument("--split", type=float, default=0.8)
     ap.add_argument("--split-mode", choices=["game", "record"], default="game")
+    ap.add_argument("--valid-data", default=None,
+                    help="dataset to draw a fixed validation set from (game "
+                         "fraction determined by --valid-fraction/--valid-seed); "
+                         "those games are excluded from every training "
+                         "selection, so all runs sharing this flag are measured "
+                         "on exactly the same records - the learning curve and "
+                         "the sampling arms need that to be comparable")
+    ap.add_argument("--valid-fraction", type=float, default=0.2,
+                    help="fraction of the validation dataset's games to hold out")
+    ap.add_argument("--valid-seed", type=int, default=99)
     ap.add_argument("--max-records", type=int, default=0,
                     help="subsample whole games up to this many records (0 = all)")
     ap.add_argument("--sampling", choices=["baseline", "tactical", "endgame"],
@@ -273,16 +283,40 @@ def main():
 
     t_start = time.time()
     metadata, all_records = load_records(args.data)
-    selected = select_games(all_records, args.max_records, args.seed)
-    # The split happens before oversampling, and oversampling touches the
-    # training side only. Reweighting first would triple the tactical records
-    # in the validation set as well, and the validation MAE of a tactical arm
-    # would then be measured on a differently-weighted population than the
-    # baseline arm's - two arms whose numbers cannot be compared. Sampling is a
-    # training-time device; the validation split stays the honest sample.
-    train_records, valid_records = split_records(
-        selected, args.split_mode, args.split, args.seed)
-    selected_presampling = len(selected)
+
+    if args.valid_data:
+        # Fixed validation set: a fraction of another dataset's games, held out
+        # of every training selection below. All runs that pass the same
+        # --valid-data/--valid-seed/--valid-fraction are then measured on the
+        # identical records, which is what makes the dataset-size curve and the
+        # sampling arms comparable.
+        vmeta, vrecords = load_records(args.valid_data)
+        missing = [r for r in vrecords if r.get("game_id") is None]
+        if missing:
+            raise SystemExit(
+                f"{args.valid_data} has {len(missing)} records without game_id; "
+                "a fixed validation set needs game identity (format v3)")
+        vgames = sorted({r.get("game_id") for r in vrecords})
+        rng = random.Random(args.valid_seed)
+        rng.shuffle(vgames)
+        vcut = int(len(vgames) * args.valid_fraction)
+        valid_game_set = set(vgames[:vcut])
+        valid_records = [r for r in vrecords if r.get("game_id") in valid_game_set]
+        usable = [r for r in all_records if r.get("game_id") not in valid_game_set]
+        train_records = select_games(usable, args.max_records, args.seed)
+    else:
+        selected = select_games(all_records, args.max_records, args.seed)
+        # The split happens before oversampling, and oversampling touches the
+        # training side only. Reweighting first would triple the tactical
+        # records in the validation set as well, and the validation MAE of a
+        # tactical arm would then be measured on a differently-weighted
+        # population than the baseline arm's - two arms whose numbers cannot be
+        # compared. Sampling is a training-time device; the validation split
+        # stays the honest sample.
+        train_records, valid_records = split_records(
+            selected, args.split_mode, args.split, args.seed)
+
+    selected_presampling = len(train_records) + len(valid_records)
     train_presampling = len(train_records)
     train_records, sampling_info = apply_sampling_policy(
         train_records, args.sampling, args.sampling_boost, args.seed)
@@ -407,13 +441,16 @@ def main():
         "dataset": args.data,
         "dataset_checksum": metadata.get("checksum"),
         "dataset_records": len(all_records),
-        "selected_records": len(selected),
+        "selected_records": selected_presampling,
         "train_records": len(train_records),
         "train_records_presampling": train_presampling,
         "valid_records": len(valid_records),
         "sampling": sampling_info,
         "split_mode": args.split_mode,
         "split": args.split,
+        "valid_data": args.valid_data,
+        "valid_seed": args.valid_seed,
+        "valid_fraction": args.valid_fraction,
         "split_game_overlap": overlap,
         "split_exact_fen_overlap": exact_overlap,
         "target_mode": args.target,
