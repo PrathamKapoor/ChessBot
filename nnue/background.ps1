@@ -36,7 +36,11 @@ $jobs = @{
       "--min-ply","8","--harvest-every","3",
       "--harvest-every-late","3","--late-from-ply","40",
       "--max-plies","140","--opening-min","4","--opening-max","10",
-      "--seed","44","--workers","14")
+      "--seed","44","--workers","14",
+      # Always resume: a restart after a machine reboot continues from the
+      # shards instead of failing the fresh-start guard, and on a first run
+      # --resume is a no-op because there is no shard directory yet.
+      "--resume")
   }
   # Teacher throughput at the deeper rungs, on a subset with game identity.
   rate = @{
