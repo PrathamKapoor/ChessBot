@@ -75,6 +75,11 @@ def main():
                     help="dataset whose validation split defines the records "
                          "(default: all records of --data)")
     ap.add_argument("--split-mode", choices=["game", "record"], default="game")
+    ap.add_argument("--split-legacy", action="store_true",
+                    help="replicate the Phase 6 trainer's split exactly "
+                         "(random.seed(seed); shuffle; last 20%% is validation) "
+                         "so v1/v2 checkpoints can be scored on the split they "
+                         "were actually held out from")
     ap.add_argument("--split", type=float, default=0.8)
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--target", choices=["clip", "tanh"], default=None,
@@ -99,8 +104,16 @@ def main():
 
     if args.split_data:
         _, split_records_all = load_records(args.split_data)
-        _, valid = split_records(split_records_all, args.split_mode, args.split,
-                                 args.seed)
+        if args.split_legacy:
+            import random as _random
+            shuffled = list(split_records_all)
+            _random.seed(args.seed)
+            _random.shuffle(shuffled)
+            cut = int(len(shuffled) * args.split)
+            _, valid = shuffled[:cut], shuffled[cut:]
+        else:
+            _, valid = split_records(split_records_all, args.split_mode,
+                                     args.split, args.seed)
         records = [r for r in valid if r["fen"] in labels]
     else:
         records = label_records
@@ -131,14 +144,16 @@ def main():
                 nomate_abs += abs(error)
                 nomate_n += 1
             key = bucket_of(record)
-            bucket = buckets.setdefault(key, [0.0, 0.0, 0, 0.0, 0])
+            bucket = buckets.setdefault(key, [0.0, 0.0, 0, 0.0, 0, 0.0])
             bucket[0] += abs(error)
             bucket[1] += error
             bucket[2] += 1
             bucket[3] += abs(clipped_error)
             bucket[4] += 1
+            bucket[5] += clipped_error * clipped_error
 
     n = max(len(records), 1)
+    total_se = sum(v[5] for v in buckets.values())
     summary = {
         "net": args.net,
         "checkpoint_epoch": checkpoint.get("epoch"),
@@ -151,6 +166,7 @@ def main():
         "records": len(records),
         "split_data": args.split_data,
         "split_mode": args.split_mode,
+        "split_legacy": args.split_legacy,
         "split": args.split,
         "seed": args.seed,
         "target_mode_used": target_mode,
@@ -164,6 +180,7 @@ def main():
         "buckets": {k: {"mae_cp": round(v[0] / max(v[2], 1), 1),
                         "bias_cp": round(v[1] / max(v[2], 1), 1),
                         "mae_clipped_cp": round(v[3] / max(v[4], 1), 1),
+                        "clipped_squared_share": round(v[5] / max(total_se, 1e-9), 4),
                         "count": v[2]}
                     for k, v in sorted(buckets.items())},
     }
