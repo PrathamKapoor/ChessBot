@@ -10,7 +10,11 @@ whole run when it was killed mid-flight:
   shards    Each chunk writes its own shard file as soon as it finishes. A
             killed run keeps everything already labelled; --resume skips
             shards that exist. The single-file write at the end meant a 5 hour
-            run that died at 90% produced nothing at all.
+            run that died at 90% produced nothing at all. Chunk boundaries
+            depend on the record count and the worker count, so a resume must
+            repeat the same --workers and --limit as the interrupted run; the
+            shards are removed on successful completion so no later run can
+            inherit them by accident.
   depths    Several depths are searched in the same engine session, so the
             agreement ladder (d5 vs d7 vs d8 vs d9 vs d10) comes out of one
             pass over the positions instead of one pass per rung.

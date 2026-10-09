@@ -1,0 +1,17 @@
+[Event "P7-SPRT-V2CTRL"]
+[Site "PocketChess local match"]
+[Date "2026.10.09"]
+[Round "4"]
+[White "v2ctrl"]
+[Black "classical"]
+[Result "0-1"]
+[FEN "rnbqkb1r/pp2pppp/3p1n2/8/3NP3/8/PPP2PPP/RNBQKB1R w KQkq - 1 5"]
+[SetUp "1"]
+[Opening "core-01-b"]
+
+5. Bb5+ Bd7 6. Kf1 e5 7. Na3 exd4 8. Bg5 Qb6 9. Bc4 Nxe4 10. Qh5 Nxg5 11. Re1+
+Kd8 12. Qxg5+ f6 13. Qd5 Bc6 14. Qe6 Qxb2 15. Bd3 Qxa3 16. f3 d5 17. h3 Qxa2
+18. Qf7 h6 19. Rc1 b5 20. g3 Nd7 21. Re1 Ne5 22. Qd7+ Bxd7 23. h4 Nxf3 24. Kg2
+Nxe1+ 25. Rxe1 b4 26. g4 b3 27. Kg3 Bd6+ 28. Kf2 Bxg4 29. Kg2 bxc2 30. Kf1 Bh3+
+31. Kg1 c1=Q 32. Be2 Qxe1+ 33. Bf1 Qxf1# 0-1
+

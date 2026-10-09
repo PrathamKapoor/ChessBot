@@ -1,0 +1,16 @@
+[Event "P7-SPRT-V2CTRL"]
+[Site "PocketChess local match"]
+[Date "2026.10.09"]
+[Round "49"]
+[White "classical"]
+[Black "v2ctrl"]
+[Result "1-0"]
+[Opening "core-01-a"]
+
+1. Nc3 d5 2. d4 c6 3. Bf4 e6 4. h3 b6 5. Nf3 f6 6. e3 Bd6 7. Bd3 g6 8. O-O Ne7
+9. Bxd6 Qxd6 10. e4 Bb7 11. e5 fxe5 12. dxe5 Qb4 13. a3 Qxb2 14. Na4 Nd7 15.
+Nxb2 O-O-O 16. Nd4 Nxe5 17. Qe2 Nf5 18. Qxe5 Nxd4 19. Qxd4 c5 20. Qf6 Rde8 21.
+Bb5 Rhf8 22. Qg7 Rd8 23. Bd7+ Kb8 24. Bxe6 Ba8 25. Qe5+ Kb7 26. Bxd5+ Kc8 27.
+Bxa8 Rde8 28. Qg7 Re4 29. Qxf8+ Kc7 30. Bxe4 b5 31. Qe7+ Kc8 32. Rad1 Kb8 33.
+Rd8# 1-0
+

@@ -1,0 +1,27 @@
+{
+  "comment": "Phase 7 batch 3: teacher depth on a matched subset. Both arms train on the same 30,000 positions, the same game-level split, seed and schedule; the only difference is the teacher label (depth 7 vs depth 9). v4_sub30k.json is a deterministic whole-game subset of the clean pool (make_subset seed 51); v4_sub30k_d9.json is that exact file relabelled to depth 9 with the same positions, game ids and category metadata (relabel.py --keep-original). Both are held out from the same records, so either net can be scored against either teacher with eval_labels.py.",
+  "runs": [
+    {
+      "tag": "NNUE-TEACH-001",
+      "curve": "nnue/curves/NNUE-TEACH-001.json",
+      "args": ["--data", "nnue/data/v4_sub30k.json",
+               "--split-mode", "game", "--target", "clip", "--clip", "2000",
+               "--loss", "huber", "--epochs", "20", "--batch-size", "64",
+               "--lr", "5e-4", "--lr-milestones", "8,14", "--lr-gamma", "0.5",
+               "--weight-decay", "1e-4", "--seed", "42",
+               "--output", "nnue/checkpoints/t30k_d7.pt",
+               "--tag", "NNUE-TEACH-001"]
+    },
+    {
+      "tag": "NNUE-TEACH-002",
+      "curve": "nnue/curves/NNUE-TEACH-002.json",
+      "args": ["--data", "nnue/data/v4_sub30k_d9.json",
+               "--split-mode", "game", "--target", "clip", "--clip", "2000",
+               "--loss", "huber", "--epochs", "20", "--batch-size", "64",
+               "--lr", "5e-4", "--lr-milestones", "8,14", "--lr-gamma", "0.5",
+               "--weight-decay", "1e-4", "--seed", "42",
+               "--output", "nnue/checkpoints/t30k_d9.pt",
+               "--tag", "NNUE-TEACH-002"]
+    }
+  ]
+}

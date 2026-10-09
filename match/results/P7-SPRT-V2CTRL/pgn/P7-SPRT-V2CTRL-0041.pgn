@@ -1,0 +1,15 @@
+[Event "P7-SPRT-V2CTRL"]
+[Site "PocketChess local match"]
+[Date "2026.10.09"]
+[Round "41"]
+[White "classical"]
+[Black "v2ctrl"]
+[Result "1/2-1/2"]
+[FEN "r1bqk1nr/pppp1ppp/2n5/b7/2BpP3/2P2N2/P4PPP/RNBQK2R w KQkq - 0 7"]
+[SetUp "1"]
+[Opening "core-01-i"]
+
+7. Nxd4 Qh4 8. O-O d5 9. Nf3 Qf6 10. exd5 Nce7 11. Qa4+ Kf8 12. Qxa5 Qxf3 13.
+gxf3 Bh3 14. Re1 f6 15. Qxc7 Rc8 16. Qf4 Rxc4 17. Qxc4 Bf5 18. d6 a6 19. dxe7+
+Nxe7 20. Qh4 Nd5 21. Qc4 Ne7 22. Qh4 Nd5 23. Qc4 1/2-1/2
+
