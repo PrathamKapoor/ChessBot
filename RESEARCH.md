@@ -1855,8 +1855,16 @@ below it, so that match has almost no resolving power between them).
     id              candidate   baseline      W/D/L      score   elo     infra  note
     P6-SPRT-002     nnue-v2     classical     0/2/48     0.020   -676    0      phase 6 control
     P7-SPRT-V2CTRL  v2ctrl      classical     0/2/48     0.020   -676.1  0      Phase 7 reproduction (same openings as phase 6)
+    P7-AA-001       classical   classical     17/16/17   0.500   0.0     0      same binary both sides: suite balance + self-draw rate
     P7-AB-TANH      v2-tanh     v2-ctrl       17/15/18    0.490   -6.9    0      target representation: bounded vs clip
     P7-AB-MSE       v2-mse      v2-ctrl       17/16/17    0.500   -0.0    0      loss function: MSE vs Huber
+
+The A/A control is the yardstick: identical engines score exactly 0.500 with a
+32% draw rate and mirrored results, which says the opening set is balanced and
+gives the self-similarity baseline. The two v2-substrate A/B matches sit on
+top of it - 0.490 and 0.500, draw rates 30% and 32% - i.e. the arms are as
+similar to each other as the classical engine is to itself, which is the
+quantitative form of "no measurable difference" at this resolution.
 
 Both first-batch variables - the loss function and the target representation -
 come out as no measurable strength effect. The offline metrics disagree with
