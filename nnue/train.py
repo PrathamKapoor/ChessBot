@@ -88,10 +88,19 @@ def apply_sampling_policy(records, policy, boost, seed):
 
     baseline  every selected record is used once
     tactical  records flagged tactical are repeated `boost` times
-    endgame   records labelled with an endgame class are repeated `boost` times
+    endgame   records with a strict endgame class (pawnless, pawn_endgame,
+              minor_ending, rook_ending) or an endgame phase label are
+              repeated `boost` times
 
     Repetition rather than deletion: it keeps the pool immutable and makes the
     oversampling ratio explicit in the run record.
+
+    The named classes matter. "Any endgame label" was the first draft and it
+    hits 49.4% of the v3 pool, because queen_ending and sparse_pieces are
+    broad (sparse_pieces alone is 37%): half the dataset duplicated is closer
+    to uniform duplication than to oversampling. The strict set hits 24.5% of
+    the same pool and covers exactly the material configurations Part 10
+    names, so the endgame arm is a 1.5x reweighting, not a 2x one.
     """
     if policy == "baseline":
         return records, {"policy": "baseline", "boost": 1}
@@ -109,8 +118,7 @@ def apply_sampling_policy(records, policy, boost, seed):
         elif policy == "endgame":
             labels = set(record.get("endgame", []))
             if record.get("phase") == "endgame" or labels & {
-                    "pawnless", "pawn_endgame", "minor_ending", "rook_ending",
-                    "queen_ending", "sparse_pieces", "opposite_bishops"}:
+                    "pawnless", "pawn_endgame", "minor_ending", "rook_ending"}:
                 keep = boost
         counts[keep] += 1
         for _ in range(keep):
@@ -154,7 +162,13 @@ def make_targets(records, mode, clip, tanh_scale):
 
 
 def bucket_of(record):
-    """Reproducible metric buckets, evaluated on the validation split only."""
+    """Reproducible metric buckets, evaluated on the validation split only.
+
+    The endgame bucket uses the same strict class set as the endgame sampling
+    policy (pawnless, pawn_endgame, minor_ending, rook_ending); with the broad
+    "any endgame label" test the bucket absorbs half the pool and stops being a
+    bucket.
+    """
     flags = set(record.get("flags", []))
     endgame = set(record.get("endgame", []))
     score = record["score_cp"]
@@ -162,7 +176,8 @@ def bucket_of(record):
                 abs(record["score_cp"] - record["shallow_cp"]) >= 200)
     if flags & {"in_check", "promotion_available"} or volatile:
         return "tactical"
-    if record.get("phase") == "endgame" or endgame:
+    if record.get("phase") == "endgame" or endgame & {
+            "pawnless", "pawn_endgame", "minor_ending", "rook_ending"}:
         return "endgame"
     if abs(score) >= 1000:
         return "extreme"

@@ -209,10 +209,13 @@ def main():
 
     engine = chess.engine.SimpleEngine.popen_uci(args.engine)
     try:
+        # NnuePath and UseNnue are accepted by the engine's setoption parser
+        # but are not advertised in the uciok option list (a Phase 6 wart), so
+        # python-chess's configure() rejects them. Send every option as a raw
+        # protocol line, exactly as match/matchlib.py does.
         for option in args.setoption + [f"name Hash value {args.hash_mb}"]:
-            name, rest = option.split(" ", 1)
-            key, value = rest.split(" value ", 1)
-            engine.configure({key: value})
+            engine.protocol.send_line(f"setoption {option}")
+        engine.ping()
         print(f"candidate {args.name}  engine={args.engine}")
         tactical = run_suite(engine, "tactical", TACTICAL, args.depth_tactical,
                              args.verbose)

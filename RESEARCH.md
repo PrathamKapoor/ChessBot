@@ -1531,6 +1531,46 @@ The dataset format was changed anyway (format v3 adds `game_id`), and the
 Phase 7 trainer splits by game by default and records the measured overlap in
 every curve, because "small on v2" is not the same as "cannot happen".
 
+### Validation metric and the same-records trap
+
+Two numbers have to be pinned before any Phase 7 comparison means anything:
+what the training curve's MAE is measured against, and which records it is
+measured on.
+
+The curve's `val_mae_cp` is MAE against the clipped target, i.e.
+`|400 * output - clamp(score_cp, +/-2000)|`. It is the number the Phase 6
+curves reported (394 cp for v2) and it is dominated by the 24% of validation
+records whose raw label sits at or beyond the clip boundary, where the error
+per record is in the hundreds of centipawns. Raw-label MAE is worse as a
+metric: it is 1845 cp for v2 because the 24% who carry mate labels can never
+be predicted (the target representation is bounded). `eval_labels.py` reports
+raw, clipped and below-clip MAE separately for this reason.
+
+The records the MAE is measured on matter more than the formula, and this bit
+the phase's own tooling before it bit anything else. Evaluating the Phase 6
+v2 net against the new trainer's validation split gave 99.9 cp instead of
+~394 cp - a 4x "improvement" that was pure measurement error. The reason:
+both splits are random 20% samples of the same 76,605-record pool, so the
+records this net was held out from are ~80% inside the *other* split's
+training set. These nets memorise their training records to ~3 cp
+(train_loss ends at 0.009 Huber units) and err ~330 cp on unseen ordinary
+positions, so any evaluation on records that are 80% memorised reports about
+a quarter of the true held-out error. Confirmed by symmetry: the new
+checkpoint scored 98.4 cp on the Phase 6 split and 389.9 cp on its own.
+
+Consequences, applied everywhere in Phase 7:
+
+  * a candidate is only ever scored on a validation split it was held out
+    from; `eval_labels.py` computes the split with the trainer's own splitter
+    and seeds so "validation" means the same records in every row;
+  * the teacher experiment (depth 7 vs depth 9) trains both nets on the same
+    subset with the same split seed, so both are held out from exactly the
+    same records and either core can be scored against either teacher;
+  * the train/validation gap reported since Phase 6 is memorisation, not
+    leakage: the earlier leakage analysis measured 0.2% near-overlap on v2,
+    and the 4x-memorisation behaviour above closes the case. More data is
+    the lever, which is what the scaling experiments test.
+
 ### The v3 pool colour defect (negative result, now a gate)
 
 The first Phase 7 pool (`v3_pool.json`, 300,566 records, depth 7, checksum
