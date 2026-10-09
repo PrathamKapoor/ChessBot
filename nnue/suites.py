@@ -201,7 +201,8 @@ def main():
                     help="UCI option as 'name X value Y'")
     ap.add_argument("--depth-tactical", type=int, default=0,
                     help="override tactical depths (0 = per-case depth)")
-    ap.add_argument("--depth-endgame", type=int, default=6)
+    ap.add_argument("--depth-endgame", type=int, default=0,
+                    help="override endgame depths (0 = per-case depth)")
     ap.add_argument("--hash-mb", type=int, default=32)
     ap.add_argument("--out", default=None)
     ap.add_argument("--verbose", action="store_true")

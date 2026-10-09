@@ -1501,13 +1501,14 @@ worried about:
 The target distribution is the first imbalance worth naming. The median label
 is about +55 cp - the pool is a near-balanced-position generator - but the
 mean is +900 cp and the standard deviation 7,400 cp, because 6% of the data
-carries mate scores (+/-30,000). Training clips those to +/-2000 cp, so a
-sixth of the data is a fat tail that trains a single constant value with no
-gradient ordering inside it, while the region the engine actually visits most
+carries mate scores (+/-30,000). Training clips those to +/-2000 cp: the 3.6%
+of records at or beyond the boundary all collapse onto the same two extreme
+values, with no gradient ordering inside the tail, while 24% of the data sits
+in the extreme bucket (|score| >= 1000) and the region the engine visits most
 (median 55 cp) gets the ordinary least-squares weighting. The diagnostics
-define the extreme bucket explicitly: `at_clip_boundary_abs_ge_2000` is 3.6%
-of v2. Whether that matters is a Phase 7 experiment (target representation),
-not an assumption.
+define the boundary bucket explicitly: `at_clip_boundary_abs_ge_2000` is 3.6%
+of v2. Whether the collapsed tail matters is a Phase 7 experiment (target
+representation), not an assumption.
 
 Two composition facts matter for the sampling experiments. 81.7% of v2
 positions have a capture available and 54.9% have a checking move, while only
@@ -1539,12 +1540,13 @@ measured on.
 
 The curve's `val_mae_cp` is MAE against the clipped target, i.e.
 `|400 * output - clamp(score_cp, +/-2000)|`. It is the number the Phase 6
-curves reported (394 cp for v2) and it is dominated by the 24% of validation
-records whose raw label sits at or beyond the clip boundary, where the error
-per record is in the hundreds of centipawns. Raw-label MAE is worse as a
-metric: it is 1845 cp for v2 because the 24% who carry mate labels can never
-be predicted (the target representation is bounded). `eval_labels.py` reports
-raw, clipped and below-clip MAE separately for this reason.
+curves reported (394 cp for v2), and it is dominated by the 24% of validation
+records whose raw label is extreme (|score_cp| >= 1000): those sit at or near
+the clip boundary where the target is +/-2000 and the per-record error is in
+the hundreds of centipawns. Raw-label MAE is worse as a metric: it is 1845 cp
+for v2 because the records carrying mate labels can never be predicted (the
+target representation is bounded). `eval_labels.py` reports raw, clipped and
+below-clip MAE separately for this reason.
 
 The records the MAE is measured on matter more than the formula, and this bit
 the phase's own tooling before it bit anything else. Evaluating the Phase 6
@@ -1570,6 +1572,96 @@ Consequences, applied everywhere in Phase 7:
     leakage: the earlier leakage analysis measured 0.2% near-overlap on v2,
     and the 4x-memorisation behaviour above closes the case. More data is
     the lever, which is what the scaling experiments test.
+
+### Screening suites
+
+`nnue/suites.py` runs 17 tactical positions (the tests/tactical_test.cpp table
+at UCI level) and 9 theory-certain endgame positions at fixed depth. The
+classical control scores 17/17 and 7/9, where the two failures are the
+control-limited endgame draws (KPK with opposition +242 cp, wrong-bishop rook
+pawn +781 cp - the classical eval does not know either draw even at depth 12).
+
+The first candidate screened, the Phase 6 reproduction v2ctrl, scores exactly
+the same: 17/17 and 7/9, failing the same two draws. That is the suite
+behaving as designed and a warning about what it is for: a net that loses
+48/50 games to its own teacher still passes every position in it. The suites
+catch crashes, illegal moves, lost mates and eval catastrophes; they do not
+measure strength, and no Phase 7 decision is allowed to rest on them alone.
+The number that did move, quietly, is the wrong-bishop draw: the control says
++781 cp and v2ctrl says +1626 cp, i.e. the net is more wrong about a drawn
+position than the teacher it was trained on. Nothing else in the suites
+notices a 676-Elo gap, which is the point of measuring matches as well.
+
+### Training on the v2 substrate (batch 1)
+
+Batch 1 varies loss, target, learning rate and epoch count on v2 - the exact
+76,605 records the weak Phase 6 net learned from - with every arm differing
+from the control in one variable. All arms use the record-level split (v2 has
+no game identity), seed 42, batch 64, AdamW, 20 epochs unless stated, and the
+same lr schedule (MultiStepLR 8/14, gamma 0.5, base 5e-4).
+
+    run                  target  loss   lr     epochs   best ep  val loss  val MAE  quiet MAE  minutes
+    NNUE-V2-CTRL-REC     clip    huber  5e-4   20       17       0.6346    389.9    147.4      47.5
+    NNUE-V2-MSE          clip    mse    5e-4   20       17       2.3213*   394.8    152.8      62.8
+    NNUE-V2-TANH         tanh    huber  5e-4   20       ...      ...       ...      ...        ...
+    NNUE-V2-LR2X         clip    huber  1e-3   20       ...      ...       ...      ...        ...
+    NNUE-V2-EPOCHS40     clip    huber  5e-4   40       ...      ...       ...      ...        ...
+
+(*) MSE and Huber losses are not comparable numbers; the MAE columns are.
+
+Validation MAE is measured against the arm's own target (tanh and clip produce
+different target scales), so cross-arm comparison happens through
+`eval_labels.py`, which inverts the target transform back to centipawns, and
+through matches - never by comparing the curve files directly.
+
+Held-out lineage, all scored on splits their net was actually held out from:
+
+    net         records  split              MAE_clip  MAE<clip  quiet  ordinary  extreme
+    v1.pt       7711     legacy, own         430.2     363.0    162.1   343.4    862.7
+    v2.pt       15321    legacy, own         393.8     332.8    148.8   319.3    798.9
+    v2ctrl.pt   15321    record seed 42      389.9     328.3    147.4   314.9    800.8
+
+The Phase 7 trainer reproduces Phase 6 within noise, and the v1 -> v2 doubling
+of data bought 36 cp of held-out clip MAE (430 -> 394). The loss decomposition
+on the v2 held-out split explains what that number is made of:
+
+    extreme (|label| >= 1000, 23.8% of records)  67.9% of clipped squared error
+    ordinary (53.1%)                             28.6%
+    quiet (23.1%)                                 3.6%
+
+Two thirds of the training signal is the quarter of the data whose labels are
+extreme (|score| >= 1000; at or beyond the +/-2000 clip boundary is 3.6% of
+records) - mate scores and forced wins - and the net still misses those by
+799 cp on average. The quiet positions, the ones the search's pruning margins
+actually consult, get 3.6% of the loss and are fit to ~149 cp. A lower
+clip-MAE is therefore purchasable entirely in the tail the qsearch never
+trusts, and every strength claim in this phase has to come from matches for
+exactly that reason.
+
+### Dataset scaling on the clean pool (v4)
+
+The clean pool was generated by generator version 4: odd harvest strides
+throughout (stride 3, including the late block that the v3 pool got wrong),
+seed 44, 15,500 self-play games at depth 3 from random 4-10 move openings plus
+2,500 random playouts, positions harvested every 3 plies from ply 8, each
+unique position labelled by the depth-7 teacher with a depth-3 shallow label
+for the tactical volatility proxy.
+
+Harvest stage (measured, `gen_v4.log`):
+
+    18,000 games -> 586,224 harvested -> 580,735 unique in 5,227 s
+    0.94% removed by the position-without-counters dedupe (generator version 4)
+    colour balance 292,739 white (50.4%) against 287,996 black
+      the late-game block (ply >= 40), which was 100% white in the v3 pool,
+      comes out 48.9% white
+
+The learning curve trains whole-game subsets of this pool at 100k, 250k and
+500k records with the same game-level split, seed and schedule (batch 2
+manifest). For these runs the subsets are derived rather than materialised -
+train.py's select_games and make_subset.py implement the same deterministic
+whole-game selection, so a subset is exactly identified by (pool checksum,
+seed, record count), and the curve records both. The teacher arms materialise
+their 30k subset because relabel.py needs a file to relabel.
 
 ### The v3 pool colour defect (negative result, now a gate)
 
