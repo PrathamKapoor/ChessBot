@@ -1,0 +1,358 @@
+{
+  "datasets": [
+    {
+      "id": "pilot.json",
+      "records": 20,
+      "teacher_depth": 4,
+      "label_seconds": null,
+      "label_hours": null,
+      "positions_per_second": null,
+      "generator_version": null
+    },
+    {
+      "id": "smoke.json",
+      "records": 102,
+      "teacher_depth": 4,
+      "label_seconds": null,
+      "label_hours": null,
+      "positions_per_second": null,
+      "generator_version": null
+    },
+    {
+      "id": "v1.json",
+      "records": 38553,
+      "teacher_depth": 7,
+      "label_seconds": null,
+      "label_hours": null,
+      "positions_per_second": null,
+      "generator_version": null
+    },
+    {
+      "id": "v2.json",
+      "records": 76605,
+      "teacher_depth": 7,
+      "label_seconds": null,
+      "label_hours": null,
+      "positions_per_second": null,
+      "generator_version": null
+    },
+    {
+      "id": "v3_pool.json",
+      "records": 300566,
+      "teacher_depth": 7,
+      "label_seconds": 13392.1,
+      "label_hours": 3.7,
+      "positions_per_second": 22.44,
+      "generator_version": null
+    },
+    {
+      "id": "v3_smoke.json",
+      "records": 381,
+      "teacher_depth": 7,
+      "label_seconds": 18.8,
+      "label_hours": 0.0,
+      "positions_per_second": 20.27,
+      "generator_version": null
+    },
+    {
+      "id": "v3_sub20k.json",
+      "records": 20000,
+      "teacher_depth": 7,
+      "label_seconds": 13392.1,
+      "label_hours": 3.7,
+      "positions_per_second": 1.49,
+      "generator_version": null
+    },
+    {
+      "id": "v3_sub60k.json",
+      "records": 60000,
+      "teacher_depth": 7,
+      "label_seconds": 13392.1,
+      "label_hours": 3.7,
+      "positions_per_second": 4.48,
+      "generator_version": null
+    }
+  ],
+  "trainings": [
+    {
+      "tag": "NNUE-V2-CTRL-REC",
+      "dataset": "v2.json",
+      "train_records": 61284,
+      "epochs": 20,
+      "seconds": 2851.9,
+      "minutes": 47.5,
+      "examples_per_second": 429.8,
+      "device": "cuda",
+      "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU"
+    },
+    {
+      "tag": "NNUE-V2-MSE",
+      "dataset": "v2.json",
+      "train_records": 61284,
+      "epochs": 20,
+      "seconds": 3745.1,
+      "minutes": 62.4,
+      "examples_per_second": 327.3,
+      "device": "cuda",
+      "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU"
+    },
+    {
+      "tag": "NNUE-V2-TANH",
+      "dataset": "v2.json",
+      "train_records": 61284,
+      "epochs": 20,
+      "seconds": 2882.0,
+      "minutes": 48.0,
+      "examples_per_second": 425.3,
+      "device": "cuda",
+      "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU"
+    },
+    {
+      "tag": "",
+      "dataset": "v3_pool.json",
+      "train_records": 4752,
+      "epochs": 2,
+      "seconds": 31.0,
+      "minutes": 0.5,
+      "examples_per_second": 306.8,
+      "device": "cuda",
+      "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU"
+    }
+  ],
+  "matches": [
+    {
+      "id": "P3C-AB-001",
+      "games": 24,
+      "seconds": 822,
+      "minutes": 13.7,
+      "seconds_per_game": 34.2,
+      "infrastructure_failures": 0,
+      "score": 0.5
+    },
+    {
+      "id": "P3C-AB-002",
+      "games": 24,
+      "seconds": 718,
+      "minutes": 12.0,
+      "seconds_per_game": 29.9,
+      "infrastructure_failures": 0,
+      "score": 0.5
+    },
+    {
+      "id": "P3C-CLOCK-001",
+      "games": 4,
+      "seconds": 380,
+      "minutes": 6.3,
+      "seconds_per_game": 95.0,
+      "infrastructure_failures": 0,
+      "score": 0.5
+    },
+    {
+      "id": "P3C-SELF-001",
+      "games": 24,
+      "seconds": 537,
+      "minutes": 8.9,
+      "seconds_per_game": 22.4,
+      "infrastructure_failures": 0,
+      "score": 0.5
+    },
+    {
+      "id": "P4-MATCH-001",
+      "games": 12,
+      "seconds": 106,
+      "minutes": 1.8,
+      "seconds_per_game": 8.8,
+      "infrastructure_failures": 0,
+      "score": 0.625
+    },
+    {
+      "id": "P4-SMOKE-001",
+      "games": 4,
+      "seconds": 23,
+      "minutes": 0.4,
+      "seconds_per_game": 5.7,
+      "infrastructure_failures": 0,
+      "score": 0.125
+    },
+    {
+      "id": "P4-SMOKE-002",
+      "games": 4,
+      "seconds": 21,
+      "minutes": 0.3,
+      "seconds_per_game": 5.2,
+      "infrastructure_failures": 0,
+      "score": 0.125
+    },
+    {
+      "id": "P4-SMOKE-003",
+      "games": 4,
+      "seconds": 26,
+      "minutes": 0.4,
+      "seconds_per_game": 6.5,
+      "infrastructure_failures": 0,
+      "score": 0.75
+    },
+    {
+      "id": "P4-SMOKE-004",
+      "games": 4,
+      "seconds": 26,
+      "minutes": 0.4,
+      "seconds_per_game": 6.4,
+      "infrastructure_failures": 0,
+      "score": 0.75
+    },
+    {
+      "id": "P4-SMOKE-005",
+      "games": 4,
+      "seconds": 28,
+      "minutes": 0.5,
+      "seconds_per_game": 7.0,
+      "infrastructure_failures": 0,
+      "score": 0.75
+    },
+    {
+      "id": "P5A-EXT-001",
+      "games": 12,
+      "seconds": 33,
+      "minutes": 0.6,
+      "seconds_per_game": 2.8,
+      "infrastructure_failures": 0,
+      "score": 0.375
+    },
+    {
+      "id": "P5A-LMR-001",
+      "games": 12,
+      "seconds": 34,
+      "minutes": 0.6,
+      "seconds_per_game": 2.8,
+      "infrastructure_failures": 0,
+      "score": 0.5
+    },
+    {
+      "id": "P5A-SPRT-001",
+      "games": 100,
+      "seconds": 853,
+      "minutes": 14.2,
+      "seconds_per_game": 8.5,
+      "infrastructure_failures": 0,
+      "score": 0.53
+    },
+    {
+      "id": "P6-SMOKE-001",
+      "games": 0,
+      "seconds": 27,
+      "minutes": 0.5,
+      "seconds_per_game": 27.4,
+      "infrastructure_failures": 1,
+      "score": 0.0
+    },
+    {
+      "id": "P6-SMOKE-002",
+      "games": 4,
+      "seconds": 6,
+      "minutes": 0.1,
+      "seconds_per_game": 1.4,
+      "infrastructure_failures": 0,
+      "score": 0.5
+    },
+    {
+      "id": "P6-SMOKE-003",
+      "games": 0,
+      "seconds": 31,
+      "minutes": 0.5,
+      "seconds_per_game": 31.2,
+      "infrastructure_failures": 1,
+      "score": 0.0
+    },
+    {
+      "id": "P6-SMOKE-004",
+      "games": 4,
+      "seconds": 24,
+      "minutes": 0.4,
+      "seconds_per_game": 6.0,
+      "infrastructure_failures": 0,
+      "score": 0.0
+    },
+    {
+      "id": "P6-SMOKE-005",
+      "games": 4,
+      "seconds": 15,
+      "minutes": 0.3,
+      "seconds_per_game": 3.8,
+      "infrastructure_failures": 0,
+      "score": 0.0
+    },
+    {
+      "id": "P6-SPRT-001",
+      "games": 26,
+      "seconds": 376,
+      "minutes": 6.3,
+      "seconds_per_game": 14.5,
+      "infrastructure_failures": 1,
+      "score": 0.019230769230769232
+    },
+    {
+      "id": "P6-SPRT-002",
+      "games": 50,
+      "seconds": 544,
+      "minutes": 9.1,
+      "seconds_per_game": 10.9,
+      "infrastructure_failures": 0,
+      "score": 0.02
+    },
+    {
+      "id": "P6-VERIFY-001",
+      "games": 2,
+      "seconds": 11,
+      "minutes": 0.2,
+      "seconds_per_game": 5.5,
+      "infrastructure_failures": 0,
+      "score": 0.25
+    },
+    {
+      "id": "P7-AB-MSE",
+      "games": 50,
+      "seconds": 1550,
+      "minutes": 25.8,
+      "seconds_per_game": 31.0,
+      "infrastructure_failures": 0,
+      "score": 0.5
+    },
+    {
+      "id": "P7-AB-TANH",
+      "games": 50,
+      "seconds": 2122,
+      "minutes": 35.4,
+      "seconds_per_game": 42.4,
+      "infrastructure_failures": 0,
+      "score": 0.49
+    },
+    {
+      "id": "P7-SPRT-V2CTRL",
+      "games": 50,
+      "seconds": 1532,
+      "minutes": 25.5,
+      "seconds_per_game": 30.6,
+      "infrastructure_failures": 0,
+      "score": 0.02
+    },
+    {
+      "id": "P7-VERIFY-000",
+      "games": 4,
+      "seconds": 22,
+      "minutes": 0.4,
+      "seconds_per_game": 5.6,
+      "infrastructure_failures": 0,
+      "score": 0.5
+    },
+    {
+      "id": "P7-VERIFY-001",
+      "games": 4,
+      "seconds": 115,
+      "minutes": 1.9,
+      "seconds_per_game": 28.6,
+      "infrastructure_failures": 0,
+      "score": 0.0
+    }
+  ]
+}
