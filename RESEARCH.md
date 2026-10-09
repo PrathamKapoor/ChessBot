@@ -1620,6 +1620,52 @@ match, not by the offline MAE, because offline MAE across target transforms is
 not comparable in the tail by construction (inverting tanh to centipawns
 amplifies output errors near the boundary).
 
+### The label-order defect (negative result, and why the gate exists)
+
+`check_labels.py` re-labels a sample of a dataset with a fresh teacher and
+requires exact reproduction of both stored labels - search at fixed depth with
+a cleared TT is deterministic, so any mismatch means the labelling path is
+broken. On its first run against the clean pool's first chunk it failed on 18
+of 20 records, and the pattern was exact: every record's `score_cp` equalled a
+fresh *shallow-depth* search, and its `shallow_cp` equalled a fresh deep one.
+The generator had been writing the two labels swapped.
+
+Cause: `label_position` returned `(values[depths[-1]], values[depths[0]])`
+while `depths` is ordered deepest-first, so the primary label received the
+shallow value. Both fields were present and plausible, the metadata said
+"depth 7", and every other check in the phase passed - checksum, colour
+balance, composition, suites, export/parity. Only a re-search could see it.
+This is the worst failure class in a teacher pipeline: silent, systematic, and
+present in every dataset the generator had produced.
+
+Scope and repair:
+
+  * affected: every dataset from generate_v3.py generated with a shallow depth
+    - the 300,566-record v3 pool, its subsets, and the 26,175 records the
+    clean pool had labelled before it was caught;
+  * not affected: v1 and v2. nnue/dataset.py never stored a shallow label, and
+    check_labels.py passes on v2 (the code path Phase 6 used);
+  * `generate_v3.py` now pins the return order with a comment naming the
+    incident, and attaches a shallow label only when one was requested;
+  * the 26,175 affected records were converted in place
+    (`fix_label_swap.py`). The conversion is lossless because both values were
+    stored: no position needed re-searching. The generator was stopped, the
+    shards converted, and the run resumed on the fixed code;
+  * the post-pool watcher runs check_labels.py on the finished pool and aborts
+    the whole downstream chain on failure.
+
+Numbers already recorded that this touches: the v3 pool's target-distribution
+diagnostics describe depth-3 values in the `score_cp` field (they were
+computed before the fix; the volatility proxy is unaffected because the
+difference is symmetric). No Phase 7 training result used v3 or pre-fix v4
+labels - the one run that did (the 6k-record probe) is recorded as a machinery
+check only. Everything downstream uses converted or post-fix labels, gated.
+
+The lesson is in the report rather than in the code: "the file looks healthy
+and the checksum verifies" is not evidence that the labels are right, and a
+gate that re-derives one record from scratch is worth more than any amount of
+plumbing that reads the file back to itself.
+
 ### Training on the v2 substrate (batch 1)
 
 Batch 1 varies loss, target, learning rate and epoch count on v2 - the exact
@@ -1680,13 +1726,16 @@ below it, so that match has almost no resolving power between them).
     P6-SPRT-002     nnue-v2     classical     0/2/48     0.020   -676    0      phase 6 control
     P7-SPRT-V2CTRL  v2ctrl      classical     0/2/48     0.020   -676.1  0      Phase 7 reproduction (same openings as phase 6)
     P7-AB-TANH      v2-tanh     v2-ctrl       17/15/18    0.490   -6.9    0      target representation: bounded vs clip
+    P7-AB-MSE       v2-mse      v2-ctrl       17/16/17    0.500   -0.0    0      loss function: MSE vs Huber
 
-The target experiment's answer is negative and clean: a 50-game A/B between
-the clip net and the tanh net ends 17/15/18, i.e. -6.9 Elo with a confidence
-interval far wider than the effect. Whatever the bounded target changed in the
-learned function (quiet-position MAE 143.8 vs 147.4 cp offline, everything
-else within noise), it did not change playing strength. Recorded as a negative
-result: target representation is not this net's binding constraint.
+Both first-batch variables - the loss function and the target representation -
+come out as no measurable strength effect. The offline metrics disagree with
+that verdict in *sign* twice: MSE is the worse fitting net (clip MAE 394.8 vs
+389.9, quiet 152.8 vs 147.4) and still draws even in play; tanh fits quiet
+positions better (143.8 vs 147.4) and still draws even. Two 50-game matches
+with 0 infrastructure failures and 30% draw rates put both effects inside
+roughly +/-100 Elo, i.e. far below the -676 that is being explained. The
+matches decide, exactly as Part 13 and Part 16 require.
 
 The 30% draw rate between the two v2-substrate nets is itself informative next
 to the 4% draw rate against classical: the nets are equal enough to reach dead
