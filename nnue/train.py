@@ -93,7 +93,9 @@ def apply_sampling_policy(records, policy, boost, seed):
               repeated `boost` times
 
     Repetition rather than deletion: it keeps the pool immutable and makes the
-    oversampling ratio explicit in the run record.
+    oversampling ratio explicit in the run record. It is applied to the
+    training split only (never the validation split), so the validation MAE of
+    a reweighted arm is measured on the same population as the baseline arm's.
 
     The named classes matter. "Any endgame label" was the first draft and it
     hits 49.4% of the v3 pool, because queen_ending and sparse_pieces are
@@ -272,10 +274,18 @@ def main():
     t_start = time.time()
     metadata, all_records = load_records(args.data)
     selected = select_games(all_records, args.max_records, args.seed)
-    selected, sampling_info = apply_sampling_policy(
-        selected, args.sampling, args.sampling_boost, args.seed)
+    # The split happens before oversampling, and oversampling touches the
+    # training side only. Reweighting first would triple the tactical records
+    # in the validation set as well, and the validation MAE of a tactical arm
+    # would then be measured on a differently-weighted population than the
+    # baseline arm's - two arms whose numbers cannot be compared. Sampling is a
+    # training-time device; the validation split stays the honest sample.
     train_records, valid_records = split_records(
         selected, args.split_mode, args.split, args.seed)
+    selected_presampling = len(selected)
+    train_presampling = len(train_records)
+    train_records, sampling_info = apply_sampling_policy(
+        train_records, args.sampling, args.sampling_boost, args.seed)
 
     train_games = {r.get("game_id") for r in train_records}
     valid_games = {r.get("game_id") for r in valid_records}
@@ -283,8 +293,9 @@ def main():
     exact_overlap = len({r["fen"] for r in train_records} &
                         {r["fen"] for r in valid_records})
 
-    print(f"pool={len(all_records)} selected={len(selected)} "
-          f"train={len(train_records)} valid={len(valid_records)} "
+    print(f"pool={len(all_records)} selected={selected_presampling} "
+          f"train={train_presampling}->{len(train_records)} "
+          f"valid={len(valid_records)} "
           f"sampling={sampling_info['policy']} boost={sampling_info['boost']}")
     print(f"split_mode={args.split_mode} game_overlap={overlap} "
           f"exact_fen_overlap={exact_overlap}")
@@ -398,6 +409,7 @@ def main():
         "dataset_records": len(all_records),
         "selected_records": len(selected),
         "train_records": len(train_records),
+        "train_records_presampling": train_presampling,
         "valid_records": len(valid_records),
         "sampling": sampling_info,
         "split_mode": args.split_mode,
