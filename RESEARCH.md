@@ -1701,7 +1701,7 @@ same lr schedule (MultiStepLR 8/14, gamma 0.5, base 5e-4).
     NNUE-V2-CTRL-REC     clip    huber  5e-4   20       17       0.6346    389.9    147.4      47.5
     NNUE-V2-MSE          clip    mse    5e-4   20       17       2.3213*   394.8    152.8      62.8
     NNUE-V2-TANH         tanh    huber  5e-4   20       15       0.5659*   359.8*   140.6      48.4
-    NNUE-V2-LR2X         clip    huber  1e-3   20       17       0.6398    391.1    148.6      47.6
+    NNUE-V2-LR2X         clip    huber  1e-3   20       17       0.6398    391.1    146.2      47.6
     NNUE-V2-EPOCHS40     clip    huber  5e-4   40       ...      ...       ...      ...        ...
 
 (*) MSE and Huber losses, and tanh and clip MAEs, are not comparable numbers:
