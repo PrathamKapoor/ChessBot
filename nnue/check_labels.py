@@ -17,7 +17,8 @@ import chess.engine
 path = sys.argv[1] if len(sys.argv) > 1 else "nnue/data/v4_pool.json.shards/chunk_0000.json"
 n = int(sys.argv[2]) if len(sys.argv) > 2 else 20
 
-records = json.load(open(path, encoding="utf-8"))
+raw = json.load(open(path, encoding="utf-8"))
+records = raw["records"] if isinstance(raw, dict) and "records" in raw else raw
 sample = random.Random(4).sample(records, min(n, len(records)))
 
 engine = chess.engine.SimpleEngine.popen_uci("build/pocketchess.exe")

@@ -53,6 +53,33 @@ $jobs = @{
       "--depths","9,10,11","--positions","32","--workers","14",
       "--out","nnue/reports_phase7_teacher_rate_deep.json")
   }
+  # The teacher experiment's d9 arm: relabel the exact 30k subset the d7 arm
+  # trains on, keeping the original depth-7 labels alongside (--keep-original).
+  relabel9 = @{
+    pid = "nnue\_relabel9.pid"
+    log = "nnue\relabel_d9.log"
+    err = "nnue\relabel_d9.err.log"
+    args = @(
+      "-3","-u","nnue\relabel.py",
+      "--data","nnue/data/v4_sub30k.json",
+      "--depth","9","--keep-original",
+      "--out","nnue/data/v4_sub30k_d9.json",
+      "--workers","14","--resume")
+  }
+  # Agreement ladder at the rungs that cannot carry a training set: d10 and
+  # d11 on a 512-position slice, one engine session per position.
+  ladder = @{
+    pid = "nnue\_ladder.pid"
+    log = "nnue\ladder.log"
+    err = "nnue\ladder.err.log"
+    args = @(
+      "-3","-u","nnue\relabel.py",
+      "--data","nnue/data/v4_sub30k.json",
+      "--depth","10","--also-depth","11",
+      "--limit","512","--keep-original",
+      "--out","nnue/data/v4_ladder512.json",
+      "--workers","14","--resume")
+  }
 }
 
 if ($Stop) {
