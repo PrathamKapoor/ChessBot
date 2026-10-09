@@ -197,6 +197,22 @@ class TestSamplingPolicies(unittest.TestCase):
         # classes (queen_ending, sparse_pieces) and a late-middlegame phase
         self.assertEqual(counts, {"a": 1, "b": 3, "c": 3, "d": 1})
 
+    def test_noextreme_drops_only_the_tail(self):
+        records = [
+            {"fen": "a", "game_id": "g", "score_cp": 100, "flags": [],
+             "endgame": [], "phase": "opening_middlegame"},
+            {"fen": "b", "game_id": "g", "score_cp": 2500, "flags": [],
+             "endgame": [], "phase": "opening_middlegame"},
+            {"fen": "c", "game_id": "g", "score_cp": -30000, "flags": [],
+             "endgame": [], "phase": "opening_middlegame"},
+            {"fen": "d", "game_id": "g", "score_cp": -1999, "flags": [],
+             "endgame": [], "phase": "opening_middlegame"},
+        ]
+        out, info = apply_sampling_policy(records, "noextreme", 3, 42)
+        self.assertEqual([r["fen"] for r in out], ["a", "d"])
+        self.assertEqual(info["dropped"], 2)
+        self.assertEqual(info["threshold_cp"], 2000.0)
+
     def test_bucket_priority(self):
         # tactical beats endgame (b is in check and in an endgame phase)
         self.assertEqual(bucket_of(self.records[1]), "tactical")

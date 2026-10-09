@@ -91,11 +91,18 @@ def apply_sampling_policy(records, policy, boost, seed):
     endgame   records with a strict endgame class (pawnless, pawn_endgame,
               minor_ending, rook_ending) or an endgame phase label are
               repeated `boost` times
+    noextreme records with |score_cp| >= 2000 are dropped from the training
+              split (a mate-handling ablation: 3.6% of the pool carries most
+              of the squared error and none of the learnable ordering)
 
-    Repetition rather than deletion: it keeps the pool immutable and makes the
-    oversampling ratio explicit in the run record. It is applied to the
-    training split only (never the validation split), so the validation MAE of
-    a reweighted arm is measured on the same population as the baseline arm's.
+    Oversampling is repetition rather than deletion: it keeps the pool
+    immutable and makes the oversampling ratio explicit in the run record.
+    noextreme is the one policy that deletes, and it is an explicit ablation,
+    not a reweighting.
+
+    Every policy is applied to the training split only (never the validation
+    split), so a reweighted arm's validation MAE is measured on the same
+    population as the baseline arm's.
 
     The named classes matter. "Any endgame label" was the first draft and it
     hits 49.4% of the v3 pool, because queen_ending and sparse_pieces are
@@ -106,6 +113,11 @@ def apply_sampling_policy(records, policy, boost, seed):
     """
     if policy == "baseline":
         return records, {"policy": "baseline", "boost": 1}
+    if policy == "noextreme":
+        kept = [r for r in records if abs(r["score_cp"]) < 2000.0]
+        return kept, {"policy": policy, "boost": 1,
+                      "threshold_cp": 2000.0,
+                      "dropped": len(records) - len(kept)}
 
     out = []
     counts = defaultdict(int)
@@ -262,7 +274,8 @@ def main():
     ap.add_argument("--valid-seed", type=int, default=99)
     ap.add_argument("--max-records", type=int, default=0,
                     help="subsample whole games up to this many records (0 = all)")
-    ap.add_argument("--sampling", choices=["baseline", "tactical", "endgame"],
+    ap.add_argument("--sampling",
+                    choices=["baseline", "tactical", "endgame", "noextreme"],
                     default="baseline")
     ap.add_argument("--sampling-boost", type=int, default=3)
     ap.add_argument("--target", choices=["clip", "tanh"], default="clip")
