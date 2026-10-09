@@ -1,0 +1,159 @@
+[
+  {
+    "dataset": "v3_pool.json",
+    "records": 300566,
+    "non_finite_targets": 0,
+    "targets": {
+      "min": -30000.0,
+      "max": 30000.0,
+      "mean": 647.7962377647505,
+      "median": 44.0,
+      "stddev": 5622.206081686992,
+      "mad": 387.0,
+      "mean_abs": 1620.6820731553137,
+      "mate_scores": 10449,
+      "exactly_zero": 656,
+      "near_zero_abs_le_20": 15930,
+      "at_clip_boundary_abs_ge_2000": 13499,
+      "abs_le_100": 63656,
+      "abs_le_300": 130020,
+      "abs_le_1000": 228303,
+      "abs_gt_1000": 61814,
+      "percentiles": {
+        "p0": -30000.0,
+        "p1": -3011.0,
+        "p5": -1453.0,
+        "p25": -272.0,
+        "p50": 44.0,
+        "p75": 520.0,
+        "p95": 2096.0,
+        "p99": 30000.0
+      }
+    },
+    "target_histogram": {
+      "[-30000,-1000)": 24704,
+      "[-1000,-500)": 25710,
+      "[-500,-200)": 31960,
+      "[-200,-50)": 31669,
+      "[-50,50)": 35741,
+      "[50,200)": 34357,
+      "[200,500)": 37056,
+      "[500,1000)": 31753,
+      "[1000,2000)": 28873,
+      "[2000,30000)": 8294
+    },
+    "composition": {
+      "stm": {
+        "white": 268425,
+        "black": 32141
+      },
+      "phase": {
+        "opening_middlegame": 185367,
+        "late_middlegame": 77363,
+        "endgame": 37836
+      },
+      "material_sign": {
+        "negative": 133641,
+        "equal": 43479,
+        "positive": 123446
+      },
+      "material_median": 0.0,
+      "material_stdev": 632.2071671700555,
+      "mean_pieces": 19.5740336565014,
+      "mean_non_pawn_pieces": 8.10054364099732,
+      "mean_pawns": 9.473490015504082,
+      "capture_positions_pct": 76.84302283026024,
+      "promotion_positions_pct": 2.3046518901006765,
+      "check_available_pct": 56.71932287750444,
+      "endgame_classes": {
+        "sparse_pieces": 112089,
+        "minor_ending": 33552,
+        "queen_ending": 59669,
+        "rook_ending": 38171,
+        "opposite_coloured_bishops": 19003,
+        "pawnless": 4612,
+        "pawn_endgame": 1951
+      },
+      "tactical_flags": {
+        "capture_available": 230964,
+        "decisive_eval": 129839,
+        "in_check": 28931,
+        "promotion_available": 6927
+      },
+      "mean_pieces_by_type_color": {
+        "pawn_black": 4.751545417645375,
+        "pawn_white": 4.721944597858706,
+        "knight_black": 1.0102373521955244,
+        "knight_white": 1.0035765855086736,
+        "bishop_black": 1.0796530545703773,
+        "bishop_white": 1.0727261233805554,
+        "rook_black": 1.4399765775237385,
+        "rook_white": 1.421365024653487,
+        "queen_black": 0.540041122415709,
+        "queen_white": 0.5329678007492531,
+        "king_black": 1.0,
+        "king_white": 1.0
+      }
+    },
+    "duplication": {
+      "exact_fen": {
+        "entries": 300566,
+        "distinct": 300566,
+        "excess_copies": 0,
+        "duplicate_pct": 0.0,
+        "max_multiplicity": 1
+      },
+      "mirrored_fen": {
+        "entries": 300566,
+        "distinct": 300566,
+        "excess_copies": 0,
+        "duplicate_pct": 0.0,
+        "max_multiplicity": 1
+      },
+      "piece_placement_signature": {
+        "entries": 300566,
+        "distinct": 298240,
+        "excess_copies": 2326,
+        "duplicate_pct": 0.7738732923883607,
+        "max_multiplicity": 8
+      },
+      "fen_without_move_counters": {
+        "distinct": 298247,
+        "collapsed_records": 3432,
+        "collapse_pct": 1.1418457177458528
+      }
+    },
+    "metadata": {
+      "format": 3,
+      "positions": 300566,
+      "dropped": 0,
+      "harvested": 301352,
+      "unique_harvested": 300566,
+      "depth": 7,
+      "shallow_depth": 3,
+      "selfplay_games": 4800,
+      "selfplay_depth": 3,
+      "random_games": 1700,
+      "harvest_every": 3,
+      "harvest_every_late": 2,
+      "late_from_ply": 40,
+      "min_ply": 8,
+      "max_plies": 140,
+      "opening_min": 4,
+      "opening_max": 10,
+      "seed": 42,
+      "workers": 14,
+      "engine": "C:\\Projects\\ChessBot\\build\\pocketchess.exe",
+      "generator": "nnue/generate_v3.py",
+      "generator_version": 3,
+      "generator_commit": "7d919fba075c742ec19fc69d4faf0c5295ad4049",
+      "checksum": "cd1627315e409241",
+      "label_seconds": 13392.1
+    },
+    "checksum_verification": {
+      "recorded": "cd1627315e409241",
+      "recomputed": "cd1627315e409241",
+      "match": true
+    }
+  }
+]

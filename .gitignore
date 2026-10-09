@@ -25,6 +25,9 @@ nnue/checkpoints/
 build_log.txt
 build_err.txt
 match/results/_logs/
+nnue/*.log
+nnue/*.err.log
+nnue/data/*.shards/
 
 # Python
 __pycache__/

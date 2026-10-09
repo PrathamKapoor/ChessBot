@@ -1,0 +1,20 @@
+[Event "P7-VERIFY-000"]
+[Site "PocketChess local match"]
+[Date "2026.10.05"]
+[Round "4"]
+[White "candidate"]
+[Black "baseline"]
+[Result "1-0"]
+[FEN "rnbqkb1r/pp2pppp/3p1n2/8/3NP3/8/PPP2PPP/RNBQKB1R w KQkq - 1 5"]
+[SetUp "1"]
+[Opening "core-01-b"]
+
+5. Nc3 e5 6. Nf3 h6 7. Bc4 Qc7 8. Qe2 a6 9. O-O b5 10. Bb3 g6 11. a4 bxa4 12.
+Rxa4 Nc6 13. Rd1 Rb8 14. h3 Be7 15. g4 Rb4 16. Be3 Bb7 17. Kf1 Kf8 18. Nd5 Nxd5
+19. exd5 Rxa4 20. Bxa4 Nb4 21. c4 e4 22. Nd2 Qa5 23. b3 Nxd5 24. cxd5 Qxd5 25.
+Nc4 Qe6 26. Qd2 h5 27. Qd4 Kg8 28. Qb6 hxg4 29. Qxb7 Rxh3 30. Bd7 Rh1+ 31. Ke2
+Qf6 32. Bxg4 Rxd1 33. Kxd1 Qa1+ 34. Ke2 Qa2+ 35. Nd2 a5 36. Qxe7 Qc2 37. Qxe4
+Qxe4 38. Nxe4 d5 39. Nf6+ Kg7 40. Nxd5 f6 41. Bd4 g5 42. Bxf6+ Kh6 43. Ne7 Kh7
+44. Bxg5 Kg7 45. f4 Kf7 46. Bh5+ Ke6 47. f5+ Ke5 48. f6 Kd4 49. Bd2 Kc5 50. f7
+Kb5 51. f8=Q Kc5 52. Qb8 Kd4 53. Qd6+ Ke4 54. Bf3# 1-0
+

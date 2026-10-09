@@ -1,0 +1,310 @@
+[
+  {
+    "dataset": "v2.json",
+    "records": 76605,
+    "non_finite_targets": 0,
+    "targets": {
+      "min": -30000.0,
+      "max": 30000.0,
+      "mean": 907.2442007701848,
+      "median": 56.0,
+      "stddev": 7417.71191890262,
+      "mad": 361.0,
+      "mean_abs": 2360.147248874094,
+      "mate_scores": 4699,
+      "exactly_zero": 225,
+      "near_zero_abs_le_20": 4376,
+      "at_clip_boundary_abs_ge_2000": 2790,
+      "abs_le_100": 17717,
+      "abs_le_300": 34738,
+      "abs_le_1000": 58080,
+      "abs_gt_1000": 13826,
+      "percentiles": {
+        "p0": -30000.0,
+        "p1": -30000.0,
+        "p5": -1474.0,
+        "p25": -214.0,
+        "p50": 56.0,
+        "p75": 535.0,
+        "p95": 2651.0,
+        "p99": 30000.0
+      }
+    },
+    "target_histogram": {
+      "[-30000,-1000)": 5236,
+      "[-1000,-500)": 5693,
+      "[-500,-200)": 7373,
+      "[-200,-50)": 8128,
+      "[-50,50)": 9927,
+      "[50,200)": 9677,
+      "[200,500)": 9369,
+      "[500,1000)": 7904,
+      "[1000,2000)": 6834,
+      "[2000,30000)": 1765
+    },
+    "composition": {
+      "stm": {
+        "white": 38385,
+        "black": 38220
+      },
+      "phase": {
+        "opening_middlegame": 55345,
+        "late_middlegame": 15278,
+        "endgame": 5982
+      },
+      "material_sign": {
+        "negative": 31296,
+        "equal": 14351,
+        "positive": 30958
+      },
+      "material_median": 0,
+      "material_stdev": 585.9562799840552,
+      "mean_pieces": 21.791149402780498,
+      "mean_non_pawn_pieces": 9.191097186867697,
+      "mean_pawns": 10.600052215912799,
+      "capture_positions_pct": 81.70223875726127,
+      "promotion_positions_pct": 1.8079759806801123,
+      "check_available_pct": 54.916780888975914,
+      "endgame_classes": {
+        "rook_ending": 7553,
+        "sparse_pieces": 20901,
+        "opposite_coloured_bishops": 4105,
+        "minor_ending": 5378,
+        "queen_ending": 12128,
+        "pawn_endgame": 313,
+        "pawnless": 347
+      },
+      "tactical_flags": {
+        "capture_available": 62588,
+        "decisive_eval": 32146,
+        "in_check": 6250,
+        "promotion_available": 1385
+      },
+      "mean_pieces_by_type_color": {
+        "pawn_black": 5.298727237125514,
+        "pawn_white": 5.301324978787285,
+        "knight_black": 1.166738463546766,
+        "knight_white": 1.1729260492134979,
+        "bishop_black": 1.234462502447621,
+        "bishop_white": 1.2526075321454213,
+        "rook_black": 1.564989230467985,
+        "rook_white": 1.5556817440114874,
+        "queen_black": 0.6270739507865022,
+        "queen_white": 0.6166177142484172,
+        "king_black": 1.0,
+        "king_white": 1.0
+      }
+    },
+    "duplication": {
+      "exact_fen": {
+        "entries": 76605,
+        "distinct": 76605,
+        "excess_copies": 0,
+        "duplicate_pct": 0.0,
+        "max_multiplicity": 1
+      },
+      "mirrored_fen": {
+        "entries": 76605,
+        "distinct": 76605,
+        "excess_copies": 0,
+        "duplicate_pct": 0.0,
+        "max_multiplicity": 1
+      },
+      "piece_placement_signature": {
+        "entries": 76605,
+        "distinct": 76492,
+        "excess_copies": 113,
+        "duplicate_pct": 0.14750995365837738,
+        "max_multiplicity": 2
+      },
+      "fen_without_move_counters": {
+        "distinct": 76496,
+        "collapsed_records": 218,
+        "collapse_pct": 0.2845767247568697
+      }
+    },
+    "leakage": {
+      "split_percent_train": 80,
+      "train_records": 61284,
+      "valid_records": 15321,
+      "exact_fen_overlap": 0,
+      "fen_core_overlap": 30,
+      "core_overlap_pct_of_valid": 0.1958096729978461,
+      "valid_positions_one_quiet_move_from_train": 30,
+      "near_overlap_pct_of_valid": 0.1958096729978461,
+      "note": "records carry no game identity, so a true game-level split is not possible with the Phase 6 dataset format"
+    },
+    "metadata": {
+      "positions": 76605,
+      "dropped": 21,
+      "depth": 7,
+      "selfplay_games": 1600,
+      "selfplay_depth": 3,
+      "random_games": 800,
+      "harvest_every": 3,
+      "min_ply": 8,
+      "seed": 42,
+      "checksum": "a72a5f78fd36dc63",
+      "engine": "C:\\Projects\\ChessBot\\build\\pocketchess.exe"
+    },
+    "checksum_verification": {
+      "recorded": "a72a5f78fd36dc63",
+      "recomputed": "a72a5f78fd36dc63",
+      "match": true
+    }
+  },
+  {
+    "dataset": "v1.json",
+    "records": 38553,
+    "non_finite_targets": 0,
+    "targets": {
+      "min": -30000.0,
+      "max": 30000.0,
+      "mean": 912.8859492127721,
+      "median": 55.0,
+      "stddev": 7433.087670672985,
+      "mad": 365.0,
+      "mean_abs": 2369.899411200166,
+      "mate_scores": 2375,
+      "exactly_zero": 115,
+      "near_zero_abs_le_20": 2228,
+      "at_clip_boundary_abs_ge_2000": 1412,
+      "abs_le_100": 8868,
+      "abs_le_300": 17419,
+      "abs_le_1000": 29197,
+      "abs_gt_1000": 6981,
+      "percentiles": {
+        "p0": -30000.0,
+        "p1": -30000.0,
+        "p5": -1483.0,
+        "p25": -219.0,
+        "p50": 55.0,
+        "p75": 539.0,
+        "p95": 2650.0,
+        "p99": 30000.0
+      }
+    },
+    "target_histogram": {
+      "[-30000,-1000)": 2675,
+      "[-1000,-500)": 2892,
+      "[-500,-200)": 3701,
+      "[-200,-50)": 4076,
+      "[-50,50)": 5006,
+      "[50,200)": 4819,
+      "[200,500)": 4666,
+      "[500,1000)": 4031,
+      "[1000,2000)": 3412,
+      "[2000,30000)": 900
+    },
+    "composition": {
+      "stm": {
+        "white": 19310,
+        "black": 19243
+      },
+      "phase": {
+        "endgame": 2981,
+        "opening_middlegame": 27864,
+        "late_middlegame": 7708
+      },
+      "material_sign": {
+        "negative": 15829,
+        "equal": 7217,
+        "positive": 15507
+      },
+      "material_median": 0,
+      "material_stdev": 592.5675834648076,
+      "mean_pieces": 21.741369024459836,
+      "mean_non_pawn_pieces": 9.175420849220554,
+      "mean_pawns": 10.565948175239281,
+      "capture_positions_pct": 81.49041579124841,
+      "promotion_positions_pct": 1.7689933338520998,
+      "check_available_pct": 54.711695587891995,
+      "endgame_classes": {
+        "minor_ending": 2701,
+        "sparse_pieces": 10515,
+        "queen_ending": 6196,
+        "opposite_coloured_bishops": 2318,
+        "rook_ending": 3877,
+        "pawnless": 188,
+        "pawn_endgame": 118
+      },
+      "tactical_flags": {
+        "in_check": 3186,
+        "decisive_eval": 16293,
+        "capture_available": 31417,
+        "promotion_available": 682
+      },
+      "mean_pieces_by_type_color": {
+        "pawn_black": 5.283116748372371,
+        "pawn_white": 5.2828314268669105,
+        "knight_black": 1.1576271626073198,
+        "knight_white": 1.1614660337716909,
+        "bishop_black": 1.2432236142453246,
+        "bishop_white": 1.2597722615620055,
+        "rook_black": 1.5613570928332425,
+        "rook_white": 1.5516302233289239,
+        "queen_black": 0.6226493398697897,
+        "queen_white": 0.6176951210022567,
+        "king_black": 1.0,
+        "king_white": 1.0
+      }
+    },
+    "duplication": {
+      "exact_fen": {
+        "entries": 38553,
+        "distinct": 38553,
+        "excess_copies": 0,
+        "duplicate_pct": 0.0,
+        "max_multiplicity": 1
+      },
+      "mirrored_fen": {
+        "entries": 38553,
+        "distinct": 38553,
+        "excess_copies": 0,
+        "duplicate_pct": 0.0,
+        "max_multiplicity": 1
+      },
+      "piece_placement_signature": {
+        "entries": 38553,
+        "distinct": 38494,
+        "excess_copies": 59,
+        "duplicate_pct": 0.15303608020128134,
+        "max_multiplicity": 2
+      },
+      "fen_without_move_counters": {
+        "distinct": 38494,
+        "collapsed_records": 118,
+        "collapse_pct": 0.3060721604025627
+      }
+    },
+    "leakage": {
+      "split_percent_train": 80,
+      "train_records": 30842,
+      "valid_records": 7711,
+      "exact_fen_overlap": 0,
+      "fen_core_overlap": 22,
+      "core_overlap_pct_of_valid": 0.28530670470756064,
+      "valid_positions_one_quiet_move_from_train": 22,
+      "near_overlap_pct_of_valid": 0.28530670470756064,
+      "note": "records carry no game identity, so a true game-level split is not possible with the Phase 6 dataset format"
+    },
+    "metadata": {
+      "positions": 38553,
+      "dropped": 4,
+      "depth": 7,
+      "selfplay_games": 800,
+      "selfplay_depth": 3,
+      "random_games": 400,
+      "harvest_every": 3,
+      "min_ply": 8,
+      "seed": 42,
+      "checksum": "a34cd0fdaacf52e1",
+      "engine": "C:\\Projects\\ChessBot\\build\\pocketchess.exe"
+    },
+    "checksum_verification": {
+      "recorded": "a34cd0fdaacf52e1",
+      "recomputed": "a34cd0fdaacf52e1",
+      "match": true
+    }
+  }
+]

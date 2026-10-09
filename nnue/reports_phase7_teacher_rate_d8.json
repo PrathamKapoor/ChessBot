@@ -1,0 +1,16 @@
+{
+  "engine": "C:\\Projects\\ChessBot\\build\\pocketchess.exe",
+  "workers": 14,
+  "cpu_threads_available": 16,
+  "depths": {
+    "8": {
+      "seconds": 50.9,
+      "labelled": 140,
+      "positions_per_second": 2.75,
+      "mean_nodes_per_position": 308789.0,
+      "hours_for_20k": 2.02,
+      "hours_for_60k": 6.06,
+      "hours_for_250k": 25.25
+    }
+  }
+}

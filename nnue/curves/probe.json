@@ -1,0 +1,153 @@
+{
+  "tag": "",
+  "dataset": "nnue/data/v3_pool.json",
+  "dataset_checksum": "cd1627315e409241",
+  "dataset_records": 300566,
+  "selected_records": 6000,
+  "train_records": 4752,
+  "valid_records": 1248,
+  "sampling": {
+    "policy": "baseline",
+    "boost": 1
+  },
+  "split_mode": "game",
+  "split": 0.8,
+  "split_game_overlap": 0,
+  "split_exact_fen_overlap": 0,
+  "target_mode": "clip",
+  "clip": 2000.0,
+  "tanh_scale": 2000.0,
+  "loss_mode": "huber",
+  "huber_delta": 1.0,
+  "optimizer": "AdamW",
+  "lr": 0.0005,
+  "lr_milestones": [
+    8,
+    14
+  ],
+  "lr_gamma": 0.5,
+  "weight_decay": 0.0001,
+  "batch_size": 64,
+  "epochs": 2,
+  "seed": 42,
+  "best_epoch": 1,
+  "best_val_loss": 1.152453824495658,
+  "final_val_mae_cp": 653.7844749597402,
+  "best_val_mae_cp": 622.0245560010275,
+  "buckets_best": {
+    "endgame": {
+      "mae_normalised": 1.4256293620479759,
+      "mae_cp": 570.2517448191903,
+      "count": 403
+    },
+    "extreme": {
+      "mae_normalised": 3.279854454892747,
+      "mae_cp": 1311.9417819570988,
+      "count": 47
+    },
+    "ordinary": {
+      "mae_normalised": 0.7429448722362942,
+      "mae_cp": 297.17794889451767,
+      "count": 422
+    },
+    "quiet": {
+      "mae_normalised": 0.3136082610913685,
+      "mae_cp": 125.44330443654742,
+      "count": 21
+    },
+    "tactical": {
+      "mae_normalised": 2.5124684680305736,
+      "mae_cp": 1004.9873872122295,
+      "count": 355
+    }
+  },
+  "compute": {
+    "device": "cuda",
+    "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU",
+    "total_seconds": 31.0,
+    "steps": 150,
+    "train_examples": 9504,
+    "examples_per_second": 306.8
+  },
+  "checkpoint": "nnue/checkpoints/probe.pt",
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 1.1536155453434698,
+      "val_loss": 1.152453824495658,
+      "val_mae_normalised": 1.5550613900025685,
+      "val_mae_cp": 622.0245560010275,
+      "buckets": {
+        "endgame": {
+          "mae_normalised": 1.4256293620479759,
+          "mae_cp": 570.2517448191903,
+          "count": 403
+        },
+        "extreme": {
+          "mae_normalised": 3.279854454892747,
+          "mae_cp": 1311.9417819570988,
+          "count": 47
+        },
+        "ordinary": {
+          "mae_normalised": 0.7429448722362942,
+          "mae_cp": 297.17794889451767,
+          "count": 422
+        },
+        "quiet": {
+          "mae_normalised": 0.3136082610913685,
+          "mae_cp": 125.44330443654742,
+          "count": 21
+        },
+        "tactical": {
+          "mae_normalised": 2.5124684680305736,
+          "mae_cp": 1004.9873872122295,
+          "count": 355
+        }
+      },
+      "lr": 0.0005,
+      "seconds": 10.508111715316772,
+      "examples_per_second": 452.22206698406313,
+      "steps_per_second": 7.137343228915138,
+      "best": true
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.6012991266419189,
+      "val_loss": 1.212107648834204,
+      "val_mae_normalised": 1.6344611873993506,
+      "val_mae_cp": 653.7844749597402,
+      "buckets": {
+        "endgame": {
+          "mae_normalised": 1.558961541588342,
+          "mae_cp": 623.5846166353367,
+          "count": 403
+        },
+        "extreme": {
+          "mae_normalised": 2.9971023138533246,
+          "mae_cp": 1198.8409255413299,
+          "count": 47
+        },
+        "ordinary": {
+          "mae_normalised": 0.9013670749467979,
+          "mae_cp": 360.54682997871913,
+          "count": 422
+        },
+        "quiet": {
+          "mae_normalised": 0.4894479119351932,
+          "mae_cp": 195.7791647740773,
+          "count": 21
+        },
+        "tactical": {
+          "mae_normalised": 2.4789491268950448,
+          "mae_cp": 991.5796507580179,
+          "count": 355
+        }
+      },
+      "lr": 0.0005,
+      "seconds": 9.542150259017944,
+      "examples_per_second": 498.00096110507747,
+      "steps_per_second": 7.859863653804884,
+      "best": false
+    }
+  ]
+}
