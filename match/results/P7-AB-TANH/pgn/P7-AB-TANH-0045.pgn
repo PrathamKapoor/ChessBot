@@ -1,0 +1,17 @@
+[Event "P7-AB-TANH"]
+[Site "PocketChess local match"]
+[Date "2026.10.09"]
+[Round "45"]
+[White "v2ctrl"]
+[Black "v2tanh"]
+[Result "1-0"]
+[FEN "r1bqk2r/ppp2ppp/2np1n2/2b1p3/2B1P3/2PP1N2/PP3PPP/RNBQK2R w KQkq - 2 6"]
+[SetUp "1"]
+[Opening "core-01-k"]
+
+6. O-O O-O 7. Kh1 h6 8. Qb3 Bh3 9. gxh3 Bxf2 10. Qxb7 Nd4 11. Bxh6 d5 12. Qxa8
+Qxa8 13. Rxf2 Rb8 14. Rg2 Ng4 15. Rxg4 g6 16. Na3 Rxb2 17. cxd4 Qd8 18. Rxg6+
+fxg6 19. Bxd5+ Kh7 20. Kg1 Rxh2 21. Kxh2 exd4 22. Nc4 c6 23. Ng5+ Qxg5 24. Bxg5
+cxd5 25. Bf6 dxc4 26. Rb1 Kg8 27. Rb7 a6 28. Rg7+ Kf8 29. e5 cxd3 30. e6 d2 31.
+Rh7 d1=N 32. Rh8# 1-0
+

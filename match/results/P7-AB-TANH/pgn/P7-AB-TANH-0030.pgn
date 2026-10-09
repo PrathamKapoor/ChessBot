@@ -1,0 +1,20 @@
+[Event "P7-AB-TANH"]
+[Site "PocketChess local match"]
+[Date "2026.10.09"]
+[Round "30"]
+[White "v2tanh"]
+[Black "v2ctrl"]
+[Result "0-1"]
+[FEN "r1bqk2r/1pppbppp/p1n2n2/4p3/B3P3/5N2/PPPP1PPP/RNBQ1RK1 w kq - 4 6"]
+[SetUp "1"]
+[Opening "core-01-c"]
+
+6. Kh1 Nxe4 7. Nc3 Nxc3 8. bxc3 h6 9. Bb3 d5 10. Re1 Bf5 11. Nh4 Bxh4 12. Bxd5
+Qxd5 13. Qf3 Qxf3 14. gxf3 Bxc2 15. f4 Rg8 16. h3 Bxf2 17. d3 Bxe1 18. Bb2 Bb3
+19. Rxe1 Bxa2 20. Kh2 Be6 21. Bc1 Rd8 22. d4 Nxd4 23. Be3 Nc2 24. fxe5 Nxe1 25.
+Kg3 Rd3 26. Kf2 Nc2 27. Bc1 Bxh3 28. e6 fxe6 29. Ke2 Rxc3 30. Bf4 Nd4+ 31. Kd2
+g6 32. Kxc3 Ne2+ 33. Kb3 Nxf4 34. Ka3 a5 35. Ka4 Kd7 36. Kxa5 b6+ 37. Kb4 c5+
+38. Kb5 h5 39. Kxb6 Rb8+ 40. Kxc5 Nd3+ 41. Kc4 Nc1 42. Kc3 Ra8 43. Kc2 Rc8+ 44.
+Kd2 g5 45. Kd1 Bg4+ 46. Ke1 Rc2 47. Kf1 e5 48. Kg1 e4 49. Kh1 Bf3+ 50. Kg1 Nd3
+51. Kf1 Rc1# 0-1
+

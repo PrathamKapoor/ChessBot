@@ -1,0 +1,20 @@
+[Event "P7-AB-TANH"]
+[Site "PocketChess local match"]
+[Date "2026.10.09"]
+[Round "9"]
+[White "v2ctrl"]
+[Black "v2tanh"]
+[Result "1/2-1/2"]
+[FEN "rnbqk2r/ppp1bppp/4pn2/3p2B1/2PP4/2N5/PP2PPPP/R2QKBNR w KQkq - 4 5"]
+[SetUp "1"]
+[Opening "core-01-e"]
+
+5. e3 h6 6. Bf4 g5 7. cxd5 gxf4 8. dxe6 Bxe6 9. exf4 Nc6 10. d5 Nxd5 11. Nxd5
+Bxd5 12. a3 Bxg2 13. Qxd8+ Rxd8 14. Bxg2 O-O 15. Ne2 Bh4 16. Rg1 Kh8 17. Bxc6
+bxc6 18. Kf1 Bf6 19. Rb1 Kh7 20. Rc1 Rd6 21. f3 Bxb2 22. Rc5 Bxa3 23. Ra5 Rd2
+24. Rxa3 Re8 25. Rxa7 Rexe2 26. Rg3 Rf2+ 27. Kg1 Rxf3 28. Rxf3 Kg6 29. Rxc7
+Rxh2 30. Rg3+ Kf5 31. Kxh2 f6 32. Kg1 Kxf4 33. Rg6 Kf5 34. Rcg7 Ke5 35. Rxh6 c5
+36. Rf7 Ke4 37. Rfxf6 c4 38. Rf8 Kd3 39. Rhh8 Kc2 40. Rf4 Kc3 41. Rxc4+ Kxc4
+42. Rd8 Kc5 43. Rb8 Kc6 44. Kg2 Kc7 45. Rb1 Kc6 46. Ra1 Kb5 47. Rb1+ Ka4 48.
+Ra1+ Kb3 49. Rb1+ Ka2 50. Ra1+ Kxa1 1/2-1/2
+
