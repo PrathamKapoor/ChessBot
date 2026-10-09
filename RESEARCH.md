@@ -1813,6 +1813,35 @@ pairs >= 300 cp apart, 4 mate disagreements, tactical positions dominating the
 disagreement) says the two teachers differ exactly where being wrong is
 expensive, so this experiment has a signal to find - or to fail to find.
 
+### Match determinism, and how to read a 50-game score
+
+P7-AA-001 (the same binary on both sides, 50 games) exists to pin this down.
+The engines are deterministic at fixed depth with a cleared TT, and the runner
+replays each opening with colours swapped, so the two games of an opening are
+move-for-move identical - verified directly on the PGNs: games 1 and 2 of
+P7-AA-001 open `Nc3 d5 2. d4 Bf5 3. h3 Nc6 ...` on both sides.
+
+Consequences, stated once and applied to every score in this phase:
+
+  * a match between two deterministic engines contributes one *paired* result
+    per opening, not `--games` independent samples. The effective sample size
+    is the 12 openings of core-01, not 50;
+  * the decisive games of a pair always split (a white win as A-vs-B is a
+    black win as B-vs-A), so a match's score between near-equal engines is a
+    function of the draw rate and of which openings the two engines play
+    differently at all. A one-game difference between two arms means *one
+    opening* where their moves diverge;
+  * the SPRT machinery in match/sprt.py assumes independent games and
+    therefore overstates significance; its verdicts are reported for
+    continuity with Phase 6 and are never the deciding evidence in this phase;
+  * the honest resolution of these matches is coarse: effects smaller than a
+    few games (roughly +/-30-50 Elo at this opening set) are not measurable
+    without either more openings or a stochastic (time-controlled) match, and
+    neither was in scope for Phase 7.
+
+P7-AA-001 also serves as a suite-balance check: identical engines should score
+0.500 with the mirrored games cancelling, which is what it measures.
+
 ### Match results
 
 All matches: build/pocketchess.exe on both sides, depth 5, hash 16, threads 1,
