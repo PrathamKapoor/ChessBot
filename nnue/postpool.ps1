@@ -80,6 +80,19 @@ Run "diagnose" "-3 -u nnue/diagnose.py nnue/data/v4_pool.json --out nnue/reports
 Run "registry" "-3 -u nnue/dataset_registry.py" | Out-Null
 Run "subset30k" "-3 -u nnue/make_subset.py --data nnue/data/v4_pool.json --records 30000 --seed 51 --out nnue/data/v4_sub30k.json" | Out-Null
 
+# RAM guard: the heavy jobs together (14 labelling workers plus a training run)
+# have already been killed once by the machine's memory pressure. Wait up to 20
+# minutes for 4 GB free before starting either, then start anyway and say so -
+# a permanent block would be worse than a slow start.
+$waited = 0
+while ($waited -lt 1200) {
+  $freeMb = (Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory / 1024
+  if ($freeMb -ge 4096) { Say ("free RAM {0:N1} GB" -f ($freeMb/1024)); break }
+  Start-Sleep -Seconds 60
+  $waited += 60
+}
+if ($waited -ge 1200) { Say "RAM still tight after 20 min; starting anyway" }
+
 Say "starting relabel9 (14 workers, d9 on the 30k subset)"
 Start-Process -FilePath "powershell" -WindowStyle Hidden `
   -ArgumentList "-NoProfile -File nnue/background.ps1 -Start relabel9"
