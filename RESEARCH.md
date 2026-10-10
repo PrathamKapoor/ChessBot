@@ -1948,7 +1948,49 @@ The partial stage was therefore dropped: every curve point trains on the same
 pool vintage and the provenance stays simpler. The assembler stays in the tree
 as the fallback if the labelling ever dies mid-way.
 
-### The v3 pool colour defect (negative result, now a gate)
+### Experiment decisions
+
+Recorded here as they were made, including the ones that failed. The final
+classification (Part 24's cases A-D) is written at the end of the phase once
+the dataset-size curve exists.
+
+    decision                                  evidence
+    REJECTED: v3 pool as a dataset            89.3% white to move, zero black
+                                              endgames (measured); replaced by
+                                              the v4 pool with odd strides
+    REJECTED: even harvest strides            the cause of the above; now
+                                              refused outright by the generator
+    REJECTED: "any endgame label" sampling    hits 49.4% of the pool, which is
+                                              duplication of half the dataset,
+                                              not oversampling; strict classes
+                                              (24.5-25.9%) ship instead
+    REJECTED: loss function as the cause      MSE vs Huber: 50-game A/B 0.500,
+                                              0 infra failures, offline MAE
+                                              disagrees in sign between buckets
+    REJECTED: target representation as the    tanh vs clip: A/B 0.490 (within
+    cause                                     the A/A control's resolution);
+                                              tail_analysis shows identical rank
+                                              ordering, only a scale difference
+    ADOPTED: game-level splits + measured     v1/v2 could not even be checked;
+    overlap                                   the Phase 7 format records game id
+    ADOPTED: fixed validation set per          otherwise the dataset-size curve
+    experiment family                         mixes data volume with the
+                                              validation sample
+    ADOPTED: label determinism gate            caught the score_cp/shallow_cp
+    (check_labels.py)                         swap after two pool generations
+    ADOPTED: per-candidate build/export       the export path is what the engine
+    parity gate                               actually loads; 1e-6 PyTorch/C++
+                                              parity on every checkpoint
+    DEFERRED: early stopping at ~12 epochs    validation is flat from epoch 9 to
+                                              20 (0.5% gain); the batch-2 runs
+                                              keep 20 epochs for comparability
+                                              with batch 1, and the schedule
+                                              finding is recorded for Phase 8
+    DEFERRED: depth-11 training ladder        23.8M nodes/position at 0.07 pos/s:
+                                              20k positions would be 76 hours;
+                                              depth 11 stays an agreement sample
+
+
 
 The first Phase 7 pool (`v3_pool.json`, 300,566 records, depth 7, checksum
 cd1627315e409241) is 89.3% white to move: 268,425 white against 32,141 black.
