@@ -1,0 +1,47 @@
+{
+  "net": "nnue/checkpoints/v2tanh1000.pt",
+  "checkpoint_epoch": 16,
+  "net_training_dataset": "nnue/data/v2.json",
+  "net_training_checksum": "a72a5f78fd36dc63",
+  "net_target_mode": "tanh",
+  "labels": "nnue/data/v2.json",
+  "labels_checksum": "a72a5f78fd36dc63",
+  "label_depth": 7,
+  "records": 15321,
+  "split_data": "nnue/data/v2.json",
+  "split_mode": "record",
+  "split_legacy": false,
+  "split": 0.8,
+  "seed": 42,
+  "target_mode_used": "tanh",
+  "label_clip": 1000.0,
+  "mae_cp": 2137.0,
+  "bias_cp": -783.3,
+  "mae_clipped_cp": 349.7,
+  "bias_clipped_cp": 40.0,
+  "mae_below_clip_cp": 243.3,
+  "records_below_clip": 11700,
+  "buckets": {
+    "extreme": {
+      "mae_cp": 8255.5,
+      "bias_cp": -3320.8,
+      "mae_clipped_cp": 693.2,
+      "clipped_squared_share": 0.7021,
+      "count": 3621
+    },
+    "ordinary": {
+      "mae_cp": 297.0,
+      "bias_cp": -2.2,
+      "mae_clipped_cp": 297.0,
+      "clipped_squared_share": 0.2709,
+      "count": 8058
+    },
+    "quiet": {
+      "mae_cp": 124.7,
+      "bias_cp": 11.5,
+      "mae_clipped_cp": 124.7,
+      "clipped_squared_share": 0.027,
+      "count": 3642
+    }
+  }
+}

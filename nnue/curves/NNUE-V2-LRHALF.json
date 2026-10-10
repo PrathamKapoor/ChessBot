@@ -1,0 +1,656 @@
+{
+  "tag": "NNUE-V2-LRHALF",
+  "dataset": "nnue/data/v2.json",
+  "dataset_checksum": "a72a5f78fd36dc63",
+  "dataset_records": 76605,
+  "selected_records": 76605,
+  "train_records": 61284,
+  "train_records_presampling": 61284,
+  "valid_records": 15321,
+  "sampling": {
+    "policy": "baseline",
+    "boost": 1
+  },
+  "split_mode": "record",
+  "split": 0.8,
+  "valid_data": null,
+  "valid_seed": 99,
+  "valid_fraction": 0.2,
+  "split_game_overlap": 0,
+  "split_exact_fen_overlap": 0,
+  "target_mode": "clip",
+  "clip": 2000.0,
+  "tanh_scale": 2000.0,
+  "loss_mode": "huber",
+  "huber_delta": 1.0,
+  "optimizer": "AdamW",
+  "lr": 0.00025,
+  "lr_milestones": [
+    8,
+    14
+  ],
+  "lr_gamma": 0.5,
+  "weight_decay": 0.0001,
+  "batch_size": 64,
+  "epochs": 20,
+  "seed": 42,
+  "best_epoch": 17,
+  "best_val_loss": 0.6341025337998001,
+  "final_val_mae_cp": 391.44957511109584,
+  "best_val_mae_cp": 390.6616543581293,
+  "buckets_best": {
+    "extreme": {
+      "mae_normalised": 1.9584104616778293,
+      "mae_cp": 783.3641846711317,
+      "count": 3621
+    },
+    "ordinary": {
+      "mae_normalised": 0.8005116965596745,
+      "mae_cp": 320.2046786238698,
+      "count": 8058
+    },
+    "quiet": {
+      "mae_normalised": 0.3902774446381523,
+      "mae_cp": 156.11097785526093,
+      "count": 3642
+    }
+  },
+  "compute": {
+    "device": "cuda",
+    "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU",
+    "environment": {
+      "torch": "2.11.0+cu128",
+      "cuda": "12.8",
+      "device": "cuda",
+      "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU",
+      "python": "3.13.2"
+    },
+    "total_seconds": 2885.6,
+    "steps": 19160,
+    "train_examples": 1225680,
+    "examples_per_second": 424.8
+  },
+  "checkpoint": "nnue/checkpoints/v2lrhalf.pt",
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 1.0893038870942677,
+      "val_loss": 0.9499283822971974,
+      "val_mae_normalised": 1.3183425971542169,
+      "val_mae_cp": 527.3370388616868,
+      "buckets": {
+        "extreme": {
+          "mae_normalised": 3.1158738122135197,
+          "mae_cp": 1246.3495248854078,
+          "count": 3621
+        },
+        "ordinary": {
+          "mae_normalised": 0.9436696308437752,
+          "mae_cp": 377.4678523375101,
+          "count": 8058
+        },
+        "quiet": {
+          "mae_normalised": 0.36014775315581943,
+          "mae_cp": 144.05910126232777,
+          "count": 3642
+        }
+      },
+      "lr": 0.00025,
+      "seconds": 134.97895288467407,
+      "examples_per_second": 454.0263403314516,
+      "steps_per_second": 7.097402813744707,
+      "best": true
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.7343468512717539,
+      "val_loss": 0.7951323481897999,
+      "val_mae_normalised": 1.155690070613465,
+      "val_mae_cp": 462.276028245386,
+      "buckets": {
+        "extreme": {
+          "mae_normalised": 2.493290739012041,
+          "mae_cp": 997.3162956048164,
+          "count": 3621
+        },
+        "ordinary": {
+          "mae_normalised": 0.8963945347064036,
+          "mae_cp": 358.55781388256145,
+          "count": 8058
+        },
+        "quiet": {
+          "mae_normalised": 0.3994988075233505,
+          "mae_cp": 159.7995230093402,
+          "count": 3642
+        }
+      },
+      "lr": 0.00025,
+      "seconds": 119.18211674690247,
+      "examples_per_second": 514.2046615109541,
+      "steps_per_second": 8.038118688850174,
+      "best": true
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.4505651726298509,
+      "val_loss": 0.7199659480196433,
+      "val_mae_normalised": 1.0753913955583903,
+      "val_mae_cp": 430.1565582233561,
+      "buckets": {
+        "extreme": {
+          "mae_normalised": 2.189040097535825,
+          "mae_cp": 875.6160390143301,
+          "count": 3621
+        },
+        "ordinary": {
+          "mae_normalised": 0.8757180698432322,
+          "mae_cp": 350.28722793729287,
+          "count": 8058
+        },
+        "quiet": {
+          "mae_normalised": 0.40994539051273204,
+          "mae_cp": 163.97815620509283,
+          "count": 3642
+        }
+      },
+      "lr": 0.00025,
+      "seconds": 117.93124079704285,
+      "examples_per_second": 519.6587400065472,
+      "steps_per_second": 8.123377601433852,
+      "best": true
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.28247556662436574,
+      "val_loss": 0.6845678606525692,
+      "val_mae_normalised": 1.041656593236605,
+      "val_mae_cp": 416.6626372946421,
+      "buckets": {
+        "extreme": {
+          "mae_normalised": 2.073268599155956,
+          "mae_cp": 829.3074396623824,
+          "count": 3621
+        },
+        "ordinary": {
+          "mae_normalised": 0.8544323296353432,
+          "mae_cp": 341.77293185413725,
+          "count": 8058
+        },
+        "quiet": {
+          "mae_normalised": 0.4302304911603389,
+          "mae_cp": 172.09219646413555,
+          "count": 3642
+        }
+      },
+      "lr": 0.00025,
+      "seconds": 131.32776808738708,
+      "examples_per_second": 466.64921587048434,
+      "steps_per_second": 7.294725357416683,
+      "best": true
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.1894723480309233,
+      "val_loss": 0.6622173433110559,
+      "val_mae_normalised": 1.0101511092341902,
+      "val_mae_cp": 404.06044369367606,
+      "buckets": {
+        "extreme": {
+          "mae_normalised": 2.029364785776715,
+          "mae_cp": 811.7459143106861,
+          "count": 3621
+        },
+        "ordinary": {
+          "mae_normalised": 0.8302655282535989,
+          "mae_cp": 332.10621130143954,
+          "count": 8058
+        },
+        "quiet": {
+          "mae_normalised": 0.39481483542724505,
+          "mae_cp": 157.92593417089802,
+          "count": 3642
+        }
+      },
+      "lr": 0.00025,
+      "seconds": 169.83745884895325,
+      "examples_per_second": 360.83912474516933,
+      "steps_per_second": 5.640687316524251,
+      "best": true
+    },
+    {
+      "epoch": 6,
+      "train_loss": 0.1405530522558803,
+      "val_loss": 0.6636364525447245,
+      "val_mae_normalised": 1.0149259468289253,
+      "val_mae_cp": 405.9703787315702,
+      "buckets": {
+        "extreme": {
+          "mae_normalised": 2.0068573678471506,
+          "mae_cp": 802.7429471388604,
+          "count": 3621
+        },
+        "ordinary": {
+          "mae_normalised": 0.8453461958216094,
+          "mae_cp": 338.13847832864377,
+          "count": 8058
+        },
+        "quiet": {
+          "mae_normalised": 0.4039127586451899,
+          "mae_cp": 161.56510345807595,
+          "count": 3642
+        }
+      },
+      "lr": 0.00025,
+      "seconds": 148.05593633651733,
+      "examples_per_second": 413.92463900067594,
+      "steps_per_second": 6.470527448643162,
+      "best": false
+    },
+    {
+      "epoch": 7,
+      "train_loss": 0.11217945403113128,
+      "val_loss": 0.6542225206702039,
+      "val_mae_normalised": 1.0026660113972368,
+      "val_mae_cp": 401.0664045588947,
+      "buckets": {
+        "extreme": {
+          "mae_normalised": 1.962994485393936,
+          "mae_cp": 785.1977941575744,
+          "count": 3621
+        },
+        "ordinary": {
+          "mae_normalised": 0.8387721203217645,
+          "mae_cp": 335.5088481287058,
+          "count": 8058
+        },
+        "quiet": {
+          "mae_normalised": 0.4104934831250629,
+          "mae_cp": 164.19739325002516,
+          "count": 3642
+        }
+      },
+      "lr": 0.00025,
+      "seconds": 127.40323495864868,
+      "examples_per_second": 481.02389252432226,
+      "steps_per_second": 7.519432299430532,
+      "best": true
+    },
+    {
+      "epoch": 8,
+      "train_loss": 0.09454569224822336,
+      "val_loss": 0.6571667394585308,
+      "val_mae_normalised": 1.0058410967713618,
+      "val_mae_cp": 402.3364387085447,
+      "buckets": {
+        "extreme": {
+          "mae_normalised": 1.9832986244276984,
+          "mae_cp": 793.3194497710793,
+          "count": 3621
+        },
+        "ordinary": {
+          "mae_normalised": 0.8352188968272326,
+          "mae_cp": 334.0875587308931,
+          "count": 8058
+        },
+        "quiet": {
+          "mae_normalised": 0.411524792712996,
+          "mae_cp": 164.60991708519842,
+          "count": 3642
+        }
+      },
+      "lr": 0.000125,
+      "seconds": 171.35231471061707,
+      "examples_per_second": 357.6490933518905,
+      "steps_per_second": 5.590820302707249,
+      "best": false
+    },
+    {
+      "epoch": 9,
+      "train_loss": 0.0698008406140184,
+      "val_loss": 0.6354318645672561,
+      "val_mae_normalised": 0.9801961377055906,
+      "val_mae_cp": 392.07845508223625,
+      "buckets": {
+        "extreme": {
+          "mae_normalised": 1.9559219324006063,
+          "mae_cp": 782.3687729602425,
+          "count": 3621
+        },
+        "ordinary": {
+          "mae_normalised": 0.8067922269064193,
+          "mae_cp": 322.7168907625677,
+          "count": 8058
+        },
+        "quiet": {
+          "mae_normalised": 0.39375615809296904,
+          "mae_cp": 157.5024632371876,
+          "count": 3642
+        }
+      },
+      "lr": 0.000125,
+      "seconds": 153.66265678405762,
+      "examples_per_second": 398.8216869510626,
+      "steps_per_second": 6.23443600448923,
+      "best": true
+    },
+    {
+      "epoch": 10,
+      "train_loss": 0.028250999749922564,
+      "val_loss": 0.6356344197734934,
+      "val_mae_normalised": 0.9785520258417298,
+      "val_mae_cp": 391.42081033669194,
+      "buckets": {
+        "extreme": {
+          "mae_normalised": 1.9577045631948606,
+          "mae_cp": 783.0818252779443,
+          "count": 3621
+        },
+        "ordinary": {
+          "mae_normalised": 0.8059599692966779,
+          "mae_cp": 322.38398771867116,
+          "count": 8058
+        },
+        "quiet": {
+          "mae_normalised": 0.38690883618393856,
+          "mae_cp": 154.76353447357545,
+          "count": 3642
+        }
+      },
+      "lr": 0.000125,
+      "seconds": 161.03234887123108,
+      "examples_per_second": 380.56949693384604,
+      "steps_per_second": 5.949115235014433,
+      "best": false
+    },
+    {
+      "epoch": 11,
+      "train_loss": 0.02090914194664161,
+      "val_loss": 0.6353916365109351,
+      "val_mae_normalised": 0.978283833402324,
+      "val_mae_cp": 391.3135333609296,
+      "buckets": {
+        "extreme": {
+          "mae_normalised": 1.9504436651536425,
+          "mae_cp": 780.177466061457,
+          "count": 3621
+        },
+        "ordinary": {
+          "mae_normalised": 0.8082167502852343,
+          "mae_cp": 323.2867001140937,
+          "count": 8058
+        },
+        "quiet": {
+          "mae_normalised": 0.38800645718606214,
+          "mae_cp": 155.20258287442485,
+          "count": 3642
+        }
+      },
+      "lr": 0.000125,
+      "seconds": 158.68778944015503,
+      "examples_per_second": 386.19228496538904,
+      "steps_per_second": 6.037011438496878,
+      "best": true
+    },
+    {
+      "epoch": 12,
+      "train_loss": 0.02276350790133256,
+      "val_loss": 0.6374427095346387,
+      "val_mae_normalised": 0.9815489127410157,
+      "val_mae_cp": 392.6195650964063,
+      "buckets": {
+        "extreme": {
+          "mae_normalised": 1.9485549534002544,
+          "mae_cp": 779.4219813601018,
+          "count": 3621
+        },
+        "ordinary": {
+          "mae_normalised": 0.8105381516405477,
+          "mae_cp": 324.2152606562191,
+          "count": 8058
+        },
+        "quiet": {
+          "mae_normalised": 0.3984835216897514,
+          "mae_cp": 159.39340867590056,
+          "count": 3642
+        }
+      },
+      "lr": 0.000125,
+      "seconds": 154.94767236709595,
+      "examples_per_second": 395.5141698082973,
+      "steps_per_second": 6.182732437118152,
+      "best": false
+    },
+    {
+      "epoch": 13,
+      "train_loss": 0.029277099558200827,
+      "val_loss": 0.6399836696207302,
+      "val_mae_normalised": 0.9853330395192299,
+      "val_mae_cp": 394.13321580769195,
+      "buckets": {
+        "extreme": {
+          "mae_normalised": 1.9636379013203744,
+          "mae_cp": 785.4551605281498,
+          "count": 3621
+        },
+        "ordinary": {
+          "mae_normalised": 0.8104219845475082,
+          "mae_cp": 324.1687938190033,
+          "count": 8058
+        },
+        "quiet": {
+          "mae_normalised": 0.39966346653339946,
+          "mae_cp": 159.8653866133598,
+          "count": 3642
+        }
+      },
+      "lr": 0.000125,
+      "seconds": 162.46876096725464,
+      "examples_per_second": 377.2048216232271,
+      "steps_per_second": 5.8965181632245205,
+      "best": false
+    },
+    {
+      "epoch": 14,
+      "train_loss": 0.028662311612867232,
+      "val_loss": 0.6399325424829964,
+      "val_mae_normalised": 0.9845168307480975,
+      "val_mae_cp": 393.806732299239,
+      "buckets": {
+        "extreme": {
+          "mae_normalised": 1.9534925147993925,
+          "mae_cp": 781.397005919757,
+          "count": 3621
+        },
+        "ordinary": {
+          "mae_normalised": 0.8132315665431696,
+          "mae_cp": 325.29262661726784,
+          "count": 8058
+        },
+        "quiet": {
+          "mae_normalised": 0.40010050210752973,
+          "mae_cp": 160.0402008430119,
+          "count": 3642
+        }
+      },
+      "lr": 6.25e-05,
+      "seconds": 138.1356372833252,
+      "examples_per_second": 443.65090142743196,
+      "steps_per_second": 6.935212511707457,
+      "best": false
+    },
+    {
+      "epoch": 15,
+      "train_loss": 0.019950261349392796,
+      "val_loss": 0.6352763640710186,
+      "val_mae_normalised": 0.9779525676164839,
+      "val_mae_cp": 391.1810270465935,
+      "buckets": {
+        "extreme": {
+          "mae_normalised": 1.9574613846721192,
+          "mae_cp": 782.9845538688477,
+          "count": 3621
+        },
+        "ordinary": {
+          "mae_normalised": 0.8034382442714677,
+          "mae_cp": 321.3752977085871,
+          "count": 8058
+        },
+        "quiet": {
+          "mae_normalised": 0.390208194353876,
+          "mae_cp": 156.0832777415504,
+          "count": 3642
+        }
+      },
+      "lr": 6.25e-05,
+      "seconds": 161.26351475715637,
+      "examples_per_second": 380.02396321502977,
+      "steps_per_second": 5.940587376150357,
+      "best": true
+    },
+    {
+      "epoch": 16,
+      "train_loss": 0.007521436284994357,
+      "val_loss": 0.6344047145789508,
+      "val_mae_normalised": 0.9768481942087122,
+      "val_mae_cp": 390.7392776834849,
+      "buckets": {
+        "extreme": {
+          "mae_normalised": 1.9578749894503236,
+          "mae_cp": 783.1499957801294,
+          "count": 3621
+        },
+        "ordinary": {
+          "mae_normalised": 0.8014082036159801,
+          "mae_cp": 320.56328144639207,
+          "count": 8058
+        },
+        "quiet": {
+          "mae_normalised": 0.38964265368877304,
+          "mae_cp": 155.85706147550923,
+          "count": 3642
+        }
+      },
+      "lr": 6.25e-05,
+      "seconds": 158.14476251602173,
+      "examples_per_second": 387.5183662423932,
+      "steps_per_second": 6.057740925204175,
+      "best": true
+    },
+    {
+      "epoch": 17,
+      "train_loss": 0.005519280634797606,
+      "val_loss": 0.6341025337998001,
+      "val_mae_normalised": 0.9766541358953231,
+      "val_mae_cp": 390.6616543581293,
+      "buckets": {
+        "extreme": {
+          "mae_normalised": 1.9584104616778293,
+          "mae_cp": 783.3641846711317,
+          "count": 3621
+        },
+        "ordinary": {
+          "mae_normalised": 0.8005116965596745,
+          "mae_cp": 320.2046786238698,
+          "count": 8058
+        },
+        "quiet": {
+          "mae_normalised": 0.3902774446381523,
+          "mae_cp": 156.11097785526093,
+          "count": 3642
+        }
+      },
+      "lr": 6.25e-05,
+      "seconds": 126.28121614456177,
+      "examples_per_second": 485.2978286956351,
+      "steps_per_second": 7.586243063285986,
+      "best": true
+    },
+    {
+      "epoch": 18,
+      "train_loss": 0.005719493247997036,
+      "val_loss": 0.6352110308328206,
+      "val_mae_normalised": 0.9783734257542879,
+      "val_mae_cp": 391.34937030171517,
+      "buckets": {
+        "extreme": {
+          "mae_normalised": 1.9509330803898282,
+          "mae_cp": 780.3732321559313,
+          "count": 3621
+        },
+        "ordinary": {
+          "mae_normalised": 0.8046975957604666,
+          "mae_cp": 321.8790383041867,
+          "count": 8058
+        },
+        "quiet": {
+          "mae_normalised": 0.3956829484426588,
+          "mae_cp": 158.2731793770635,
+          "count": 3642
+        }
+      },
+      "lr": 6.25e-05,
+      "seconds": 118.45043611526489,
+      "examples_per_second": 517.3809570474198,
+      "steps_per_second": 8.087770981845638,
+      "best": false
+    },
+    {
+      "epoch": 19,
+      "train_loss": 0.008075577850221895,
+      "val_loss": 0.6364931583610731,
+      "val_mae_normalised": 0.9802954780643848,
+      "val_mae_cp": 392.1181912257539,
+      "buckets": {
+        "extreme": {
+          "mae_normalised": 1.9507167846976772,
+          "mae_cp": 780.2867138790709,
+          "count": 3621
+        },
+        "ordinary": {
+          "mae_normalised": 0.80709987018164,
+          "mae_cp": 322.839948072656,
+          "count": 8058
+        },
+        "quiet": {
+          "mae_normalised": 0.39866850338109094,
+          "mae_cp": 159.46740135243638,
+          "count": 3642
+        }
+      },
+      "lr": 6.25e-05,
+      "seconds": 116.81594920158386,
+      "examples_per_second": 524.6201432155899,
+      "steps_per_second": 8.200934945508372,
+      "best": false
+    },
+    {
+      "epoch": 20,
+      "train_loss": 0.00960145637849632,
+      "val_loss": 0.6360284796692312,
+      "val_mae_normalised": 0.9786239377777396,
+      "val_mae_cp": 391.44957511109584,
+      "buckets": {
+        "extreme": {
+          "mae_normalised": 1.961172678068309,
+          "mae_cp": 784.4690712273236,
+          "count": 3621
+        },
+        "ordinary": {
+          "mae_normalised": 0.8033122269598063,
+          "mae_cp": 321.3248907839225,
+          "count": 8058
+        },
+        "quiet": {
+          "mae_normalised": 0.389621423953379,
+          "mae_cp": 155.8485695813516,
+          "count": 3642
+        }
+      },
+      "lr": 6.25e-05,
+      "seconds": 116.91699576377869,
+      "examples_per_second": 524.166735551599,
+      "steps_per_second": 8.193847213929114,
+      "best": false
+    }
+  ]
+}

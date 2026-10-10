@@ -1,0 +1,658 @@
+{
+  "tag": "NNUE-V2-NOXTREME",
+  "dataset": "nnue/data/v2.json",
+  "dataset_checksum": "a72a5f78fd36dc63",
+  "dataset_records": 76605,
+  "selected_records": 76605,
+  "train_records": 55261,
+  "train_records_presampling": 61284,
+  "valid_records": 15321,
+  "sampling": {
+    "policy": "noextreme",
+    "boost": 1,
+    "threshold_cp": 2000.0,
+    "dropped": 6023
+  },
+  "split_mode": "record",
+  "split": 0.8,
+  "valid_data": null,
+  "valid_seed": 99,
+  "valid_fraction": 0.2,
+  "split_game_overlap": 0,
+  "split_exact_fen_overlap": 0,
+  "target_mode": "clip",
+  "clip": 2000.0,
+  "tanh_scale": 2000.0,
+  "loss_mode": "huber",
+  "huber_delta": 1.0,
+  "optimizer": "AdamW",
+  "lr": 0.0005,
+  "lr_milestones": [
+    8,
+    14
+  ],
+  "lr_gamma": 0.5,
+  "weight_decay": 0.0001,
+  "batch_size": 64,
+  "epochs": 20,
+  "seed": 42,
+  "best_epoch": 16,
+  "best_val_loss": 0.7315593916176583,
+  "final_val_mae_cp": 429.14489418429656,
+  "best_val_mae_cp": 428.98041562260335,
+  "buckets_best": {
+    "extreme": {
+      "mae_normalised": 2.5593904741427345,
+      "mae_cp": 1023.7561896570938,
+      "count": 3621
+    },
+    "ordinary": {
+      "mae_normalised": 0.7413285381095259,
+      "mae_cp": 296.5314152438104,
+      "count": 8058
+    },
+    "quiet": {
+      "mae_normalised": 0.3267007183005091,
+      "mae_cp": 130.68028732020366,
+      "count": 3642
+    }
+  },
+  "compute": {
+    "device": "cuda",
+    "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU",
+    "environment": {
+      "torch": "2.11.0+cu128",
+      "cuda": "12.8",
+      "device": "cuda",
+      "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU",
+      "python": "3.13.2"
+    },
+    "total_seconds": 2835.9,
+    "steps": 17280,
+    "train_examples": 1105220,
+    "examples_per_second": 389.7
+  },
+  "checkpoint": "nnue/checkpoints/v2noxtreme.pt",
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.7684654289679359,
+      "val_loss": 1.0044075860249515,
+      "val_mae_normalised": 1.369723068594847,
+      "val_mae_cp": 547.8892274379388,
+      "buckets": {
+        "extreme": {
+          "mae_normalised": 3.525175076431742,
+          "mae_cp": 1410.0700305726969,
+          "count": 3621
+        },
+        "ordinary": {
+          "mae_normalised": 0.8936890787372195,
+          "mae_cp": 357.4756314948878,
+          "count": 8058
+        },
+        "quiet": {
+          "mae_normalised": 0.2799345446812661,
+          "mae_cp": 111.97381787250644,
+          "count": 3642
+        }
+      },
+      "lr": 0.0005,
+      "seconds": 129.08308386802673,
+      "examples_per_second": 428.10411979696966,
+      "steps_per_second": 6.693363484276104,
+      "best": true
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.5239838593720514,
+      "val_loss": 0.8810182871083881,
+      "val_mae_normalised": 1.2395640335197542,
+      "val_mae_cp": 495.82561340790164,
+      "buckets": {
+        "extreme": {
+          "mae_normalised": 3.052054513162488,
+          "mae_cp": 1220.8218052649952,
+          "count": 3621
+        },
+        "ordinary": {
+          "mae_normalised": 0.8328645242820546,
+          "mae_cp": 333.14580971282186,
+          "count": 8058
+        },
+        "quiet": {
+          "mae_normalised": 0.33735550153002714,
+          "mae_cp": 134.94220061201085,
+          "count": 3642
+        }
+      },
+      "lr": 0.0005,
+      "seconds": 128.40849351882935,
+      "examples_per_second": 430.3531525498096,
+      "steps_per_second": 6.728526877961591,
+      "best": true
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.3126697588831095,
+      "val_loss": 0.8249098916805706,
+      "val_mae_normalised": 1.1836785042023708,
+      "val_mae_cp": 473.4714016809483,
+      "buckets": {
+        "extreme": {
+          "mae_normalised": 2.8061769382626403,
+          "mae_cp": 1122.4707753050561,
+          "count": 3621
+        },
+        "ordinary": {
+          "mae_normalised": 0.8245673561937965,
+          "mae_cp": 329.82694247751857,
+          "count": 8058
+        },
+        "quiet": {
+          "mae_normalised": 0.3650762914207635,
+          "mae_cp": 146.0305165683054,
+          "count": 3642
+        }
+      },
+      "lr": 0.0005,
+      "seconds": 129.8271565437317,
+      "examples_per_second": 425.6505454726306,
+      "steps_per_second": 6.655002104347602,
+      "best": true
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.19280774633806252,
+      "val_loss": 0.784626730118538,
+      "val_mae_normalised": 1.1375627778511852,
+      "val_mae_cp": 455.02511114047405,
+      "buckets": {
+        "extreme": {
+          "mae_normalised": 2.6890229568136426,
+          "mae_cp": 1075.609182725457,
+          "count": 3621
+        },
+        "ordinary": {
+          "mae_normalised": 0.8017634158876819,
+          "mae_cp": 320.7053663550727,
+          "count": 8058
+        },
+        "quiet": {
+          "mae_normalised": 0.3380114532773675,
+          "mae_cp": 135.204581310947,
+          "count": 3642
+        }
+      },
+      "lr": 0.0005,
+      "seconds": 123.50645709037781,
+      "examples_per_second": 447.43409617492216,
+      "steps_per_second": 6.995585658875749,
+      "best": true
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.12749178417549983,
+      "val_loss": 0.7679167403641666,
+      "val_mae_normalised": 1.1187608172474763,
+      "val_mae_cp": 447.5043268989905,
+      "buckets": {
+        "extreme": {
+          "mae_normalised": 2.6174611096486173,
+          "mae_cp": 1046.9844438594469,
+          "count": 3621
+        },
+        "ordinary": {
+          "mae_normalised": 0.7909836683502769,
+          "mae_cp": 316.39346734011076,
+          "count": 8058
+        },
+        "quiet": {
+          "mae_normalised": 0.353915815346479,
+          "mae_cp": 141.5663261385916,
+          "count": 3642
+        }
+      },
+      "lr": 0.0005,
+      "seconds": 123.87799787521362,
+      "examples_per_second": 446.09213054659006,
+      "steps_per_second": 6.974604165546295,
+      "best": true
+    },
+    {
+      "epoch": 6,
+      "train_loss": 0.09336358884550051,
+      "val_loss": 0.7610996249477434,
+      "val_mae_normalised": 1.1134342931594685,
+      "val_mae_cp": 445.3737172637874,
+      "buckets": {
+        "extreme": {
+          "mae_normalised": 2.5910479524325876,
+          "mae_cp": 1036.419180973035,
+          "count": 3621
+        },
+        "ordinary": {
+          "mae_normalised": 0.7917918799462138,
+          "mae_cp": 316.71675197848555,
+          "count": 8058
+        },
+        "quiet": {
+          "mae_normalised": 0.35598113136325094,
+          "mae_cp": 142.3924525453004,
+          "count": 3642
+        }
+      },
+      "lr": 0.0005,
+      "seconds": 117.33274459838867,
+      "examples_per_second": 470.97679500423874,
+      "steps_per_second": 7.363673311805111,
+      "best": true
+    },
+    {
+      "epoch": 7,
+      "train_loss": 0.07403357903376022,
+      "val_loss": 0.7480717487037513,
+      "val_mae_normalised": 1.0945921549869575,
+      "val_mae_cp": 437.836861994783,
+      "buckets": {
+        "extreme": {
+          "mae_normalised": 2.5663841551952156,
+          "mae_cp": 1026.5536620780863,
+          "count": 3621
+        },
+        "ordinary": {
+          "mae_normalised": 0.7714332922068918,
+          "mae_cp": 308.5733168827567,
+          "count": 8058
+        },
+        "quiet": {
+          "mae_normalised": 0.346282245297975,
+          "mae_cp": 138.51289811919003,
+          "count": 3642
+        }
+      },
+      "lr": 0.0005,
+      "seconds": 111.15243625640869,
+      "examples_per_second": 497.16409159510283,
+      "steps_per_second": 7.773108976279272,
+      "best": true
+    },
+    {
+      "epoch": 8,
+      "train_loss": 0.06273071199992057,
+      "val_loss": 0.7469662377949631,
+      "val_mae_normalised": 1.0937275260027453,
+      "val_mae_cp": 437.49101040109815,
+      "buckets": {
+        "extreme": {
+          "mae_normalised": 2.5477477153405665,
+          "mae_cp": 1019.0990861362267,
+          "count": 3621
+        },
+        "ordinary": {
+          "mae_normalised": 0.7796337348773066,
+          "mae_cp": 311.85349395092265,
+          "count": 8058
+        },
+        "quiet": {
+          "mae_normalised": 0.34303026689131594,
+          "mae_cp": 137.2121067565264,
+          "count": 3642
+        }
+      },
+      "lr": 0.00025,
+      "seconds": 116.91247797012329,
+      "examples_per_second": 472.66982070230193,
+      "steps_per_second": 7.390143592891712,
+      "best": true
+    },
+    {
+      "epoch": 9,
+      "train_loss": 0.04519671953114264,
+      "val_loss": 0.7348590853432748,
+      "val_mae_normalised": 1.079103617621156,
+      "val_mae_cp": 431.6414470484624,
+      "buckets": {
+        "extreme": {
+          "mae_normalised": 2.545763766755718,
+          "mae_cp": 1018.3055067022872,
+          "count": 3621
+        },
+        "ordinary": {
+          "mae_normalised": 0.7540742634735738,
+          "mae_cp": 301.6297053894295,
+          "count": 8058
+        },
+        "quiet": {
+          "mae_normalised": 0.3400344725561168,
+          "mae_cp": 136.01378902244673,
+          "count": 3642
+        }
+      },
+      "lr": 0.00025,
+      "seconds": 108.51939845085144,
+      "examples_per_second": 509.22692890734896,
+      "steps_per_second": 7.961710185772055,
+      "best": true
+    },
+    {
+      "epoch": 10,
+      "train_loss": 0.015396371612695777,
+      "val_loss": 0.7365794504395307,
+      "val_mae_normalised": 1.079577015924762,
+      "val_mae_cp": 431.83080636990474,
+      "buckets": {
+        "extreme": {
+          "mae_normalised": 2.5760941039920016,
+          "mae_cp": 1030.4376415968006,
+          "count": 3621
+        },
+        "ordinary": {
+          "mae_normalised": 0.7458484359261237,
+          "mae_cp": 298.3393743704495,
+          "count": 8058
+        },
+        "quiet": {
+          "mae_normalised": 0.33007032002201164,
+          "mae_cp": 132.02812800880466,
+          "count": 3642
+        }
+      },
+      "lr": 0.00025,
+      "seconds": 108.3951780796051,
+      "examples_per_second": 509.81050060563103,
+      "steps_per_second": 7.970834268711482,
+      "best": false
+    },
+    {
+      "epoch": 11,
+      "train_loss": 0.010593925251834406,
+      "val_loss": 0.7349792985787443,
+      "val_mae_normalised": 1.0770399557860229,
+      "val_mae_cp": 430.81598231440915,
+      "buckets": {
+        "extreme": {
+          "mae_normalised": 2.5641297035801975,
+          "mae_cp": 1025.6518814320789,
+          "count": 3621
+        },
+        "ordinary": {
+          "mae_normalised": 0.7466161227601282,
+          "mae_cp": 298.6464491040513,
+          "count": 8058
+        },
+        "quiet": {
+          "mae_normalised": 0.32959438445438305,
+          "mae_cp": 131.8377537817532,
+          "count": 3642
+        }
+      },
+      "lr": 0.00025,
+      "seconds": 118.81611061096191,
+      "examples_per_second": 465.09686031501565,
+      "steps_per_second": 7.271741143160158,
+      "best": false
+    },
+    {
+      "epoch": 12,
+      "train_loss": 0.011874545654401462,
+      "val_loss": 0.7379481198193082,
+      "val_mae_normalised": 1.0802664885313344,
+      "val_mae_cp": 432.10659541253375,
+      "buckets": {
+        "extreme": {
+          "mae_normalised": 2.5726476174564987,
+          "mae_cp": 1029.0590469825995,
+          "count": 3621
+        },
+        "ordinary": {
+          "mae_normalised": 0.7485108249505242,
+          "mae_cp": 299.4043299802097,
+          "count": 8058
+        },
+        "quiet": {
+          "mae_normalised": 0.3305067694013328,
+          "mae_cp": 132.20270776053312,
+          "count": 3642
+        }
+      },
+      "lr": 0.00025,
+      "seconds": 163.60257840156555,
+      "examples_per_second": 337.7758501113647,
+      "steps_per_second": 5.281090362031435,
+      "best": false
+    },
+    {
+      "epoch": 13,
+      "train_loss": 0.017648416350744923,
+      "val_loss": 0.7356120284232667,
+      "val_mae_normalised": 1.0785216789676348,
+      "val_mae_cp": 431.40867158705396,
+      "buckets": {
+        "extreme": {
+          "mae_normalised": 2.5581097664078505,
+          "mae_cp": 1023.2439065631402,
+          "count": 3621
+        },
+        "ordinary": {
+          "mae_normalised": 0.750845030253417,
+          "mae_cp": 300.3380121013668,
+          "count": 8058
+        },
+        "quiet": {
+          "mae_normalised": 0.3324563073923628,
+          "mae_cp": 132.98252295694513,
+          "count": 3642
+        }
+      },
+      "lr": 0.00025,
+      "seconds": 130.87603068351746,
+      "examples_per_second": 422.2392726261034,
+      "steps_per_second": 6.601667207414874,
+      "best": false
+    },
+    {
+      "epoch": 14,
+      "train_loss": 0.01975050121766231,
+      "val_loss": 0.7369330318565741,
+      "val_mae_normalised": 1.0802977570478416,
+      "val_mae_cp": 432.11910281913663,
+      "buckets": {
+        "extreme": {
+          "mae_normalised": 2.555421172601352,
+          "mae_cp": 1022.1684690405407,
+          "count": 3621
+        },
+        "ordinary": {
+          "mae_normalised": 0.7544506976210352,
+          "mae_cp": 301.78027904841406,
+          "count": 8058
+        },
+        "quiet": {
+          "mae_normalised": 0.33462332730308864,
+          "mae_cp": 133.84933092123546,
+          "count": 3642
+        }
+      },
+      "lr": 0.000125,
+      "seconds": 131.28550362586975,
+      "examples_per_second": 420.9223293797903,
+      "steps_per_second": 6.581076936431458,
+      "best": false
+    },
+    {
+      "epoch": 15,
+      "train_loss": 0.013824515092889221,
+      "val_loss": 0.7336771886176457,
+      "val_mae_normalised": 1.0749663385396588,
+      "val_mae_cp": 429.98653541586356,
+      "buckets": {
+        "extreme": {
+          "mae_normalised": 2.569568884007281,
+          "mae_cp": 1027.8275536029123,
+          "count": 3621
+        },
+        "ordinary": {
+          "mae_normalised": 0.741621300792629,
+          "mae_cp": 296.6485203170516,
+          "count": 8058
+        },
+        "quiet": {
+          "mae_normalised": 0.3265145166956332,
+          "mae_cp": 130.6058066782533,
+          "count": 3642
+        }
+      },
+      "lr": 0.000125,
+      "seconds": 218.02013611793518,
+      "examples_per_second": 253.46741353334113,
+      "steps_per_second": 3.9629367056840583,
+      "best": true
+    },
+    {
+      "epoch": 16,
+      "train_loss": 0.003921062048301718,
+      "val_loss": 0.7315593916176583,
+      "val_mae_normalised": 1.0724510390565085,
+      "val_mae_cp": 428.98041562260335,
+      "buckets": {
+        "extreme": {
+          "mae_normalised": 2.5593904741427345,
+          "mae_cp": 1023.7561896570938,
+          "count": 3621
+        },
+        "ordinary": {
+          "mae_normalised": 0.7413285381095259,
+          "mae_cp": 296.5314152438104,
+          "count": 8058
+        },
+        "quiet": {
+          "mae_normalised": 0.3267007183005091,
+          "mae_cp": 130.68028732020366,
+          "count": 3642
+        }
+      },
+      "lr": 0.000125,
+      "seconds": 157.93378806114197,
+      "examples_per_second": 349.8997945810458,
+      "steps_per_second": 5.4706469755889975,
+      "best": true
+    },
+    {
+      "epoch": 17,
+      "train_loss": 0.002493319796710807,
+      "val_loss": 0.7319548493164278,
+      "val_mae_normalised": 1.0729487742622017,
+      "val_mae_cp": 429.1795097048807,
+      "buckets": {
+        "extreme": {
+          "mae_normalised": 2.557363341210857,
+          "mae_cp": 1022.9453364843428,
+          "count": 3621
+        },
+        "ordinary": {
+          "mae_normalised": 0.7422451340706895,
+          "mae_cp": 296.89805362827576,
+          "count": 8058
+        },
+        "quiet": {
+          "mae_normalised": 0.328782082232685,
+          "mae_cp": 131.512832893074,
+          "count": 3642
+        }
+      },
+      "lr": 0.000125,
+      "seconds": 129.07203793525696,
+      "examples_per_second": 428.14075677428394,
+      "steps_per_second": 6.693936299614219,
+      "best": false
+    },
+    {
+      "epoch": 18,
+      "train_loss": 0.002528312263204021,
+      "val_loss": 0.732918795505786,
+      "val_mae_normalised": 1.0746022556758832,
+      "val_mae_cp": 429.84090227035324,
+      "buckets": {
+        "extreme": {
+          "mae_normalised": 2.562790359261615,
+          "mae_cp": 1025.1161437046458,
+          "count": 3621
+        },
+        "ordinary": {
+          "mae_normalised": 0.7414794137073113,
+          "mae_cp": 296.59176548292453,
+          "count": 8058
+        },
+        "quiet": {
+          "mae_normalised": 0.3320363090302742,
+          "mae_cp": 132.81452361210967,
+          "count": 3642
+        }
+      },
+      "lr": 0.000125,
+      "seconds": 242.4821891784668,
+      "examples_per_second": 227.89715066176643,
+      "steps_per_second": 3.5631482993750785,
+      "best": false
+    },
+    {
+      "epoch": 19,
+      "train_loss": 0.003998743211317458,
+      "val_loss": 0.7326473107588337,
+      "val_mae_normalised": 1.0736723793338028,
+      "val_mae_cp": 429.4689517335211,
+      "buckets": {
+        "extreme": {
+          "mae_normalised": 2.562764200509763,
+          "mae_cp": 1025.1056802039052,
+          "count": 3621
+        },
+        "ordinary": {
+          "mae_normalised": 0.7412412677613935,
+          "mae_cp": 296.4965071045574,
+          "count": 8058
+        },
+        "quiet": {
+          "mae_normalised": 0.3286774291847165,
+          "mae_cp": 131.4709716738866,
+          "count": 3642
+        }
+      },
+      "lr": 0.000125,
+      "seconds": 166.55336833000183,
+      "examples_per_second": 331.7915485834437,
+      "steps_per_second": 5.187526428694656,
+      "best": false
+    },
+    {
+      "epoch": 20,
+      "train_loss": 0.0059935450244048664,
+      "val_loss": 0.7317847418132288,
+      "val_mae_normalised": 1.0728622354607413,
+      "val_mae_cp": 429.14489418429656,
+      "buckets": {
+        "extreme": {
+          "mae_normalised": 2.5564535210982635,
+          "mae_cp": 1022.5814084393054,
+          "count": 3621
+        },
+        "ordinary": {
+          "mae_normalised": 0.7419099037235681,
+          "mae_cp": 296.76396148942723,
+          "count": 8058
+        },
+        "quiet": {
+          "mae_normalised": 0.33006428118221326,
+          "mae_cp": 132.02571247288532,
+          "count": 3642
+        }
+      },
+      "lr": 0.000125,
+      "seconds": 144.58929586410522,
+      "examples_per_second": 382.19288412565487,
+      "steps_per_second": 5.975546079234285,
+      "best": false
+    }
+  ]
+}

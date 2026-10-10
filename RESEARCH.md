@@ -1651,40 +1651,55 @@ and changed only the output scale, by a factor of four. That is the mechanism
 behind P7-AB-TANH's flat result: the two nets order the tail identically, and
 the search sees the same ordering.
 
-### Target radius: clip 1000 vs clip 2000 vs clip 4000
+### Target radius and tail suppression: the phase's largest training effect
 
 The clip boundary is not a detail; it decides how much of the loss is spent in
-the collapsed tail. Three arms move it (1000, 2000 = control, 4000) with
-everything else fixed, and the comparison is made on the identical subset of
-11,700 held-out records with |label| < 1000 - the region where all three
-transforms are the identity, so the numbers are centipawns on the same records
+the collapsed tail. Eight arms move that allocation with everything else fixed
+(clip 1000/2000/4000, tanh 1000/2000, and the noextreme ablation that drops
+|label| >= 2000 outright; tanh at scale 500 is queued to pin the trend's end).
+The comparison is made on the identical 11,700 held-out records with
+|label| < 1000 - the region where every transform is the identity, so the
+numbers are centipawns on the same records
 (`eval_labels.py --label-clip 1000`):
 
-    arm           target     MAE<1000   quiet   ordinary
-    v2clip1000    clip 1000    232.3     126.6    280.1
-    v2ctrl        clip 2000    262.8     147.4    314.9
-    v2ep40        clip 2000    259.7     142.7    312.6
-    v2mse         clip 2000    268.6     152.8    321.0
-    v2tanh        tanh 2000    264.3     143.8    318.8
-    v2clip4000    clip 4000    294.9     164.4    353.9
+    arm           target           MAE<1000   quiet   ordinary   minutes
+    v2clip1000    clip 1000          232.3     126.6    280.1      48.2
+    v2tanh1000    tanh 1000          243.3     124.7    297.0      48.3
+    v2noxtreme    drop >=2000        244.9     130.7    296.5      47.3
+    v2ep40        clip 2000, 40ep    259.7     142.7    312.6      95.6
+    v2ctrl        clip 2000          262.8     147.4    314.9      47.5
+    v2lr2x        clip 2000, 1e-3    263.9     146.2    317.1      47.4
+    v2tanh        tanh 2000          264.3     143.8    318.8      48.0
+    v2mse         clip 2000, mse     268.6     152.8    321.0      62.4
+    v2clip4000    clip 4000          294.9     164.4    353.9      48.2
 
-The ordering is monotone in the size of the collapsed tail. clip 4000 lets
-|label| up to 4000 carry full squared error (and up to 10 target units of
-gradient against the 2.5 of clip 1000), so the tail eats more of the loss and
-the learnable region fits 12% worse than the control. clip 1000 does the
-opposite: everything above 1000 collapses to a target of 2.5, the tail's share
-of the squared error falls, and the below-1000 region fits 12% *better*
-(quiet 126.6 against 147.4 cp). The mechanic is expected - the training
-weights the emphasized region - but the emphasized region is the one that
-matters: the median label is ~55 cp and the search's margins live there.
+The spread is 232 to 295 cp on the below-1000 region and 125 to 164 cp on
+quiet positions - 27% and 32% respectively - against ~3% for everything the
+loss-function, learning-rate and optimizer sweeps did. The ordering is
+monotone in how strongly the arm suppresses the tail's gradient mass:
+clip 4000 gives |label| up to 4000 full squared error and the learnable region
+fits worst; clip 1000 collapses everything above 1000 onto a target of 2.5 so
+the tail's share of the loss falls and the below-1000 region fits best of the
+hard-clip arms; tanh 1000 compresses smoothly (its derivative vanishes at
+large scores, so the tail's gradient mass goes to zero without a hard
+boundary) and produces the best quiet-bucket fit of any arm at 124.7 cp;
+dropping the tail entirely (noextreme) is a little worse than tanh 1000 and
+clip 1000, which says the tail is not worthless - it is over-weighted.
 
-What this does not yet show is strength. The A/B of clip1000 against the
-control is queued (P7-AB-v2clip1000), and a clip-1000 arm is added to the
-pool-side experiments (NNUE-TARGET-001) so the finding is tested where the
-data is big enough to matter, not just on the 76k substrate. If it transfers,
-the target-radius result is the most actionable thing Phase 7 found: it costs
-nothing at inference (the inference path multiplies by 400 regardless) and it
-is a pure training-configuration change.
+Two mechanisms are at work and the data cannot separate them yet: the arms
+that emphasize the below-1000 region fit it better *because* training weighted
+it (mechanically expected), and they may also fit it better because the tail's
+gradient noise stopped perturbing the shared feature transformer. Either way
+the emphasized region is the one that matters - the median label is ~55 cp and
+the search's pruning margins live there - which is why this is the phase's
+most actionable training result and the one Phase 8 should build on.
+
+Strength is the open question. A/B matches against the control are queued for
+clip1000, clip4000, tanh1000 and tanh500; the pool-side arm NNUE-TARGET-001
+repeats the best-performing configuration at 250k on the clean pool once the
+matches say which configuration that is. The clip radius costs nothing at
+inference (the bridge multiplies by 400 regardless) - it is a pure
+training-configuration change.
 
 ### The label-order defect (negative result, and why the gate exists)
 
