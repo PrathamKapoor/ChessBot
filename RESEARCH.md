@@ -1760,14 +1760,20 @@ so the only difference between arms is the weighting.
 
   * tactical: records flagged in_check or promotion_available, or whose shallow
     label differs from the deep label by >= 200 cp (the volatility proxy),
-    are repeated 3x in the training split. Measured on the v3 pool's
-    composition this hits 27.2% of records (volatility 56.7k, in_check 28.9k,
-    promotion 6.9k of 300k).
+    are repeated 3x in the training split.
   * endgame: records with a strict endgame class (pawnless, pawn_endgame,
-    minor_ending, rook_ending) or an endgame phase label, repeated 3x. The
-    first draft used "any endgame label" and hit 49.4% of the pool; half the
-    dataset duplicated is not oversampling, so the strict 24.5% set ships.
+    minor_ending, rook_ending) or an endgame phase label, repeated 3x.
   * baseline: the unweighted selection, which is also the curve's D1 point.
+
+Hit rates, measured on the clean pool's positions (first 98,779 records of the
+v4 assembly) rather than assumed: tactical 1.49x (24,319 records = 24.6%
+boosted), endgame 1.52x (25,596 = 25.9%), and the noextreme ablation drops
+10.3% of records (|score_cp| >= 2000) - the clean pool's decisive tail is much
+fatter than v2's 3.6%, because depth-3 self-play games are more lopsided than
+the Phase 6 generator's mix. The v3-pool design-time measurement was 27.2% and
+24.5%; the clean pool reproduces those within a point, and the first endgame
+draft ("any endgame label") that hit 49.4% was replaced by the strict classes
+before any run.
 
 The validation split is a fixed materialized set and is never reweighted, so
 the three arms' validation numbers are measured on identical, identically
