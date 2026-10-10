@@ -1674,6 +1674,9 @@ Scope and repair:
     (`fix_label_swap.py`). The conversion is lossless because both values were
     stored: no position needed re-searching. The generator was stopped, the
     shards converted, and the run resumed on the fixed code;
+  * all three label states are now verified by re-search: v2 (never affected),
+    the converted chunks (8 records, 0 mismatches) and the first chunks
+    written by the fixed generator (8 records, 0 mismatches);
   * the post-pool watcher runs check_labels.py on the finished pool and aborts
     the whole downstream chain on failure.
 
@@ -1904,12 +1907,22 @@ Harvest stage (measured, `gen_v4.log`):
       comes out 48.9% white
 
 The learning curve trains whole-game subsets of this pool at 100k, 250k and
-500k records with the same game-level split, seed and schedule (batch 2
-manifest). For these runs the subsets are derived rather than materialised -
+450k training records with the same game-level split, seed and schedule (batch
+2 manifest). For these runs the subsets are derived rather than materialised -
 train.py's select_games and make_subset.py implement the same deterministic
 whole-game selection, so a subset is exactly identified by (pool checksum,
 seed, record count), and the curve records both. The teacher arms materialise
 their 30k subset because relabel.py needs a file to relabel.
+
+Subsets are derived from the *full* pool. An earlier plan assembled a partial
+pool from completed chunks (`assemble_pool.py`) to start the GPU work hours
+before the labelling finished; the sustained labelling rate is 18.8
+positions/s at 14 workers against the v3 pool's 22.4/s (about 16% slower, not
+the 2.2x an earlier probe suggested - that probe was taken while the machine
+was fully loaded), which makes the full pool a ~7 hour job rather than a day.
+The partial stage was therefore dropped: every curve point trains on the same
+pool vintage and the provenance stays simpler. The assembler stays in the tree
+as the fallback if the labelling ever dies mid-way.
 
 ### The v3 pool colour defect (negative result, now a gate)
 
