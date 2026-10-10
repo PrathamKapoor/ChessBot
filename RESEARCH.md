@@ -1821,6 +1821,21 @@ Held-out lineage, all scored on splits their net was actually held out from:
     v2.pt       15321    legacy, own         393.8     332.8    148.8   319.3    798.9
     v2ctrl.pt   15321    record seed 42      389.9     328.3    147.4   314.9    800.8
 
+The controlled data-volume pair (v1's records with the Phase 7 recipe against
+v2's records with the same recipe; each scored on its own held-out split, so
+the record sets differ by construction but come from the same generator and
+distribution):
+
+    net         records  MAE<1000  quiet   ordinary
+    v1ctrl      38,553    291.5    177.0    340.2
+    v2ctrl      76,605    262.8    147.4    314.9
+
+Doubling the data improves the below-1000 region by 10% and quiet positions by
+17%; the match between the two nets (P7-AB-v1ctrl, queued) decides whether that
+converts to strength. The shipped v1 -> v2 match (P7-AB-V1V2) already says the
+*Phase 6* progression was +63 Elo, and that pair also changed the optimizer, so
+this controlled pair is what attributes it.
+
 The batch-1 arms on the same held-out split (eval_labels), for the loss and
 target comparisons in centipawns rather than curve units:
 

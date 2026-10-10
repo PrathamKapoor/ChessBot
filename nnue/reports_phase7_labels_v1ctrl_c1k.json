@@ -1,0 +1,47 @@
+{
+  "net": "nnue/checkpoints/v1ctrl.pt",
+  "checkpoint_epoch": 18,
+  "net_training_dataset": "nnue/data/v1.json",
+  "net_training_checksum": "a34cd0fdaacf52e1",
+  "net_target_mode": "clip",
+  "labels": "nnue/data/v1.json",
+  "labels_checksum": "a34cd0fdaacf52e1",
+  "label_depth": 7,
+  "records": 7711,
+  "split_data": "nnue/data/v1.json",
+  "split_mode": "record",
+  "split_legacy": false,
+  "split": 0.8,
+  "seed": 42,
+  "target_mode_used": "clip",
+  "label_clip": 1000.0,
+  "mae_cp": 2178.1,
+  "bias_cp": -790.4,
+  "mae_clipped_cp": 358.4,
+  "bias_clipped_cp": 44.7,
+  "mae_below_clip_cp": 291.5,
+  "records_below_clip": 5859,
+  "buckets": {
+    "extreme": {
+      "mae_cp": 8146.4,
+      "bias_cp": -3355.8,
+      "mae_clipped_cp": 570.1,
+      "clipped_squared_share": 0.4656,
+      "count": 1852
+    },
+    "ordinary": {
+      "mae_cp": 340.2,
+      "bias_cp": 20.1,
+      "mae_clipped_cp": 340.2,
+      "clipped_squared_share": 0.4627,
+      "count": 4111
+    },
+    "quiet": {
+      "mae_cp": 177.0,
+      "bias_cp": 21.3,
+      "mae_clipped_cp": 177.0,
+      "clipped_squared_share": 0.0717,
+      "count": 1748
+    }
+  }
+}
