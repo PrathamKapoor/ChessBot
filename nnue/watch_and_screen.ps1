@@ -20,8 +20,19 @@ Set-Location $ROOT
 
 foreach ($name in $Names.Split(",")) {
   $ckpt = "nnue/checkpoints/$name.pt"
+  # Wait for the checkpoint to exist AND to stop changing. The trainer rewrites
+  # it on every validation improvement, so "the file exists" fires on the first
+  # epoch and produces a stale .bin - golden parity does not catch that (it
+  # compares the .bin against the .pt at the same moment, both mid-training),
+  # and one arm's match was run against an early-epoch net before this was
+  # noticed. A checkpoint untouched for 3 minutes belongs to a finished run.
   while (-not (Test-Path $ckpt)) { Start-Sleep -Seconds 60 }
-  Start-Sleep -Seconds 15   # let the trainer finish writing the checkpoint
+  while ($true) {
+    $age = ((Get-Date) - (Get-Item $ckpt).LastWriteTime).TotalSeconds
+    if ($age -ge 180) { break }
+    Start-Sleep -Seconds 60
+  }
+  Start-Sleep -Seconds 15
 
   Write-Host "screening $name" -ForegroundColor Cyan
   & powershell -NoProfile -File nnue/screen.ps1 -Checkpoint $ckpt -Name $name

@@ -1982,7 +1982,42 @@ below it, so that match has almost no resolving power between them).
     P7-AB-TANH      v2-tanh     v2-ctrl       17/15/18    0.490   -6.9    0      target representation: bounded vs clip
     P7-AB-MSE       v2-mse      v2-ctrl       17/16/17    0.500   -0.0    0      loss function: MSE vs Huber
     P7-AB-V1V2      v2          v1           20/19/11    0.590   +63.2   0      Phase 6 lineage: 2x data, but also Adam -> AdamW
-    P7-AB-noxtreme  v2-noxtreme v2-ctrl      15/14/21    0.440   -41.9   0      mate-tail ablation: better offline, worse in play
+    P7-AB-v2noxtreme  v2-noxtreme v2-ctrl      15/14/21    0.440   -41.9   0      mate-tail ablation: better offline, worse in play
+    P7-AB-v2clip1000 v2-clip1000 v2-ctrl      0/9/41     0.090   -401.9  0      RETRACTED - stale export, re-run queued
+    P7-AB-v1ctrl    v1ctrl      v2-ctrl       2/14/34    0.180   -263.4  0      RETRACTED - stale export, re-run queued
+
+**Retraction.** The two rows marked RETRACTED were measured against `.bin`
+files that had been exported from checkpoints written *during* training, not
+from the final ones. watch_and_screen.ps1 waited for the checkpoint to exist,
+but the trainer rewrites it on every validation improvement, so it fired on the
+first save and exported an early-epoch net. Golden parity does not catch this:
+it compares the `.bin` against the `.pt` at the same moment, and both were
+consistent mid-training. v1ctrl's race happened to be caught (parity 0/8 within
+1e-4, GOLDEN FAILED); clip1000's was not. The audit that settles it compares
+each `.bin`'s mtime with the training run's recorded finish time from the queue
+status file:
+
+    arm         training finished     bin written         verdict
+    v2ctrl      01:03:53              (fresh at 13:13)    valid
+    v2mse       02:06:41              03:12:53 (+66 min)  valid
+    v2tanh      02:55:07              02:59:49 (+5 min)   valid
+    v2lr2x      04:44:03              04:46:58 (+3 min)   valid
+    v2noxtreme  09:33:01              10:04:28 (+31 min)  valid
+    v2clip1000  07:08:49              06:24:24 (-44 min)  STALE
+    v2tanh500   11:36:21              10:47:01 (-49 min)  STALE
+    v1ctrl      10:42:29              10:24:29 (-18 min)  STALE
+
+So P7-AB-noxtreme, P7-AB-TANH, P7-AB-MSE and P7-AA-001 stand; clip1000,
+tanh500 and v1ctrl must be re-run from the re-exported final checkpoints
+(nnue/rescreen_all.ps1), and their queued matches were cancelled before they
+produced numbers. The offline tables are unaffected: eval_labels.py reads the
+`.pt`, not the `.bin`, so every held-out number in this document was computed
+against a final checkpoint.
+
+Two consequences beyond the re-runs: watch_and_screen.ps1 now waits for a
+checkpoint that has been untouched for three minutes, and the batch-2 target
+arm that was *removed* on the strength of the clip1000 number is re-open -
+its evidence evaporates with the retraction.
 
 P7-AB-noxtreme is the phase's first Case D datapoint, and it is a strong one.
 The noxtreme arm fits the below-1000 held-out region better than the control
