@@ -1,0 +1,16 @@
+{
+  "comment": "Phase 7 lineage control: v1's 38,553 records trained with the exact Phase 7 recipe (clip 2000, huber, AdamW wd 1e-4, lr 5e-4, milestones 8/14, 20 epochs, record split seed 42), to be matched against NNUE-V2-CTRL-REC (v2's 76,605 records, same recipe). v1 and v2 come from the same Phase 6 generator and distribution, so the only variable is data volume - which is what the uncontrolled v1-vs-v2 match (P7-AB-V1V2, +63 Elo) could not claim, because v1 also used plain Adam. This pair is the first clean data-volume point, at ~2x, ahead of the pool's 100k/250k/450k curve.",
+  "runs": [
+    {
+      "tag": "NNUE-V1CTRL-38K",
+      "curve": "nnue/curves/NNUE-V1CTRL-38K.json",
+      "args": ["--data", "nnue/data/v1.json", "--split-mode", "record",
+               "--target", "clip", "--clip", "2000", "--loss", "huber",
+               "--epochs", "20", "--batch-size", "64", "--lr", "5e-4",
+               "--lr-milestones", "8,14", "--lr-gamma", "0.5",
+               "--weight-decay", "1e-4", "--seed", "42",
+               "--output", "nnue/checkpoints/v1ctrl.pt",
+               "--tag", "NNUE-V1CTRL-38K"]
+    }
+  ]
+}

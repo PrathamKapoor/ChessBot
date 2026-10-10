@@ -1,0 +1,21 @@
+[Event "P7-AB-V1V2"]
+[Site "PocketChess local match"]
+[Date "2026.10.10"]
+[Round "30"]
+[White "v2"]
+[Black "v1"]
+[Result "1-0"]
+[FEN "r1bqk2r/1pppbppp/p1n2n2/4p3/B3P3/5N2/PPPP1PPP/RNBQ1RK1 w kq - 4 6"]
+[SetUp "1"]
+[Opening "core-01-c"]
+
+6. Kh1 Nxe4 7. Qe2 d5 8. Nc3 Bh3 9. gxh3 Bg5 10. Nxe4 dxe4 11. Nxg5 Qxg5 12.
+Bxc6+ bxc6 13. Qxe4 O-O 14. Qxc6 Qg1+ 15. Rxg1 e4 16. Qf6 g6 17. Rg5 Rad8 18.
+Kg1 e3 19. fxe3 Rd6 20. Qe7 Rdd8 21. Qxc7 Rd5 22. Qe5 Rxe5 23. Rxe5 Kg7 24. b3
+Rc8 25. Bb2 Rxc2 26. Bd4 Rxd2 27. Ra5+ Kg8 28. Rd1 Rxd1+ 29. Kg2 h5 30. Bc5 Rd5
+31. Bb4 Rxa5 32. Bxa5 g5 33. Kg1 h4 34. a3 Kg7 35. Bc3+ Kg8 36. Bf6 g4 37. hxg4
+Kh7 38. Be5 a5 39. Bd6 h3 40. Bf8 a4 41. bxa4 Kg8 42. Bb4 Kg7 43. Bc3+ Kg6 44.
+Bb4 Kg5 45. Be7+ Kh6 46. g5+ Kg6 47. Bf6 Kh5 48. a5 Kg6 49. a6 Kh5 50. a7 Kh4
+51. g6+ Kh5 52. g7 Kg6 53. g8=Q+ Kxf6 54. a8=Q Ke6 55. Qe4+ Kd6 56. Qd8+ Kc5
+57. Qed5# 1-0
+

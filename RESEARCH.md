@@ -1916,6 +1916,22 @@ below it, so that match has almost no resolving power between them).
     P7-AA-001       classical   classical     17/16/17   0.500   0.0     0      same binary both sides: suite balance + self-draw rate
     P7-AB-TANH      v2-tanh     v2-ctrl       17/15/18    0.490   -6.9    0      target representation: bounded vs clip
     P7-AB-MSE       v2-mse      v2-ctrl       17/16/17    0.500   -0.0    0      loss function: MSE vs Huber
+    P7-AB-V1V2      v2          v1           20/19/11    0.590   +63.2   0      Phase 6 lineage: 2x data, but also Adam -> AdamW
+
+P7-AB-V1V2 is the phase's first measurable strength difference, and it needs
+an asterisk: v2 beat v1 20W/19D/11L (+63.2 Elo, 0 infrastructure failures)
+against an A/A control of exactly 0.500 and two no-effect arms at 0.490/0.500 -
+so the match design does resolve a real effect of this size. But the shipped
+v1 -> v2 progression changed data volume (38,553 -> 76,605 records) *and* the
+optimizer (plain Adam -> AdamW with weight decay 1e-4), so the +63 Elo belongs
+to the pair of changes, not to data alone. To attribute it, the lineage control
+(NNUE-V1CTRL-38K) trains v1's records with the exact Phase 7 recipe and will be
+matched against NNUE-V2-CTRL-REC: same optimizer, same schedule, same split,
+only the dataset differs.
+
+If that controlled pair also separates, then data volume demonstrably converts
+to playing strength at this scale (~2x, ~+60 Elo), which is the thesis the
+pool's 100k/250k/450k curve tests at four to six times the volume.
 
 The A/A control is the yardstick: identical engines score exactly 0.500 with a
 32% draw rate and mirrored results, which says the opening set is balanced and
