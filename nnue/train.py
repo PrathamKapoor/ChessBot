@@ -303,7 +303,12 @@ def main():
         # --valid-data/--valid-seed/--valid-fraction are then measured on the
         # identical records, which is what makes the dataset-size curve and the
         # sampling arms comparable.
-        vmeta, vrecords = load_records(args.valid_data)
+        vmeta, vrecords = load_records(args.valid_data) \
+            if os.path.abspath(args.valid_data) != os.path.abspath(args.data) \
+            else (metadata, all_records)
+        # Reuse the already-loaded records when the validation source is the
+        # same file as the training source: parsing a 580k-record pool twice is
+        # ~1.5 GB of avoidable peak memory, and the machine is RAM-tight.
         missing = [r for r in vrecords if r.get("game_id") is None]
         if missing:
             raise SystemExit(
