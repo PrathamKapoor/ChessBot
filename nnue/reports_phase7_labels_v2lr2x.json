@@ -1,0 +1,47 @@
+{
+  "net": "nnue/checkpoints/v2lr2x.pt",
+  "checkpoint_epoch": 17,
+  "net_training_dataset": "nnue/data/v2.json",
+  "net_training_checksum": "a72a5f78fd36dc63",
+  "net_target_mode": "clip",
+  "labels": "nnue/data/v2.json",
+  "labels_checksum": "a72a5f78fd36dc63",
+  "label_depth": 7,
+  "records": 15321,
+  "split_data": "nnue/data/v2.json",
+  "split_mode": "record",
+  "split_legacy": false,
+  "split": 0.8,
+  "seed": 42,
+  "target_mode_used": "clip",
+  "label_clip": 2000.0,
+  "mae_cp": 2136.5,
+  "bias_cp": -803.8,
+  "mae_clipped_cp": 391.1,
+  "bias_clipped_cp": -30.3,
+  "mae_below_clip_cp": 329.5,
+  "records_below_clip": 13855,
+  "buckets": {
+    "extreme": {
+      "mae_cp": 8187.3,
+      "bias_cp": -3405.9,
+      "mae_clipped_cp": 802.0,
+      "clipped_squared_share": 0.6845,
+      "count": 3621
+    },
+    "ordinary": {
+      "mae_cp": 317.1,
+      "bias_cp": -3.6,
+      "mae_clipped_cp": 317.1,
+      "clipped_squared_share": 0.2789,
+      "count": 8058
+    },
+    "quiet": {
+      "mae_cp": 146.2,
+      "bias_cp": 12.8,
+      "mae_clipped_cp": 146.2,
+      "clipped_squared_share": 0.0366,
+      "count": 3642
+    }
+  }
+}

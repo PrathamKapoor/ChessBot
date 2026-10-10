@@ -1738,6 +1738,22 @@ Held-out lineage, all scored on splits their net was actually held out from:
     v2.pt       15321    legacy, own         393.8     332.8    148.8   319.3    798.9
     v2ctrl.pt   15321    record seed 42      389.9     328.3    147.4   314.9    800.8
 
+The batch-1 arms on the same held-out split (eval_labels), for the loss and
+target comparisons in centipawns rather than curve units:
+
+    net         target  MAE_clip  MAE<clip  quiet  ordinary   match
+    v2ctrl      clip     389.9     328.3    147.4   314.9     -
+    v2mse       clip     394.9     333.1    152.8   321.0     0.500 vs v2ctrl
+    v2tanh      tanh     438.4*    338.4    143.8   318.8     0.490 vs v2ctrl
+    v2lr2x      clip     391.1     329.5    146.2   317.1     -
+
+(*) v2tanh's clip-MAE is inflated by the tanh inversion: near the boundary the
+inverse is very steep, so an output error of a few target units becomes
+thousands of centipawns. The below-clip and per-bucket columns are the
+comparable ones there, and they say the same thing as the match: the arms are
+within a few per cent of each other, in both directions depending on the
+metric.
+
 The Phase 7 trainer reproduces Phase 6 within noise, and the v1 -> v2 doubling
 of data bought 36 cp of held-out clip MAE (430 -> 394). The loss decomposition
 on the v2 held-out split explains what that number is made of:
