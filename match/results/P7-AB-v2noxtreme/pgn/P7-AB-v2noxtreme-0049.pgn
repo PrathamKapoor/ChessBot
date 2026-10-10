@@ -1,0 +1,13 @@
+[Event "P7-AB-v2noxtreme"]
+[Site "PocketChess local match"]
+[Date "2026.10.10"]
+[Round "49"]
+[White "v2ctrl"]
+[Black "v2noxtreme"]
+[Result "0-1"]
+[Opening "core-01-a"]
+
+1. d4 e6 2. Nf3 Nf6 3. Bf4 a5 4. Ng5 h6 5. Nxf7 Kxf7 6. Qd3 d5 7. Nc3 Kg8 8.
+O-O-O Rh7 9. Kb1 a4 10. Qxh7+ Nxh7 11. Nxa4 Qe8 12. Nc5 Nc6 13. Na6 Rxa6 14.
+Ka1 Rxa2+ 15. Kxa2 Nb4+ 16. Ka3 Qb5 17. g3 Nd3+ 18. b4 Qxb4+ 19. Ka2 Qb2# 0-1
+

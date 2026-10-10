@@ -1982,6 +1982,19 @@ below it, so that match has almost no resolving power between them).
     P7-AB-TANH      v2-tanh     v2-ctrl       17/15/18    0.490   -6.9    0      target representation: bounded vs clip
     P7-AB-MSE       v2-mse      v2-ctrl       17/16/17    0.500   -0.0    0      loss function: MSE vs Huber
     P7-AB-V1V2      v2          v1           20/19/11    0.590   +63.2   0      Phase 6 lineage: 2x data, but also Adam -> AdamW
+    P7-AB-noxtreme  v2-noxtreme v2-ctrl      15/14/21    0.440   -41.9   0      mate-tail ablation: better offline, worse in play
+
+P7-AB-noxtreme is the phase's first Case D datapoint, and it is a strong one.
+The noxtreme arm fits the below-1000 held-out region better than the control
+(244.9 against 262.8 cp) and quiet positions better (130.7 against 147.4) - and
+loses the match 15/14/21, score 0.440, -41.9 Elo. Dropping the mate tail from
+training made the net fit the emphasised region *better* and play *worse*.
+
+The plausible mechanism is the one the offline metric cannot see: a net that
+never sees a won position never learns how won positions convert. clip1000 and
+tanh1000 keep the tail at a reduced gradient weight rather than deleting it,
+and their matches (queued) are the test of whether down-weighting is the right
+instrument where deletion is not.
 
 P7-AB-V1V2 is the phase's first measurable strength difference, and it needs
 an asterisk: v2 beat v1 20W/19D/11L (+63.2 Elo, 0 infrastructure failures)

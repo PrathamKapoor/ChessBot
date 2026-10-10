@@ -1,0 +1,17 @@
+[Event "P7-AB-v2noxtreme"]
+[Site "PocketChess local match"]
+[Date "2026.10.10"]
+[Round "10"]
+[White "v2noxtreme"]
+[Black "v2ctrl"]
+[Result "0-1"]
+[FEN "rnbqk2r/ppp1bppp/4pn2/3p2B1/2PP4/2N5/PP2PPPP/R2QKBNR w KQkq - 4 5"]
+[SetUp "1"]
+[Opening "core-01-e"]
+
+5. Bxf6 Bxf6 6. cxd5 exd5 7. e3 Nc6 8. Bd3 Be6 9. Nge2 Rc8 10. Nf4 Nb4 11. Nxe6
+fxe6 12. Qa4+ Nc6 13. O-O Rb8 14. Kh1 Kf7 15. Bf5 exf5 16. Qb5 Nb4 17. h3 f4
+18. exf4 c6 19. Qe2 Ra8 20. f5 Qd6 21. Rg1 h5 22. Rad1 Nxa2 23. Nb5 Qe7 24. b3
+Qxe2 25. Rge1 Qxf2 26. Nd6+ Kg8 27. Re8+ Rxe8 28. Nxe8 Kh7 29. Nxf6+ gxf6 30.
+Ra1 Rg8 31. Rxa2 Qxa2 32. g4 Re8 33. gxh5 Re1# 0-1
+
