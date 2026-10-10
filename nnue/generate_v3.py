@@ -337,6 +337,7 @@ def main():
             saved = json.load(f)
         harvest = [tuple(item) for item in saved["positions"]]
         harvest_count = saved["harvested"]
+        unique = harvest          # the shard holds the deduped list
         print(f"harvest restored from {harvest_path}: {len(harvest)} unique "
               f"of {harvest_count} positions", flush=True)
     else:
@@ -376,7 +377,13 @@ def main():
         print(f"harvested {harvest_count} positions ({len(unique)} unique) in "
               f"{time.time()-t0:.0f}s", flush=True)
 
-    unique = [tuple(item) for item in harvest]
+    # `unique` is the deduped position list: built in the fresh path below,
+    # taken from the restored shard in the other. An earlier version of the
+    # resume patch wrote `unique = [tuple(item) for item in harvest]` here,
+    # silently re-introducing the undeduped list (586,224 against 580,735) into
+    # the chunking: chunks written before a resume then carried 1,289 exact
+    # duplicate positions and chunks written after it did not. Caught by the
+    # dataset gate's duplicate check on the finished pool.
     len_unique = len(unique)
 
     # ---- phase 2: label ---------------------------------------------------
