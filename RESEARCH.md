@@ -1502,7 +1502,7 @@ worried about:
     |score| >= 2000             1412 (3.7%)   2790 (3.6%)
     |score| <= 100              8868 (23.0%)  17717 (23.1%)
     exact duplicate FENs        0             0
-    same placement, other       0.29%         0.29%
+    same placement, other       0.31%         0.29%
     move counters (identical
     HalfKP features)
 
