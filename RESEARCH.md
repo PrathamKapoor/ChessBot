@@ -1713,31 +1713,56 @@ same lr schedule (MultiStepLR 8/14, gamma 0.5, base 5e-4).
     NNUE-V2-MSE          clip    mse    5e-4   20       17       2.3213*   394.8    152.8      62.8
     NNUE-V2-TANH         tanh    huber  5e-4   20       15       0.5659*   359.8*   140.6      48.4
     NNUE-V2-LR2X         clip    huber  1e-3   20       17       0.6398    391.1    146.2      47.6
-    NNUE-V2-EPOCHS40     clip    huber  5e-4   40       ...      ...       ...      ...        ...
+    NNUE-V2-EPOCHS40     clip    huber  5e-4   40       19       0.6332    387.7    142.7      95.6
 
 (*) MSE and Huber losses, and tanh and clip MAEs, are not comparable numbers:
 each is measured against its own target. Cross-arm comparison happens through
 eval_labels.py (which inverts the target transform back to centipawns) and
 through matches.
 
-The learning-rate sweep is flat: doubling the rate (LR2X) converges no faster
-and plateaus 1.2 cp higher; the lower rate (batch 1b) is the other end of the
-same flat curve. The more useful finding is the shape of every trajectory.
-Validation error falls steeply for eight epochs and then essentially stops:
+The 40-epoch arm settles the schedule question, with one important twist. Its
+best *aggregate* checkpoint is epoch 19 - essentially where the 20-epoch
+control also peaks (17) - and the aggregate metric never improves after that
+(387.7 against the control's 389.9, inside the noise of a tail-dominated
+metric). But the quiet-position bucket tells a different story:
+
+    quiet MAE    ep 9   ep 12   ep 17   ep 24   ep 27   ep 40
+    CTRL (20ep)  148.7   150.2   147.4   -       -       -
+    EP40 (40ep)  156.9   149.4   143.1   141.1   139.1   141.2
+
+The control's quiet MAE bounces in a 144-150 band with no trend once its
+learning rate has decayed; the long arm's quiet MAE keeps falling as it
+trains after its first decay and reaches 139.1, about 4% better than anything
+the control produced. The aggregate metric could not see this, because 68% of
+it is the mate tail that both nets have already saturated. Consequences:
+
+  * checkpoint selection on aggregate validation loss picks the wrong
+    checkpoint for playing strength, and the difference is exactly the bucket
+    the search's pruning margins consult. Phase 8 should select and early-stop
+    on bucketed metrics (quiet and ordinary) or on a weighted loss that does
+    not let the collapsed tail dominate;
+  * "validation saturates at epoch 9" is true of the aggregate and false of
+    the quiet bucket - a longer schedule with a later first decay is worth
+    roughly 4% quiet MAE for 2x the compute, and the batch-2 runs keep the
+    batch-1 schedule (20 epochs, decays 8/14) only so that the dataset-size
+    comparison is measured against one recipe. The final candidate run gets
+    the longer schedule.
+
+The aggregate trajectories, for the record - the numbers that made the
+schedule look finished at epoch 9:
 
     epoch    1     3     5     8     9    12    16    20
     CTRL    512   426   405   400   392   394   390   391
     LR2X    510   430   410   404   394   397   391   392
     MSE     512   432   413   411   398   398   395   396
 
-From epoch 9 to epoch 20 the best arm gains 2 cp of validation MAE (0.5%)
-while the training loss falls from ~0.05 to ~0.004, i.e. every further epoch is
-memorisation of the training split with no generalisation benefit. Whatever
-the 12.6M-parameter net can learn from 61k records it has learned by epoch
-~9-12; early stopping there would have saved 30-50% of the training compute at
-no measurable cost. The 40-epoch arm (batch 1b) tests the other side of that
-claim - whether the second half of a long schedule eventually helps or only
-overfits harder.
+From epoch 9 to epoch 20 the best arm gains 2 cp (0.5%) on this metric while
+training loss falls from ~0.05 to ~0.004. On the aggregate alone the model is
+done by epoch ~9-12. The 40-epoch arm shows why that reading fails for
+playing strength: the aggregate is 68% mate tail by squared error, the tail is
+saturated for both nets at any epoch, and the metric is blind to the quiet
+positions the search consults - which are exactly the ones that kept
+improving, as measured above.
 
 Held-out lineage, all scored on splits their net was actually held out from:
 
