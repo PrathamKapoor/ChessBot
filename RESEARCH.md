@@ -1467,6 +1467,14 @@ C++ inference and the same search. Every variable in this phase is data,
 teacher, target, loss or schedule. No quantisation, no width change, no
 buckets, no second head, no self-play RL, no MCTS.
 
+The freeze is verifiable from history rather than asserted: between the Phase
+6 checkpoint (cd796f1) and the end of Phase 7 no commit touched
+nnue/model.py, nnue/export.py, nnue/features.py, nnue/nnue_inference.hpp,
+nnue/nnue_features.hpp, nnue/evaluation_bridge.hpp, engine/ or
+nnue/nnue_eval.cpp. The parameter count is 12,592,481 today and was
+12,592,481 at the Phase 6 checkpoint, and every Phase 7 checkpoint exported to
+PCNN v1 passes the same golden parity gate against the same C++ inference.
+
 ### Dataset diagnostics
 
 `nnue/diagnose.py` writes target distribution, composition, duplication and
