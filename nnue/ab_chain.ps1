@@ -21,7 +21,14 @@ Set-Location $ROOT
 
 foreach ($name in $Names.Split(",")) {
   $bin = "nnue/checkpoints/$name.bin"
-  while (-not (Test-Path $bin)) { Start-Sleep -Seconds 60 }
+  # Wait for the RESCREEN, not for the file: the .bin exists from the moment
+  # of the first mid-training export, and a match was run against one of those
+  # before this was noticed (see rescreen_all.ps1). The rescreen log's parity
+  # line is the evidence that the .bin came from the final checkpoint.
+  $rescreen = "nnue/rescreen_$name.log"
+  while (-not ((Test-Path $rescreen) -and (Select-String -Path $rescreen -Pattern "parity: GOLDEN" -Quiet))) {
+    Start-Sleep -Seconds 60
+  }
   # Wait for any earlier match to finish: exactly one match at a time.
   while (Get-CimInstance Win32_Process -Filter "Name='python.exe'" |
          Where-Object { $_.CommandLine -match 'match/runner.py' -or $_.CommandLine -match 'match\\runner.py' }) {
