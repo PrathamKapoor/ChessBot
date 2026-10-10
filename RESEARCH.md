@@ -1651,6 +1651,41 @@ and changed only the output scale, by a factor of four. That is the mechanism
 behind P7-AB-TANH's flat result: the two nets order the tail identically, and
 the search sees the same ordering.
 
+### Target radius: clip 1000 vs clip 2000 vs clip 4000
+
+The clip boundary is not a detail; it decides how much of the loss is spent in
+the collapsed tail. Three arms move it (1000, 2000 = control, 4000) with
+everything else fixed, and the comparison is made on the identical subset of
+11,700 held-out records with |label| < 1000 - the region where all three
+transforms are the identity, so the numbers are centipawns on the same records
+(`eval_labels.py --label-clip 1000`):
+
+    arm           target     MAE<1000   quiet   ordinary
+    v2clip1000    clip 1000    232.3     126.6    280.1
+    v2ctrl        clip 2000    262.8     147.4    314.9
+    v2ep40        clip 2000    259.7     142.7    312.6
+    v2mse         clip 2000    268.6     152.8    321.0
+    v2tanh        tanh 2000    264.3     143.8    318.8
+    v2clip4000    clip 4000    294.9     164.4    353.9
+
+The ordering is monotone in the size of the collapsed tail. clip 4000 lets
+|label| up to 4000 carry full squared error (and up to 10 target units of
+gradient against the 2.5 of clip 1000), so the tail eats more of the loss and
+the learnable region fits 12% worse than the control. clip 1000 does the
+opposite: everything above 1000 collapses to a target of 2.5, the tail's share
+of the squared error falls, and the below-1000 region fits 12% *better*
+(quiet 126.6 against 147.4 cp). The mechanic is expected - the training
+weights the emphasized region - but the emphasized region is the one that
+matters: the median label is ~55 cp and the search's margins live there.
+
+What this does not yet show is strength. The A/B of clip1000 against the
+control is queued (P7-AB-v2clip1000), and a clip-1000 arm is added to the
+pool-side experiments (NNUE-TARGET-001) so the finding is tested where the
+data is big enough to matter, not just on the 76k substrate. If it transfers,
+the target-radius result is the most actionable thing Phase 7 found: it costs
+nothing at inference (the inference path multiplies by 400 regardless) and it
+is a pure training-configuration change.
+
 ### The label-order defect (negative result, and why the gate exists)
 
 `check_labels.py` re-labels a sample of a dataset with a fresh teacher and
