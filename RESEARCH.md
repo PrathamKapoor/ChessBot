@@ -2086,6 +2086,20 @@ Harvest stage (measured, `gen_v4.log`):
       the late-game block (ply >= 40), which was 100% white in the v3 pool,
       comes out 48.9% white
 
+Labelling then ran for about ten wall-clock hours across a machine kill and two
+restarts (chunk shards and the harvest shard made every restart a resume rather
+than a re-run), and the finished file needed one repair: the resume patch had
+overwritten the deduped position list with the undeduped harvest before
+chunking, so the chunks written before the kill carried 1,289 exact duplicate
+positions and the chunks written after it did not. The dataset gate's duplicate
+check found it in a 20k sample of the finished pool and aborted the post-pool
+chain before anything trained on it; `dedup_pool.py` removed them by the same
+rule the generator uses. Final pool:
+
+    v4_pool.json   579,679 records, depth 7 (+ depth-3 shallow label)
+                   checksum 9d4e2d6ed7154610, all FENs distinct
+                   generator version 4, seed 44, full provenance in metadata
+
 The learning curve trains whole-game subsets of this pool at 100k, 250k and
 450k training records with the same game-level split, seed and schedule (batch
 2 manifest). For these runs the subsets are derived rather than materialised -
