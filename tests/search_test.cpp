@@ -737,6 +737,29 @@ bool bestMoveIsNotOneOf(const std::string& out,
   return true;
 }
 
+void testTTPersistenceAcrossMoves() {
+  Position pos;
+  if (!load(pos, "r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4")) return;
+
+  TranspositionTable sharedTT;
+  sharedTT.resize(16);
+  SearchOptions opts;
+
+  Search s1(pos, opts, sharedTT, /*preserveTT=*/true);
+  const SearchResult r1 = s1.searchDepth(5);
+  const uint64_t nodes1 = r1.stats.nodes;
+  check(r1.best != kMoveNone, "first search finds best move");
+  check(sharedTT.hashfull() > 0, "transposition table populated after search 1");
+
+  Search s2(pos, opts, sharedTT, /*preserveTT=*/true);
+  const SearchResult r2 = s2.searchDepth(5);
+  const uint64_t nodes2 = r2.stats.nodes;
+
+  check(r1.score == r2.score, "score is stable across searches with persistent TT");
+  check(r1.best == r2.best, "best move is stable across searches with persistent TT");
+  check(nodes2 <= nodes1, "persistent TT preserves transposition hits and reduces search tree");
+}
+
 void testUci() {
   UciEngine engine;
   std::ostringstream out;
@@ -823,6 +846,7 @@ void testUci() {
 
   // A bare "position startpos" with no move list must still work.
   out.str("");
+  engine.execute("ucinewgame", out);
   engine.execute("position startpos", out);
   engine.execute("go depth 2", out);
   check(bestMoveIs(out.str(), "e2e4"), "bare startpos is unaffected");
@@ -943,6 +967,7 @@ int main() {
   testQsearch();
   testIterativeDeepening();
   testUci();
+  testTTPersistenceAcrossMoves();
 
   if (g_fail == 0)
     printf("SEARCH OK (%d checks)\n", g_checks);

@@ -94,6 +94,9 @@ class TranspositionTable {
   // would be meaningless. Rounds down to a whole number of entries.
   void resize(size_t mb);
   void clear();
+  // Advances the generation counter without zeroing entries. This ages existing
+  // entries so newer searches can replace them while still allowing probe hits.
+  void newSearch();
 
   size_t sizeBytes() const { return entries_.size() * sizeof(TTEntry); }
   size_t entryCount() const { return entries_.size(); }

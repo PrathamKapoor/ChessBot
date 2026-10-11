@@ -55,8 +55,19 @@ constexpr int kHistoryGravity = 160;
 
 }  // namespace
 
-Search::Search(Position& pos, SearchOptions opts) : root_(pos), opts_(opts) {
+Search::Search(Position& pos, SearchOptions opts)
+    : root_(pos), opts_(opts), internalTt_(), tt_(internalTt_), preserveTT_(false) {
   if (opts_.ttSizeMB > 0) tt_.resize(opts_.ttSizeMB);
+  resetSearchState();
+  std::memset(killers_, 0, sizeof(killers_));
+  std::memset(history_, 0, sizeof(history_));
+  std::memset(pvTable_, 0, sizeof(pvTable_));
+}
+
+Search::Search(Position& pos, SearchOptions opts, TranspositionTable& sharedTT,
+               bool preserveTT)
+    : root_(pos), opts_(opts), internalTt_(), tt_(sharedTT), preserveTT_(preserveTT) {
+  if (opts_.ttSizeMB > 0 && tt_.entryCount() == 0) tt_.resize(opts_.ttSizeMB);
   resetSearchState();
   std::memset(killers_, 0, sizeof(killers_));
   std::memset(history_, 0, sizeof(history_));
@@ -71,8 +82,12 @@ void Search::resetSearchState() {
   prevScore = kValueNone;
   std::memset(pvLength_, 0, sizeof(pvLength_));
   if (opts_.useTT) {
-    tt_.clear();
-    tt_.resetCounters();
+    if (preserveTT_) {
+      tt_.newSearch();
+    } else {
+      tt_.clear();
+      tt_.resetCounters();
+    }
   }
 }
 

@@ -239,6 +239,7 @@ inline bool isPositionallyDrawn(const Position& pos) {
 class Search {
  public:
   Search(Position& pos, SearchOptions opts = {});
+  Search(Position& pos, SearchOptions opts, TranspositionTable& sharedTT, bool preserveTT = true);
 
   // Iterative deepening from 1 to limits.depth (or until a limit trips). The
   // result of the last COMPLETED iteration is what comes back: a partially
@@ -322,7 +323,9 @@ class Search {
 
   Position& root_;
   SearchOptions opts_;
-  TranspositionTable tt_;
+  TranspositionTable internalTt_;
+  TranspositionTable& tt_;
+  bool preserveTT_ = false;
 
   // Best move of the root in the iteration currently running. Held separately
   // from the PV table so that an aborted iteration can be discarded without

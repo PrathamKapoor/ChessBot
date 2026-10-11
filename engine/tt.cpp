@@ -36,6 +36,11 @@ void TranspositionTable::clear() {
   resetCounters();
 }
 
+void TranspositionTable::newSearch() {
+  generation_ = uint8_t(generation_ + 1);
+  resetCounters();
+}
+
 void TranspositionTable::resetCounters() {
   probes_ = hits_ = cutoffs_ = stores_ = collisions_ = 0;
 }

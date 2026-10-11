@@ -39,6 +39,9 @@ class UciEngine {
   // Exposed so tests can drive the loop without a stream.
   bool execute(const std::string& line, std::ostream& out);
 
+  TranspositionTable& tt() { return tt_; }
+  const TranspositionTable& tt() const { return tt_; }
+
  private:
   void applyPosition(std::istream& in);
   void go(std::istream& in, std::ostream& out);
@@ -55,6 +58,7 @@ class UciEngine {
   Position pos_;
   bool havePosition_ = false;
   SearchOptions options_;
+  TranspositionTable tt_;
 
   std::thread worker_;
 };

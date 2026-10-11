@@ -139,7 +139,9 @@ const char* kEngineName = "PocketChess";
 
 }  // namespace
 
-UciEngine::UciEngine() = default;
+UciEngine::UciEngine() {
+  tt_.resize(options_.ttSizeMB);
+}
 
 void UciEngine::applyPosition(std::istream& in) {
   std::string token;
@@ -244,7 +246,7 @@ void UciEngine::finishWorker() {
 }
 
 void UciEngine::runSearch(const SearchLimits& limits, std::ostream& out) {
-  Search search(pos_, options_);
+  Search search(pos_, options_, tt_, /*preserveTT=*/true);
   const SearchResult r = search.search(limits);
 
   // The search returns a legal move for any non-terminal position. This is
@@ -376,6 +378,7 @@ bool UciEngine::execute(const std::string& line, std::ostream& out) {
   if (cmd == "ucinewgame") {
     havePosition_ = false;
     g_searchStopRequested = true;  // stop anything still running from before
+    tt_.clear();
     return true;
   }
 
@@ -400,6 +403,7 @@ bool UciEngine::execute(const std::string& line, std::ostream& out) {
       if (mb < 1) mb = 1;
       if (mb > 1024) mb = 1024;
       options_.ttSizeMB = mb;
+      tt_.resize(mb);
     }
     if (name == "NnuePath") {
       // Load a NNUE network from a file path.
