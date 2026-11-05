@@ -1,0 +1,17 @@
+[Event "P7-AB-v1ctrl"]
+[Site "PocketChess local match"]
+[Date "2026.10.10"]
+[Round "27"]
+[White "v2ctrl"]
+[Black "v1ctrl"]
+[Result "1-0"]
+[FEN "rnbqkb1r/pp2pppp/3p1n2/8/3NP3/8/PPP2PPP/RNBQKB1R w KQkq - 1 5"]
+[SetUp "1"]
+[Opening "core-01-b"]
+
+5. Bb5+ Bd7 6. Kf1 Nxe4 7. Bxd7+ Nxd7 8. f3 Qa5 9. fxe4 Nc5 10. Bd2 Qa4 11. Bg5
+Nxe4 12. b3 Qa6+ 13. c4 e5 14. Bh4 d5 15. Nf3 Bc5 16. Qxd5 O-O 17. Qxe4 Qxa2
+18. Rxa2 Rac8 19. Qxe5 g6 20. Rxa7 Bxa7 21. Na3 Rce8 22. Qf6 Bd4 23. Nxd4 Re2
+24. Nf5 gxf5 25. Rg1 Rfe8 26. c5 h6 27. Qxf5 Ra2 28. Bf6 Kf8 29. c6 b6 30. Qd7
+h5 31. Qd6+ Re7 32. Qxe7+ Kg8 33. Qe8+ Kh7 34. Qxf7+ Kh6 35. Qg7# 1-0
+

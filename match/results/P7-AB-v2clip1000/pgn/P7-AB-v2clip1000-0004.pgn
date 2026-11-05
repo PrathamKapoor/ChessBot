@@ -1,0 +1,21 @@
+[Event "P7-AB-v2clip1000"]
+[Site "PocketChess local match"]
+[Date "2026.10.10"]
+[Round "4"]
+[White "v2clip1000"]
+[Black "v2ctrl"]
+[Result "0-1"]
+[FEN "rnbqkb1r/pp2pppp/3p1n2/8/3NP3/8/PPP2PPP/RNBQKB1R w KQkq - 1 5"]
+[SetUp "1"]
+[Opening "core-01-b"]
+
+5. Bb5+ Bd7 6. O-O a6 7. Bxd7+ Nbxd7 8. Qf3 Ne5 9. Kh1 Nxf3 10. Ne6 fxe6 11.
+Nc3 Nxh2 12. Kxh2 Ng4+ 13. Kh1 h5 14. Be3 Qc7 15. e5 Rg8 16. Nb5 axb5 17. Kg1
+Qxc2 18. exd6 Qd3 19. dxe7 Bxe7 20. Rad1 Rxa2 21. Rxd3 Rxb2 22. Rc3 Nxe3 23.
+Rc8+ Kd7 24. Rb8 Rxb8 25. Ra1 Ra8 26. Rc1 Rg8 27. Ra1 Ra8 28. Rc1 Rxf2 29. Kxf2
+Kd8 30. Kg1 Ra4 31. Re1 g6 32. g3 Bb4 33. Rc1 Bd6 34. g4 Rxg4+ 35. Kf2 Ba3 36.
+Rb1 h4 37. Kxe3 Bc5+ 38. Kf3 Rg3+ 39. Ke4 b4 40. Re1 Re3+ 41. Rxe3 Bxe3 42.
+Kxe3 b3 43. Kd4 b2 44. Kc3 b1=Q 45. Kd4 e5+ 46. Kxe5 Ke7 47. Kd4 Qc1 48. Ke4 b6
+49. Kd4 Ke8 50. Ke4 h3 51. Kd5 Qc5+ 52. Ke4 h2 53. Kd3 h1=Q 54. Kd2 Qe4 55. Kd1
+Qcc2# 0-1
+

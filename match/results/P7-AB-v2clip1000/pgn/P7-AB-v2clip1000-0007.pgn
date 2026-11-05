@@ -1,0 +1,20 @@
+[Event "P7-AB-v2clip1000"]
+[Site "PocketChess local match"]
+[Date "2026.10.10"]
+[Round "7"]
+[White "v2ctrl"]
+[Black "v2clip1000"]
+[Result "1-0"]
+[FEN "r1bqkbnr/ppp2ppp/8/4p3/4P3/8/PPP2PPP/RNBQKB1R w KQkq - 0 6"]
+[SetUp "1"]
+[Opening "core-01-d"]
+
+6. Bb5+ c6 7. O-O Qxd1 8. Rxd1 Bh3 9. gxh3 cxb5 10. Kh1 Bd6 11. Rxd6 h6 12. c4
+Ne7 13. Nc3 O-O 14. cxb5 h5 15. b6 axb6 16. Be3 h4 17. Rh6 gxh6 18. Rg1+ Ng6
+19. Bg5 hxg5 20. Rxg5 Rxa2 21. Nxa2 Rd8 22. Nc3 Rd3 23. Nd5 Rd1+ 24. Rg1 Rxg1+
+25. Kxg1 f6 26. Kh1 Kf7 27. Nxb6 Nf8 28. Nc4 Nh7 29. Nd6+ Kg7 30. Nxb7 Ng5 31.
+Nd6 Nxh3 32. Kg2 Nxf2 33. Kxf2 f5 34. exf5 h3 35. Kf3 e4+ 36. Nxe4 Kf8 37. Kg3
+Ke8 38. f6 Kf7 39. Kf2 Kg8 40. Nd6 Kh7 41. f7 Kg7 42. b4 Kf8 43. b5 Ke7 44. Kg1
+Kxd6 45. f8=Q+ Kd7 46. b6 Kc6 47. Qf6+ Kd7 48. Qg6 Ke7 49. b7 Kd7 50. b8=Q Ke7
+51. Qbd6# 1-0
+

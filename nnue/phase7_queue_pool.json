@@ -1,5 +1,5 @@
 {
-  "comment": "Phase 7 batch 2: dataset scaling and sampling on the clean v4 pool. Every run trains on whole-game selections of the pool minus a FIXED validation set (--valid-data v4_pool, --valid-seed 99, --valid-fraction 0.2), so all five runs are measured on exactly the same ~116k validation records. --max-records counts training records only; D3 is 450k, the largest selection the pool supports once the validation games are excluded. Run order puts the two sampling arms first so the sampling experiment (which shares D1's baseline) completes before the larger curve points. NNUE-TARGET-001 is the clip-radius finding (batch 1's clip1000 beat the control by 12% on the below-1000 region) tested at 250k on the clean pool: same selection, same validation set, same schedule as NNUE-DATA-002, only the clip radius differs.",
+  "comment": "Phase 7 batch 2: dataset scaling and sampling on the clean v4 pool. Every run trains on whole-game selections of the pool minus a FIXED validation set (--valid-data v4_pool, --valid-seed 99, --valid-fraction 0.2), so all runs are measured on exactly the same ~116k validation records. --max-records counts training records only; D3 is 450k, the largest selection the pool supports once the validation games are excluded. Run order puts the sampling arms first so the sampling experiment (which shares D1's baseline) completes before the larger curve points. The planned clip-1000 pool arm (NNUE-TARGET-001) was REMOVED after P7-AB-v2clip1000: clip 1000 fits the below-1000 held-out region best of all arms and loses its match 0/9/41 (-402 elo). Nothing that suppresses the eval's range goes near the pool until the mechanism is understood.",
   "runs": [
     {
       "tag": "NNUE-DATA-001",
@@ -175,48 +175,6 @@
         "nnue/checkpoints/d250k.pt",
         "--tag",
         "NNUE-DATA-002"
-      ]
-    },
-    {
-      "tag": "NNUE-TARGET-001",
-      "curve": "nnue/curves/NNUE-TARGET-001.json",
-      "args": [
-        "--data",
-        "nnue/data/v4_pool.json",
-        "--max-records",
-        "250000",
-        "--valid-data",
-        "nnue/data/v4_pool.json",
-        "--valid-fraction",
-        "0.2",
-        "--valid-seed",
-        "99",
-        "--split-mode",
-        "game",
-        "--target",
-        "clip",
-        "--clip",
-        "1000",
-        "--loss",
-        "huber",
-        "--epochs",
-        "20",
-        "--batch-size",
-        "64",
-        "--lr",
-        "5e-4",
-        "--lr-milestones",
-        "8,14",
-        "--lr-gamma",
-        "0.5",
-        "--weight-decay",
-        "1e-4",
-        "--seed",
-        "42",
-        "--output",
-        "nnue/checkpoints/d250k_clip1000.pt",
-        "--tag",
-        "NNUE-TARGET-001"
       ]
     },
     {

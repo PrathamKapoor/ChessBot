@@ -1,11 +1,10 @@
 # PocketChess / ChessBot
 
-[![Build & Tests](https://img.shields.io/badge/tests-passing-brightgreen.svg)]()
 [![Standard](https://img.shields.io/badge/C%2B%2B-20-blue.svg)]()
 [![Hardware Acceleration](https://img.shields.io/badge/SIMD-AVX2%20%2B%20BMI2%20(PEXT)-orange.svg)]()
 [![Protocol](https://img.shields.io/badge/protocol-UCI-purple.svg)]()
 
-A high-performance, independently developed, tournament-ready C++20 UCI chess engine combining hardware-accelerated bitboard move generation, efficient Principal Variation Search (PVS), and dual classical/embedded NNUE evaluation.
+A C++20 UCI chess engine combining bitboard move generation, Principal Variation Search (PVS), and classical evaluation, with experimental NNUE training and evaluation tools.
 
 ---
 
@@ -29,7 +28,7 @@ A high-performance, independently developed, tournament-ready C++20 UCI chess en
 
 - **Dual-Evaluation Architecture:**
   - **Classical Tapered PeSTO Evaluation:** Zero-dependency positional evaluation with game-phase interpolated piece-square tables, pawn structure analysis, open-file rook bonuses, and king safety penalties.
-  - **Vectorized Embedded NNUE:** HalfKP feature transformer evaluated via AVX2 SIMD intrinsics with int16 accumulators and clipped activations, trained on Huber loss with bounded clipping.
+  - **Experimental NNUE:** HalfKP features, AVX2 inference, and scripts for training and evaluating networks. Networks and datasets are not included in the repository.
 
 - **Rigorous Verification & Tooling:**
   - Automated differential oracle tests comparing against reference Negamax.
@@ -65,7 +64,7 @@ A high-performance, independently developed, tournament-ready C++20 UCI chess en
 +-------------v---------------------------------------------v----------+
 |                         Evaluation Pipeline                          |
 |  - Classical PeSTO Tapered Eval (engine/evaluate.cpp)                |
-|  - Embedded HalfKP AVX2 NNUE (nnue/evaluation_bridge.cpp)            |
+|  - Experimental HalfKP AVX2 NNUE (nnue/evaluation_bridge.hpp)        |
 +----------------------------------------------------------------------+
 ```
 
@@ -75,17 +74,20 @@ A high-performance, independently developed, tournament-ready C++20 UCI chess en
 
 ### Prerequisites
 - C++20 compliant compiler supporting AVX2 and BMI2 (e.g. GCC 13+, Clang 16+, MSYS2 UCRT64).
-- PowerShell (on Windows) or Bash (on Linux).
+- PowerShell and a compatible `g++` on PATH; the supplied build script targets Windows.
 - Python 3.10+ (for training and match testing).
+- Python tools use `python-chess`; NNUE training and golden tests also require PyTorch. Install `pytest` to run the Python tests. For example: `python -m pip install python-chess torch pytest`.
+
+The engine itself requires no API keys, environment file, database, backend, or frontend. The build uses x86 AVX2 and BMI2 instructions; it requires a compatible CPU. Training data and network checkpoints are excluded from Git and must be generated separately for NNUE experiments.
 
 ### Compile
 Run the build script from the project root:
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\build.ps1 -Target all
+powershell -ExecutionPolicy Bypass -File .\build.ps1
 ```
-Or build only the test binaries:
+For a debug build:
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\build.ps1 -Target tests
+powershell -ExecutionPolicy Bypass -File .\build.ps1 -Config debug
 ```
 The compiled binaries will be output to `build/`:
 - `build/pocketchess.exe` (Main UCI engine)
@@ -134,8 +136,9 @@ go depth 6
 
 Supported UCI options:
 - `Hash` (spin, default 16, min 1, max 1024): Transposition table size in megabytes.
-- `UseNnue` (check, default false): Toggle between NNUE and Classical PeSTO evaluation.
-- `NnuePath` (string): Path to export binary NNUE network file (`.bin`).
+- `Threads` (spin, fixed at 1) and `Ponder` are advertised for GUI compatibility.
+
+The engine also accepts `NnuePath` and `UseNnue` through `setoption`; NNUE is experimental and requires a separately generated network.
 
 Compatible with standard chess GUIs: CuteChess, Arena, Banksia GUI, Python-Chess, and Fritz.
 
@@ -143,7 +146,7 @@ Compatible with standard chess GUIs: CuteChess, Arena, Banksia GUI, Python-Chess
 
 ## Engineering Documentation
 
-- [`decisions.md`](file:///C:/Projects/ChessBot/decisions.md): Detailed architecture decisions, rationale, trade-offs, and empirical findings.
-- [`flow.md`](file:///C:/Projects/ChessBot/flow.md): Complete control flow, data transformations, and algorithm lifecycles.
-- [`handoff.md`](file:///C:/Projects/ChessBot/handoff.md): Current engineering state, operational manual, and validation badges.
-- [`RESEARCH.md`](file:///C:/Projects/ChessBot/RESEARCH.md): Historical research findings, benchmarking logs, and experiment notes.
+- [`decisions.md`](decisions.md): Architecture decisions and trade-offs.
+- [`flow.md`](flow.md): Control flow and algorithm lifecycles.
+- [`handoff.md`](handoff.md): Engineering state and operational notes.
+- [`RESEARCH.md`](RESEARCH.md): Research findings, benchmarks, and experiments.

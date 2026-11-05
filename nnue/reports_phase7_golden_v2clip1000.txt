@@ -1,0 +1,50 @@
+feature parity (C++ vs Python):
+  startpos                   python= 31 cpp= 31  ok
+  castled_kingside           python= 31 cpp= 31  ok
+  castled_queenside          python= 33 cpp= 33  ok
+  middlegame_queen_endgame   python=  9 cpp=  9  ok
+  middlegame_open            python= 30 cpp= 30  ok
+  king_pawn_ending           python=  3 cpp=  3  ok
+  won_ending                 python=  8 cpp=  8  ok
+  lost_ending                python=  7 cpp=  7  ok
+features: 8/8 identical
+
+Python/C++ parity:
+  v2clip1000.bin startpos                   py=  19.53835  cpp=  19.53835  d=4.49e-06  ok
+  v2clip1000.bin castled_kingside           py= -44.30851  cpp= -44.30849  d=1.50e-05  ok
+  v2clip1000.bin castled_queenside          py=   9.98713  cpp=   9.98712  d=7.46e-06  ok
+  v2clip1000.bin middlegame_queen_endgame   py= 148.58971  cpp= 148.58972  d=1.20e-05  ok
+  v2clip1000.bin middlegame_open            py=  98.95980  cpp=  98.95979  d=1.20e-05  ok
+  v2clip1000.bin king_pawn_ending           py= 543.86144  cpp= 543.86139  d=4.88e-05  ok
+  v2clip1000.bin won_ending                 py= 199.19069  cpp= 199.19070  d=1.19e-05  ok
+  v2clip1000.bin lost_ending                py=-147.34466  cpp=-147.34466  d=4.10e-08  ok
+parity: 8/8 within 0.0004
+
+pinned golden vectors:
+  pilot        startpos                   want=   8.22954  got=   8.22954  d=0.00e+00  ok
+  pilot        castled_kingside           want=  -5.07376  got=  -5.07376  d=0.00e+00  ok
+  pilot        castled_queenside          want=   8.99123  got=   8.99123  d=0.00e+00  ok
+  pilot        middlegame_queen_endgame   want=  -6.64202  got=  -6.64202  d=0.00e+00  ok
+  pilot        middlegame_open            want=  -5.73782  got=  -5.73782  d=0.00e+00  ok
+  pilot        king_pawn_ending           want=  -8.30936  got=  -8.30936  d=0.00e+00  ok
+  pilot        won_ending                 want=  -8.67506  got=  -8.67506  d=0.00e+00  ok
+  pilot        lost_ending                want=  -7.92110  got=  -7.92110  d=0.00e+00  ok
+  v1           startpos                   want= -27.94521  got= -27.94521  d=0.00e+00  ok
+  v1           castled_kingside           want=   1.71248  got=   1.71248  d=0.00e+00  ok
+  v1           castled_queenside          want=  74.35612  got=  74.35612  d=0.00e+00  ok
+  v1           middlegame_queen_endgame   want=-1007.72753  got=-1007.72753  d=0.00e+00  ok
+  v1           middlegame_open            want=  37.67102  got=  37.67102  d=0.00e+00  ok
+  v1           king_pawn_ending           want=-728.01657  got=-728.01657  d=0.00e+00  ok
+  v1           won_ending                 want= 174.94142  got= 174.94142  d=0.00e+00  ok
+  v1           lost_ending                want= -94.10044  got= -94.10044  d=0.00e+00  ok
+  v2           startpos                   want=  58.17662  got=  58.17662  d=0.00e+00  ok
+  v2           castled_kingside           want= 140.91741  got= 140.91741  d=0.00e+00  ok
+  v2           castled_queenside          want= 142.98115  got= 142.98115  d=0.00e+00  ok
+  v2           middlegame_queen_endgame   want=-601.16868  got=-601.16868  d=0.00e+00  ok
+  v2           middlegame_open            want=  53.99344  got=  53.99344  d=0.00e+00  ok
+  v2           king_pawn_ending           want= 708.69556  got= 708.69556  d=0.00e+00  ok
+  v2           won_ending                 want= 328.11172  got= 328.11172  d=0.00e+00  ok
+  v2           lost_ending                want= -72.99594  got= -72.99594  d=0.00e+00  ok
+golden: 24/24 within 0.0001
+
+GOLDEN OK

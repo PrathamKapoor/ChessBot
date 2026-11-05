@@ -30,7 +30,27 @@ nnue/*.err.log
 nnue/*.pid
 nnue/curves/*.log
 nnue/data/*.shards/
+nnue/*_status.json
+nnue/postpool_status.txt
 
 # Python
 __pycache__/
 *.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+credentials.json
+service-account.json
+secrets.json
+*.db
+*.sqlite
+*.sqlite3

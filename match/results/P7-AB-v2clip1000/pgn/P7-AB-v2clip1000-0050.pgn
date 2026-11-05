@@ -1,0 +1,21 @@
+[Event "P7-AB-v2clip1000"]
+[Site "PocketChess local match"]
+[Date "2026.10.10"]
+[Round "50"]
+[White "v2clip1000"]
+[Black "v2ctrl"]
+[Result "1/2-1/2"]
+[Opening "core-01-a"]
+
+1. Nf3 c6 2. c3 d5 3. d4 g6 4. h4 Bg7 5. Ne5 f6 6. Qc2 Bf5 7. Nd2 Bxc2 8. Ndf3
+fxe5 9. Nxe5 Bxe5 10. dxe5 Qc7 11. c4 Qxe5 12. cxd5 Be4 13. e3 Nf6 14. Bd3 Bxd3
+15. h5 Qxd5 16. f3 Ba6 17. hxg6 Qd3 18. Kf2 e5 19. g7 Qc2+ 20. Kg1 Qxc1+ 21.
+Rxc1 Kd7 22. Rd1+ Ke6 23. gxh8=Q Bd3 24. Rxd3 Na6 25. Rxh7 Rxh8 26. Rxb7 Nb4
+27. Rxa7 Rh1+ 28. Kxh1 Nxd3 29. f4 e4 30. Kg1 Ng4 31. b3 Kf6 32. Rc7 Kg6 33.
+f5+ Kxf5 34. g3 c5 35. Rf7+ Kg6 36. Re7 Ndf2 37. Kg2 Nxe3+ 38. Kxf2 Nd5 39.
+Rxe4 Nf6 40. Rf4 Kf7 41. Kg1 Kg7 42. Kg2 Nd5 43. Rg4+ Kf6 44. Kh2 Ne3 45. Rf4+
+Ke6 46. Kg1 Nd5 47. Rf8 Ne3 48. Rf3 Nc2 49. Rf1 Nd4 50. Rf2 Ke7 51. b4 cxb4 52.
+Rd2 Nf3+ 53. Kf1 Nxd2+ 54. Ke2 Nc4 55. Kd3 Na3 56. Kd4 Kd7 57. Ke4 Kd8 58. Kd4
+Nc2+ 59. Kd3 Ne1+ 60. Kc4 Ke8 61. Kxb4 Ng2 62. Kb3 Ne1 63. a3 Kd8 64. Kc4 Nc2
+65. Kd3 Ne1+ 66. Ke2 Nc2 67. Kd3 Ne1+ 68. Ke3 Nc2+ 1/2-1/2
+

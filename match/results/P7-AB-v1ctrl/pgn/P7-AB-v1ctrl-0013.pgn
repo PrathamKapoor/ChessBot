@@ -1,0 +1,15 @@
+[Event "P7-AB-v1ctrl"]
+[Site "PocketChess local match"]
+[Date "2026.10.10"]
+[Round "13"]
+[White "v2ctrl"]
+[Black "v1ctrl"]
+[Result "1/2-1/2"]
+[FEN "r1bqkb1r/pp1p1ppp/2n1pn2/8/3NP3/2N1B3/PPP2PPP/R2QKB1R b KQkq - 4 6"]
+[SetUp "1"]
+[Opening "core-01-g"]
+
+6... Ne5 7. Ndb5 g6 8. Nd6+ Bxd6 9. Qxd6 Nfg4 10. O-O-O g5 11. h3 Qf6 12. hxg4
+Rg8 13. Rxh7 Nxg4 14. Bb5 Nxe3 15. Bxd7+ Bxd7 16. Qxd7+ Kf8 17. Qd6+ Ke8 18.
+Qd7+ Kf8 19. Qd6+ Ke8 20. Qd7+ 1/2-1/2
+
