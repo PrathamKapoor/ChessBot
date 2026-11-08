@@ -1,0 +1,20 @@
+[Event "stockfish19-smoke-001"]
+[Site "PocketChess local match"]
+[Date "2026.11.07"]
+[Round "3"]
+[White "Stockfish19"]
+[Black "PocketChess"]
+[Result "1-0"]
+[FEN "rnbqkb1r/pp2pppp/3p1n2/8/3NP3/8/PPP2PPP/RNBQKB1R w KQkq - 1 5"]
+[SetUp "1"]
+[Opening "core-01-b"]
+
+5. Nc3 e5 6. Bb5+ Bd7 7. Bxd7+ Qxd7 8. Nde2 Nc6 9. Bg5 Qg4 10. Bxf6 gxf6 11.
+O-O Rg8 12. Ng3 Qxd1 13. Raxd1 Nb4 14. Rd2 O-O-O 15. Nf5 Rg5 16. Rfd1 h6 17. h4
+Rg4 18. f3 Rf4 19. Kf1 a6 20. a3 Nc6 21. Nd5 Rxf5 22. exf5 Nd4 23. Rxd4 exd4
+24. Rxd4 b5 25. a4 Bg7 26. axb5 axb5 27. Rg4 Bh8 28. Rb4 Kd7 29. Rxb5 Ra8 30.
+c4 Ra1+ 31. Ke2 Bg7 32. Rb7+ Ke8 33. Rb8+ Kd7 34. Rg8 Bf8 35. Rxf8 Rb1 36.
+Rxf7+ Kc8 37. Rxf6 Rxb2+ 38. Ke3 h5 39. Re6 Rxg2 40. f6 Rg1 41. f7 Re1+ 42. Kf2
+Rxe6 43. f8=Q+ Kd7 44. Qf7+ Kd8 45. Nb6 Re7 46. Qf8+ Kc7 47. Nd5+ Kc6 48. Qc8+
+Rc7 49. Qxc7# 1-0
+

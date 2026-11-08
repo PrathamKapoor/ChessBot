@@ -1,0 +1,1 @@
+{"manifest_version":3,"name":"PocketChess Companion","version":"1.0.0","description":"A separate board for playing your PocketChess engine against computer opponents.","permissions":["storage"],"host_permissions":["http://127.0.0.1:8765/*"],"action":{"default_title":"Open PocketChess Companion"},"background":{"service_worker":"background.js"}}

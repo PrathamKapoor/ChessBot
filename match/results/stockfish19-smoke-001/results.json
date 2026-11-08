@@ -1,0 +1,220 @@
+{
+  "experiment_id": "stockfish19-smoke-001",
+  "started_utc": "2026-11-07T18:27:20.323335+00:00",
+  "finished_utc": "2026-11-07T18:27:39.422967+00:00",
+  "elapsed_s": 19.1,
+  "configuration": {
+    "suite": "match/suite_core-01.txt",
+    "openings": 12,
+    "games_requested": 4,
+    "control": "movetime 50ms",
+    "hash_mb": 16,
+    "threads": 1,
+    "options": [
+      "name Hash value 16"
+    ],
+    "max_plies": 200,
+    "hard_timeout_per_move_s": 60.0
+  },
+  "provenance": {
+    "repo": "C:\\Projects\\ChessBot",
+    "baseline_commit": "f49370a13ae31a941cfaa334e9c93b15a0c87876",
+    "candidate_commit": "f49370a13ae31a941cfaa334e9c93b15a0c87876",
+    "baseline_binary": {
+      "path": "C:\\Projects\\ChessBot\\third_party\\stockfish\\stockfish\\stockfish-windows-x86-64-universal.exe",
+      "size_bytes": 103046300,
+      "mtime": "2026-09-05T02:56:50+00:00",
+      "sha256": "45bc8e4969147db9c2eb533810637994619bff0eacc81ccfd9854394901bcbd0"
+    },
+    "candidate_binary": {
+      "path": "C:\\Projects\\ChessBot\\build\\pocketchess.exe",
+      "size_bytes": 345315,
+      "mtime": "2026-11-05T18:28:59.820583+00:00",
+      "sha256": "5639831ec49cf91f27f20e0709a6849c36ce69592d1a8394c444a9f5f20b344a"
+    },
+    "baseline_build": null,
+    "candidate_build": null,
+    "tree_state": {
+      "clean": false,
+      "changed_count": 4,
+      "changed": [
+        ".gitignore",
+        "extension/",
+        "tests/test_extension_bridge.py",
+        "tools/companion_bridge.py"
+      ]
+    },
+    "runner": "match/runner.py first-party",
+    "runner_version": "1.0.0",
+    "machine": {
+      "platform": "Windows-11-10.0.26200-SP0",
+      "processor": "AMD64 Family 25 Model 68 Stepping 1, AuthenticAMD",
+      "python": "3.13.14"
+    },
+    "chess_library": {
+      "name": "python-chess",
+      "version": "1.11.2",
+      "license": "GPL-3.0+"
+    },
+    "sprt": "sprt"
+  },
+  "games": [
+    {
+      "experiment_id": "stockfish19-smoke-001",
+      "game_id": 1,
+      "opening_id": "core-01-a",
+      "opening_structure": "open",
+      "opening_plies": 0,
+      "baseline_engine": "Stockfish19",
+      "candidate_engine": "PocketChess",
+      "baseline_white": true,
+      "white_engine": "Stockfish19",
+      "black_engine": "PocketChess",
+      "baseline_commit": "f49370a13ae31a941cfaa334e9c93b15a0c87876",
+      "candidate_commit": "f49370a13ae31a941cfaa334e9c93b15a0c87876",
+      "control": "movetime 50ms",
+      "hash_mb": 16,
+      "threads": 1,
+      "result": "1-0",
+      "termination": "checkmate",
+      "candidate_score": 0.0,
+      "plies": 49,
+      "moves_played": 49,
+      "elapsed_s": 3.131,
+      "is_chess_result": true,
+      "is_failure": false,
+      "error": null,
+      "pgn": "stockfish19-smoke-001-0001.pgn"
+    },
+    {
+      "experiment_id": "stockfish19-smoke-001",
+      "game_id": 2,
+      "opening_id": "core-01-a",
+      "opening_structure": "open",
+      "opening_plies": 0,
+      "baseline_engine": "Stockfish19",
+      "candidate_engine": "PocketChess",
+      "baseline_white": false,
+      "white_engine": "PocketChess",
+      "black_engine": "Stockfish19",
+      "baseline_commit": "f49370a13ae31a941cfaa334e9c93b15a0c87876",
+      "candidate_commit": "f49370a13ae31a941cfaa334e9c93b15a0c87876",
+      "control": "movetime 50ms",
+      "hash_mb": 16,
+      "threads": 1,
+      "result": "0-1",
+      "termination": "checkmate",
+      "candidate_score": 0.0,
+      "plies": 88,
+      "moves_played": 88,
+      "elapsed_s": 5.034,
+      "is_chess_result": true,
+      "is_failure": false,
+      "error": null,
+      "pgn": "stockfish19-smoke-001-0002.pgn"
+    },
+    {
+      "experiment_id": "stockfish19-smoke-001",
+      "game_id": 3,
+      "opening_id": "core-01-b",
+      "opening_structure": "open",
+      "opening_plies": 8,
+      "baseline_engine": "Stockfish19",
+      "candidate_engine": "PocketChess",
+      "baseline_white": true,
+      "white_engine": "Stockfish19",
+      "black_engine": "PocketChess",
+      "baseline_commit": "f49370a13ae31a941cfaa334e9c93b15a0c87876",
+      "candidate_commit": "f49370a13ae31a941cfaa334e9c93b15a0c87876",
+      "control": "movetime 50ms",
+      "hash_mb": 16,
+      "threads": 1,
+      "result": "1-0",
+      "termination": "checkmate",
+      "candidate_score": 0.0,
+      "plies": 97,
+      "moves_played": 89,
+      "elapsed_s": 5.143,
+      "is_chess_result": true,
+      "is_failure": false,
+      "error": null,
+      "pgn": "stockfish19-smoke-001-0003.pgn"
+    },
+    {
+      "experiment_id": "stockfish19-smoke-001",
+      "game_id": 4,
+      "opening_id": "core-01-b",
+      "opening_structure": "open",
+      "opening_plies": 8,
+      "baseline_engine": "Stockfish19",
+      "candidate_engine": "PocketChess",
+      "baseline_white": false,
+      "white_engine": "PocketChess",
+      "black_engine": "Stockfish19",
+      "baseline_commit": "f49370a13ae31a941cfaa334e9c93b15a0c87876",
+      "candidate_commit": "f49370a13ae31a941cfaa334e9c93b15a0c87876",
+      "control": "movetime 50ms",
+      "hash_mb": 16,
+      "threads": 1,
+      "result": "0-1",
+      "termination": "checkmate",
+      "candidate_score": 0.0,
+      "plies": 108,
+      "moves_played": 100,
+      "elapsed_s": 5.745,
+      "is_chess_result": true,
+      "is_failure": false,
+      "error": null,
+      "pgn": "stockfish19-smoke-001-0004.pgn"
+    }
+  ],
+  "summary": {
+    "chess_results": 4,
+    "infrastructure_failures": 0,
+    "failures_by_termination": {},
+    "colour_balance": {
+      "baseline_white": 2,
+      "candidate_white": 2
+    },
+    "candidate_wins": 0,
+    "draws": 0,
+    "baseline_wins": 4,
+    "total_games": 4,
+    "score": 0.0,
+    "elo_estimate": -Infinity,
+    "sprt": {
+      "elo0": 0.0,
+      "elo1": 5.0,
+      "alpha": 0.05,
+      "beta": 0.05,
+      "games": 4,
+      "wins": 0,
+      "draws": 0,
+      "losses": 4,
+      "decisive_games": 4,
+      "draw_rate": 0.0,
+      "score": 0.0,
+      "elo_estimate": -Infinity,
+      "llr": -0.05797882381797337,
+      "upper_boundary": 2.9444389791664403,
+      "lower_boundary": -2.9444389791664403,
+      "decision": "inconclusive",
+      "status": "inconclusive: continue"
+    },
+    "terminations": {
+      "checkmate": 4
+    },
+    "by_opening": {
+      "core-01-a": {
+        "w": 0,
+        "d": 0,
+        "l": 2
+      },
+      "core-01-b": {
+        "w": 0,
+        "d": 0,
+        "l": 2
+      }
+    }
+  }
+}
